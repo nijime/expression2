@@ -1,0 +1,49 @@
+@name EGP HUD
+@inputs EGP:wirelink Users:array
+@outputs Arr
+@persist Arr1:array O:entity H H1 A A1
+@trigger 
+interval(300)
+
+if(first()) {
+    O = owner()
+    EGP:egpResolution(vec2(0,0), vec2(egpScrW(O),egpScrH(O)))
+    #EGP:egpBox(1, vec2(250,550), vec2(400,1020))
+    #EGP:egpColor(1, vec4(0,255,220,100))
+    
+    
+    #for(I = 1, 20) {
+    #    Arr1[I+1, vector2] = vec2(440+6.4*I^2, 1070-I*51.2)
+    #    Arr1[1, vector2] = vec2(447,40)
+    #}
+
+    #EGP:egpPoly(2, Arr1)
+    #EGP:egpColor(2, vec4(0,255,220,100))
+    
+    EGP:egpRoundedBoxOutline(3, vec2(2000,2000), vec2(3500,100))
+    
+    EGP:egpColor(5, vec4(0,150,255,175))
+    
+    EGP:egpSize(6, 20)
+    EGP:egpSize(7, 25)
+    
+    EGP:egpColor(6, vec4(0,255,150,175))
+    EGP:egpColor(7, vec4(0,150,255,175))
+}
+H1 = O:health()
+A1 = O:armor()
+if($H1 > 1) {
+    H = $H1
+}
+if($A1 > 1) {
+    A = $A1
+}
+EGP:egpRoundedBox(4, vec2(2000-(100-H1)*17.5,2000), vec2(H1*35, 100))
+EGP:egpColor(4, vec4((100-H1)*3,H1*2.5,O:health()*1,175))
+
+EGP:egpRoundedBox(5, vec2(2000-(100-A1)*17.5,2000), vec2(A1*35, 100))
+
+EGP:egpText(6, H1:toString() + "% (d " + H:toString() + ")", vec2(3700-(100-H1)*35,1900))
+EGP:egpText(7, A1:toString() + "% (d " + A:toString() + ")", vec2(3700-(100-A1)*35,1860))
+
+

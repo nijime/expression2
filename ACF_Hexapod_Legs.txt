@@ -1,0 +1,169 @@
+@name ACF_Hexapod_Legs
+@inputs 
+@outputs 
+@persist 
+interval(500)
+if(perf() & holoCanCreate() & I < 101) {
+    
+
+        if(I < 16)          { Inc = 0  Inc2 = 0 Si = 1}        
+        if(I > 15 & I < 32) { Inc = 16 Inc2 = 8 Si = 1}
+        if(I > 32 & I < 49) { Inc = 32 Inc2 = 12 Si = 1}
+        if(I > 49 & I < 66) { Inc = 48 Inc2 = 20 Si = 1}
+
+
+        if(I > 66 & I < 66+17)    { Inc = 64 Inc2 = 4  Si = 1.2}
+        if(I > 66+17 & I < 66+34) { Inc = 80 Inc2 = 16 Si = 1.2}
+        
+        if(I >= 110) {
+            HoloFinished = 1
+        }
+        
+        #Inc = 16
+        #Inc2 = 4*(I-1)
+
+
+    
+    if(I > 66) {
+        
+    holoCreate(40+Inc, h(1+Inc2):toWorld(vec(L1/2+5, 0, -L1/2)), vec(0.4,0.6, 1.2), h(1+Inc2):toWorld(ang(-35,0,0)), vec(120,120,120), "models/props_junk/TrashBin01a.mdl")
+    holoParent(40+Inc, 1+Inc2)
+    holoMaterial(40+Inc, "phoenix_storms/gear")
+    
+    
+    
+    
+    
+    holoCreate(41+Inc, h(2+Inc2):toWorld(vec(2, 0, L2/4+12)*Si), vec(0.4,0.5, 2.1)*Si, h(2+Inc2):toWorld(ang(180,0,0)), vec(120,120,120), "models/props_junk/TrashBin01a.mdl")
+    holoParent(41+Inc, 2+Inc2)
+    holoMaterial(41+Inc, "phoenix_storms/gear")
+    
+    holoCreate(42+Inc, h(2+Inc2):toWorld(vec(2, 0, L2/2+0)*Si), vec(0.6,0.6, 3.7)*Si, h(2+Inc2):toWorld(ang(0,90,0)), vec(190), "models/props_junk/gascan001a.mdl")
+    holoParent(42+Inc, 2+Inc2)
+    holoMaterial(42+Inc, "phoenix_storms/gear")
+    
+    
+    
+    
+    
+    holoCreate(43+Inc, h(3+Inc2):toWorld(vec(0, 0, 0)*Si), vec(0.92,0.92,1.1)*Si, h(3+Inc2):toWorld(ang(0,0,90)), vec(255,255,255), "models/mechanics/wheels/wheel_smooth_24.mdl")
+    holoParent(43+Inc, 3+Inc2)
+    #holoMaterial(43, "phoenix_storms/gear")
+    
+#    #holoCreate(44+Inc, h(3+Inc2):toWorld(vec(12, 0, L3/4-4)*Si), vec(0.7,0.7,1.3)*Si, h(3+Inc2):toWorld(ang(23,0,180)), vec(225), "models/props_junk/TrashBin01a.mdl")
+    holoCreate(44+Inc, h(3+Inc2):toWorld(vec(20, 0, L3/4-17)*Si), vec(1.3,0.25,0.45)*Si, h(3+Inc2):toWorld(ang(67,180,0)), vec(120), "models/props_lab/kennel_physics.mdl")    
+    holoParent(44+Inc, 3+Inc2)
+    holoMaterial(44+Inc, "phoenix_storms/gear")
+    
+    holoCreate(45+Inc, h(3+Inc2):toWorld(vec(18, 0, L3/1.5-7)*Si), vec(0.5,0.5,1.65)*Si, h(3+Inc2):toWorld(ang(-20,0,180)), vec(150), "models/props_junk/TrashBin01a.mdl")
+    holoParent(45+Inc, 3+Inc2)
+    holoMaterial(45+Inc, "phoenix_storms/gear")
+    
+
+
+    holoCreate(46+Inc, h(45+Inc):toWorld(vec(15, 0, 5)*Si), vec(1.4,0.5,0.6)*Si, h(45+Inc):toWorld(ang(90,90,90)), vec(255), "models/sprops/rectangles/size_2_5/rect_18x36x3.mdl")
+    holoParent(46+Inc, 45+Inc)
+    holoMaterial(46+Inc, "phoenix_storms/concrete0")
+    
+
+
+    holoCreate(47+Inc, h(46+Inc):toWorld(vec(-5, -15, -5)*Si), vec(1.2,0.9,0.7)*Si, h(46+Inc):toWorld(ang(0,0,113)), vec(255), "models/sprops/geometry/hhex_84.mdl")
+    holoParent(47+Inc, 46+Inc)
+    holoMaterial(47+Inc, "phoenix_storms/concrete0")
+    
+    holoCreate(48+Inc, h(46+Inc):toWorld(vec(-5, 14, -4)*Si), vec(1.2,0.6,0.6)*Si, h(46+Inc):toWorld(ang(0,180,113)), vec(255), "models/sprops/geometry/hhex_84.mdl")
+    holoParent(48+Inc, 46+Inc)
+    holoMaterial(48+Inc, "phoenix_storms/concrete0")
+    
+    holoCreate(49+Inc, h(46+Inc):toWorld(vec(0, 0, 0)*Si), vec(1.5,0.7,0.86)*Si, h(46+Inc):toWorld(ang(0,0,180)), vec(120), "models/props_docks/dock01_cleat01a.mdl")
+    holoParent(49+Inc, 46+Inc)
+    holoMaterial(49+Inc, "phoenix_storms/gear")
+    
+    holoCreate(50+Inc, h(3+Inc2):toWorld(vec(16, 0, L3/1.5-0)*Si), vec(0.4,0.3,0.9)*Si, h(3+Inc2):toWorld(ang(-4,0,180)), vec(90), "models/props_c17/oildrum001.mdl")
+    holoParent(50+Inc, 3+Inc2)
+    holoMaterial(50+Inc, "phoenix_storms/gear")
+    
+    holoCreate(51+Inc, h(3+Inc2):toWorld(vec(4, 0, L3/4-0)*Si), vec(1.2,0.25,0.5)*Si, h(3+Inc2):toWorld(ang(67,180,180)), vec(120), "models/props_lab/kennel_physics.mdl")
+    holoParent(51+Inc, 3+Inc2)
+    holoMaterial(51+Inc, "phoenix_storms/gear")
+    
+
+    holoCreate(52+Inc, h(3+Inc2):toWorld(vec(13, 0, L3/1.5+25)*Si), vec(0.5,0.5,12.65)*Si, h(3+Inc2):toWorld(ang(160,0,180)), vec(100), "models/sprops/mechanics/bgears/bevel_10t_l.mdl")
+    holoParent(52+Inc, 3+Inc2)
+    holoMaterial(52+Inc, "phoenix_storms/gear")
+
+    }
+
+
+    if(I <= 66) {
+        
+        
+    holoCreate(40+Inc, h(1+Inc2):toWorld(vec(L1/2+5, 0, -L1/2)), vec(0.4,0.6, 1.2), h(1+Inc2):toWorld(ang(-35,0,0)), vec(120,120,120), "models/props_junk/TrashBin01a.mdl")
+    holoParent(40+Inc, 1+Inc2)
+    holoMaterial(40+Inc, "phoenix_storms/gear")
+    
+    
+    
+    
+    
+    holoCreate(41+Inc, h(2+Inc2):toWorld(vec(2, 0, L2/4+12)), vec(0.4,0.5, 2.1), h(2+Inc2):toWorld(ang(180,0,0)), vec(120,120,120), "models/props_junk/TrashBin01a.mdl")
+    holoParent(41+Inc, 2+Inc2)
+    holoMaterial(41+Inc, "phoenix_storms/gear")
+    
+    holoCreate(42+Inc, h(2+Inc2):toWorld(vec(2, 0, L2/2+0)), vec(0.6,0.6, 3.7), h(2+Inc2):toWorld(ang(0,90,0)), vec(190), "models/props_junk/gascan001a.mdl")
+    holoParent(42+Inc, 2+Inc2)
+    holoMaterial(42+Inc, "phoenix_storms/gear")
+    
+    
+    
+    
+    
+    holoCreate(43+Inc, h(3+Inc2):toWorld(vec(0, 0, 0)), vec(0.92,0.92,1.1), h(3+Inc2):toWorld(ang(0,0,90)), vec(255,255,255), "models/mechanics/wheels/wheel_smooth_24.mdl")
+    holoParent(43+Inc, 3+Inc2)
+    #holoMaterial(43, "phoenix_storms/gear")
+    
+#    #holoCreate(44+Inc, h(3+Inc2):toWorld(vec(12, 0, L3/4-4)), vec(0.7,0.7,1.3), h(3+Inc2):toWorld(ang(23,0,180)), vec(225), "models/props_junk/TrashBin01a.mdl")
+    holoCreate(44+Inc, h(3+Inc2):toWorld(vec(20, 0, L3/4-17)), vec(1.3,0.25,0.45), h(3+Inc2):toWorld(ang(67,180,0)), vec(120), "models/props_lab/kennel_physics.mdl")    
+    holoParent(44+Inc, 3+Inc2)
+    holoMaterial(44+Inc, "phoenix_storms/gear")
+    
+    holoCreate(45+Inc, h(3+Inc2):toWorld(vec(18, 0, L3/1.5-7)), vec(0.5,0.5,1.65), h(3+Inc2):toWorld(ang(-20,0,180)), vec(150), "models/props_junk/TrashBin01a.mdl")
+    holoParent(45+Inc, 3+Inc2)
+    holoMaterial(45+Inc, "phoenix_storms/gear")
+    
+
+
+    holoCreate(46+Inc, h(45+Inc):toWorld(vec(15, 0, 5)), vec(1.4,0.5,0.6), h(45+Inc):toWorld(ang(90,90,90)), vec(255), "models/sprops/rectangles/size_2_5/rect_18x36x3.mdl")
+    holoParent(46+Inc, 45+Inc)
+    holoMaterial(46+Inc, "phoenix_storms/concrete0")
+    
+
+
+    holoCreate(47+Inc, h(46+Inc):toWorld(vec(-5, -15, -5)), vec(1.2,0.9,0.7), h(46+Inc):toWorld(ang(0,0,113)), vec(255), "models/sprops/geometry/hhex_84.mdl")
+    holoParent(47+Inc, 46+Inc)
+    holoMaterial(47+Inc, "phoenix_storms/concrete0")
+    
+    holoCreate(48+Inc, h(46+Inc):toWorld(vec(-5, 14, -4)), vec(1.2,0.6,0.6), h(46+Inc):toWorld(ang(0,180,113)), vec(255), "models/sprops/geometry/hhex_84.mdl")
+    holoParent(48+Inc, 46+Inc)
+    holoMaterial(48+Inc, "phoenix_storms/concrete0")
+    
+    holoCreate(49+Inc, h(46+Inc):toWorld(vec(0, 0, 0)), vec(1.5,0.7,0.86), h(46+Inc):toWorld(ang(0,0,180)), vec(120), "models/props_docks/dock01_cleat01a.mdl")
+    holoParent(49+Inc, 46+Inc)
+    holoMaterial(49+Inc, "phoenix_storms/gear")
+    
+    holoCreate(50+Inc, h(3+Inc2):toWorld(vec(16, 0, L3/1.5-0)), vec(0.4,0.3,0.9), h(3+Inc2):toWorld(ang(-4,0,180)), vec(50), "models/props_c17/oildrum001.mdl")
+    holoParent(50+Inc, 3+Inc2)
+    holoMaterial(50+Inc, "phoenix_storms/gear")
+    
+    holoCreate(51+Inc, h(3+Inc2):toWorld(vec(4, 0, L3/4-0)), vec(1.2,0.25,0.5), h(3+Inc2):toWorld(ang(67,180,180)), vec(120), "models/props_lab/kennel_physics.mdl")
+    holoParent(51+Inc, 3+Inc2)
+    holoMaterial(51+Inc, "phoenix_storms/gear")
+
+    holoCreate(52+Inc, h(3+Inc2):toWorld(vec(13, 0, L3/1.5+25)), vec(0.5,0.5,12.65), h(3+Inc2):toWorld(ang(160,0,180)), vec(100), "models/sprops/mechanics/bgears/bevel_10t_l.mdl")
+    holoParent(52+Inc, 3+Inc2)
+    holoMaterial(52+Inc, "phoenix_storms/gear")
+    
+    
+    }
+    
+}

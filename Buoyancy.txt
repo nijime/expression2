@@ -1,0 +1,24 @@
+@name Buoyancy
+@persist E:entity R:ranger
+interval(100)
+
+if(first()) {
+    entity():propGravity(0)
+    entity():setMass(0)
+    noCollideAll(entity(), 1)
+    
+    E = entity():isWeldedTo()
+    E:propGravity(0)
+}
+
+
+rangerHitWater(1)
+rangerFilter(array(E, entity()))
+R = rangerOffset(1, E:pos(), vec(0,0,-1))
+
+if(R:hit()) {
+    E:applyForce(vec(0,0,15*E:mass()))
+    
+} else {
+    E:applyForce(vec(0,0,-50*E:mass()))
+}

@@ -1,0 +1,74 @@
+@name Ground to air missile
+@inputs Seat:entity PointOfRotation:entity TurretContactToGround:entity
+@outputs Attack1 Attack2 Reload Shoot
+@persist P:entity Time Safety
+@trigger 
+interval(1)
+runOnChat(1)
+Time = Time + 1
+O = owner()
+Driver = Seat:driver()
+if(Driver:keyAttack1()) {
+    Attack1 = 1
+} else {
+Attack1 = 0
+}
+
+if(Driver:keyAttack2()) {
+    Attack2 = 1
+} else {
+Attack2 = 0
+}
+if(Driver:keyReload()) {
+    Reload = 1
+} else {
+Reload = 0
+}
+findIncludeClass("player")
+#findExcludePlayer("Nijime")
+findExcludePlayer("Ch o w")
+findExcludePlayer("Enter")
+findInBox(PointOfRotation:pos()+vec(10000,10000,0), PointOfRotation:pos()+vec(-10000,-10000,17000))
+Opos = findClosest(PointOfRotation:pos())
+Opospos = Opos:pos()
+Turpos = PointOfRotation:pos()
+Aim = (Opos:pos()-Turpos):toAngle()
+HEIGHTOFTURRET = 40
+if(O:lastSaid() == "Off" & chatClk(O)) {
+    Safety = 0
+    Safety = Safety - 100
+}
+if(O:lastSaid() == "On" & chatClk(O)) {
+    Safety = 0
+    Safety = Safety + 100
+}
+if(Safety >= 1) {
+    Turcanfire = 1
+} else {
+Turcanfire = 0
+}
+PointOfRotation:setPos(TurretContactToGround:pos()+vec(0,0,HEIGHTOFTURRET))
+if(Driver) {
+PointOfRotation:setAng(ang(Driver:eyeAngles():pitch()+180,Driver:eyeAngles():yaw(),0))
+} else {
+
+PointOfRotation:setAng(ang(Aim:pitch()+179,Aim:yaw(),0))
+
+}
+if(Time/200 == round(Time/200-0.4) & Turcanfire & Opos) {
+    #P = propSpawn("models/props_phx/mk-82.mdl", PointOfRotation:pos()+vec(0,0,30),1)
+    #P:propFreeze(0)
+    #P:setMass(50000)
+    #P:propGravity(0)
+    #P:setTrails(20,20,20, "trails/laser", vec(0,100,255),255)
+    #P:propNotSolid(0)
+    #P:setAlpha(0)
+}
+if(Time/300 == round(Time/300-0.4) & Turcanfire & Opos) {
+    #P:applyForce(-PointOfRotation:forward()*100000000000000)
+}
+if(Opos & Turcanfire == 1) {
+    Shoot = 1
+} else {
+Shoot = 0
+}

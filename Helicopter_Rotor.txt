@@ -1,0 +1,51 @@
+@name Helicopter Rotor Horizontal
+@inputs Active
+@outputs S C
+@persist E:entity K Spin
+@trigger 
+@model models/hunter/plates/plate1x1.mdl
+interval(100)
+
+if(first()) {
+    E = entity()
+    
+    holoCreate(1)
+    holoPos(1, E:pos()+vec(0,0,25))
+    holoParent(1, E)
+    
+    holoCreate(2)
+    holoCreate(3)
+    holoCreate(4)
+    holoCreate(5)
+    holoModel(3, "models/hunter/plates/plate1x8.mdl")
+    holoModel(4, "models/hunter/plates/plate1x8.mdl")
+    holoModel(5, "models/hunter/plates/plate1x8.mdl")
+    holoScale(3, vec(0.3,1.1,0.5))
+    holoScale(4, vec(0.3,1.1,0.5))
+    holoScale(5, vec(0.3,1.1,0.5))
+    holoPos(3, holoEntity(2):pos())
+    holoPos(4, holoEntity(2):pos())
+    holoPos(5, holoEntity(2):pos())
+    holoAng(3, ang(10,0,0))
+    holoAng(4, ang(10,120,0))
+    holoAng(5, ang(10,240,0))
+    holoParent(3, holoEntity(2))
+    holoParent(4, holoEntity(2))
+    holoParent(5, holoEntity(2))
+    holoAlpha(1, 0)
+    holoAlpha(2, 0)
+}
+
+if(Active & K < 50) {
+    K = K + 1
+}
+
+if(!Active & K > 0) {
+    K = K - 1
+}
+
+Spin = Spin + K 
+
+
+holoPos(2, holoEntity(1):pos())
+holoAng(2, E:toWorld(ang(0,Spin,0)))

@@ -1,0 +1,352 @@
+@name Galaxy Simulator 2013
+@inputs B
+@outputs X Y Age Death Burn Spins
+@persist Time Life Active Int Value Ang
+@trigger 
+
+#Universe Timescale = 10,000 years/1 second
+
+interval(100)
+Time = Time+10
+#Lifetime counter values
+Life = Time + 10
+Age = Life
+#Switch
+Active = 1
+#Temperature counter values
+Burn = Time+1
+Burn = Time+-10000
+
+Spins = Age/1150
+
+#Orbital position settings
+##Mild stars
+X01=cos(Time/2.8)*15
+Y01=sin(Time/2.8)*15
+X1=cos(Time/3)*30
+Y1=sin(Time/3)*30
+X2=cos(Time/3.2)*45
+Y2=sin(Time/3.2)*45
+X3=cos(Time/3.4)*60
+Y3=sin(Time/3.4)*60
+X4=cos(Time/3.6)*75
+Y4=sin(Time/3.6)*75
+X5=cos(Time/3.8)*90
+Y5=sin(Time/3.8)*90
+X6=cos(Time/4)*105
+Y6=sin(Time/4)*105
+X7=cos(Time/4.2)*120
+Y7=sin(Time/4.2)*120
+X8=cos(Time/4.4)*135
+Y8=sin(Time/4.4)*135
+X9=cos(Time/4.6)*150
+Y9=sin(Time/4.6)*150
+X10=cos(Time/4.8)*175
+Y10=sin(Time/4.8)*175
+X11=cos(Time/5)*190
+Y11=sin(Time/5)*190
+##Dwarf stars
+X12=cos(Time/2.4)*70
+Y12=sin(Time/2.4)*70
+X13=cos(Time/2.2)*60
+Y13=sin(Time/2.2)*60
+X14=cos(Time/2.8)*120
+Y14=sin(Time/2.8)*120
+X15=cos(Time/3)*170
+Y15=sin(Time/3)*180            
+X16=cos(Time/1.4)*50
+Y16=sin(Time/1.4)*50
+X17=cos(Time/1.4)*200
+Y17=sin(Time/1.4)*200
+X18=cos(Time/1.8)*20
+Y18=sin(Time/1.8)*20
+X19=cos(Time/2)*100
+Y19=sin(Time/2)*100
+##Red giant
+X20=cos(Time/5.4)*40
+Y20=sin(Time/5.4)*40
+X21=cos(Time/6.4)*160
+Y21=sin(Time/6.4)*200
+X22=cos(Time/5.8)*70
+Y22=sin(Time/5.8)*70
+X23=cos(Time/6)*110
+Y23=sin(Time/6)*110
+##Binary star
+X24=cos(Time/0.7)*3
+Y24=sin(Time/0.7)*3
+##Black hole mass
+X25=cos(Time/6)*80
+Y25=sin(Time/6)*80
+
+X30=cos(Time/7)*120
+Y30=sin(Time/7)*115
+####Center of the galaxy
+holoCreate(75)
+holoScale(75, vec(2,2,2))
+holoColor(75, vec(0,0,0))
+###Celestial bodies
+##Stars
+holoCreate(30)
+holoPos(30,entity():pos()+vec(X,Y,0))
+holoScale(30, vec(0.6,0.6,0.6))
+
+holoCreate(31)
+holoPos(31,entity():pos()+vec(X1,Y1,0))
+holoScale(31, vec(0.6,0.6,0.6))
+
+holoCreate(32)
+holoPos(32,entity():pos()+vec(X2,Y2,0))
+holoScale(32, vec(0.6,0.6,0.6))
+
+holoCreate(33)
+holoPos(33,entity():pos()+vec(X3,Y3,0))
+holoScale(33, vec(0.6,0.6,0.6))
+
+holoCreate(34)
+holoPos(34,entity():pos()+vec(X4,Y4,0))
+holoScale(34, vec(0.6,0.6,0.6))
+
+holoCreate(35)
+holoPos(35,entity():pos()+vec(X5,Y5,0))
+holoScale(35, vec(0.6,0.6,0.6))
+
+holoCreate(36)
+holoPos(36,entity():pos()+vec(X6,Y6,0))
+holoScale(36, vec(0.6,0.6,0.6))
+
+holoCreate(37)
+holoPos(37,entity():pos()+vec(X7,Y7,0))
+holoScale(37, vec(0.6,0.6,0.6))
+
+holoCreate(38)
+holoPos(38,entity():pos()+vec(X8,Y8,0))
+holoScale(38, vec(0.6,0.6,0.6))
+
+holoCreate(39)
+holoPos(39,entity():pos()+vec(X9,Y9,0))
+holoScale(39, vec(0.6,0.6,0.6))
+
+holoCreate(40)
+holoPos(40,entity():pos()+vec(X10,Y10,0))
+holoScale(40, vec(0.6,0.6,0.6))
+
+holoCreate(41)
+holoPos(41,entity():pos()+vec(X11,Y11,0))
+holoScale(41, vec(0.6,0.6,0.6))
+#Dwarf stars
+holoCreate(43)
+holoPos(43,entity():pos()+vec(X12,Y12,0))
+holoScale(43, vec(0.3,0.3,0.3))
+
+holoCreate(44)
+holoPos(44,entity():pos()+vec(X13,Y13,0))
+holoScale(44, vec(0.3,0.3,0.3))
+
+holoCreate(45)
+holoPos(45,entity():pos()+vec(X14,Y14,0))
+holoScale(45, vec(0.3,0.3,0.3))
+
+holoCreate(46)
+holoPos(46,entity():pos()+vec(X15,Y15,0))
+holoScale(46, vec(0.3,0.3,0.3))
+
+holoCreate(47)
+holoPos(47,entity():pos()+vec(X16,Y16,0))
+holoScale(47, vec(0.3,0.3,0.3))
+
+holoCreate(48)
+holoPos(48,entity():pos()+vec(X17,Y17,0))
+holoScale(48, vec(0.3,0.3,0.3))
+
+holoCreate(49)
+holoPos(49,entity():pos()+vec(X18,Y18,0))
+holoScale(49, vec(0.3,0.3,0.3))
+
+holoCreate(50)
+holoPos(50,entity():pos()+vec(X19,Y19,0))
+holoScale(50, vec(0.3,0.3,0.3))
+#Red Giants
+holoCreate(51)
+holoPos(51,entity():pos()+vec(X20,Y20,0))
+holoScale(51, vec(0.8,0.8,0.8))
+
+holoCreate(52)
+holoPos(52,entity():pos()+vec(X21,Y21,0))
+holoScale(52, vec(0.8,0.8,0.8))
+
+holoCreate(53)
+holoPos(53,entity():pos()+vec(X22,Y22,0))
+holoScale(53, vec(0.8,0.8,0.8))
+
+holoCreate(54)
+holoPos(54,entity():pos()+vec(X23,Y23,0))
+holoScale(54, vec(0.8,0.8,0.8))
+#Binary stars
+holoCreate(55)
+holoPos(55, holoEntity(43):pos()+vec(X24,Y24,0))
+holoScale(55, vec(0.2,0.2,0.2))
+
+holoCreate(56)
+holoPos(56, holoEntity(50):pos()+vec(X24,Y24,0))
+holoScale(56, vec(0.2,0.2,0.2))
+
+holoCreate(57)
+holoPos(57, holoEntity(46):pos()+vec(X24,Y24,0))
+holoScale(57, vec(0.2,0.2,0.2))
+
+##Star temperature
+#Mild stars
+holoColor(30, vec(255,191,0))
+holoColor(31, vec(255,191,0))
+holoColor(32, vec(255,191,0))
+holoColor(33, vec(255,191,0))
+holoColor(34, vec(255,191,0))
+holoColor(35, vec(255,191,0))
+holoColor(36, vec(255,191,0))
+holoColor(37, vec(255,191,0))
+holoColor(38, vec(255,191,0))
+holoColor(39, vec(255,191,0))
+holoColor(40, vec(255,191,0))
+holoColor(41, vec(255,191,0))
+#Dwarf Stars
+holoColor(43, vec(0,255,255))
+holoColor(44, vec(0,255,255))
+holoColor(45, vec(0,255,255))
+holoColor(46, vec(0,255,255))
+holoColor(47, vec(0,255,255))
+holoColor(48, vec(0,255,255))
+holoColor(49, vec(0,255,255))
+holoColor(50, vec(0,255,255))
+#Red giants
+holoColor(51, vec(255,93,0))
+holoColor(52, vec(255,93,0))
+holoColor(53, vec(255,93,0))
+holoColor(54, vec(255,93,0))
+#Black holes
+holoColor(58, vec(0,0,0))
+holoColor(63, vec(0,0,0))
+
+###Universal Structures
+holoModel(30, "sphere")
+holoModel(31, "sphere")
+holoModel(32, "sphere")
+holoModel(33, "sphere")
+holoModel(34, "sphere")
+holoModel(35, "sphere")
+holoModel(36, "sphere")
+holoModel(37, "sphere")
+holoModel(38, "sphere")
+holoModel(39, "sphere")
+holoModel(40, "sphere")
+holoModel(41, "sphere")
+holoModel(75, "sphere")
+holoModel(43, "sphere")
+holoModel(44, "sphere")
+holoModel(45, "sphere")
+holoModel(46, "sphere")
+holoModel(47, "sphere")
+holoModel(48, "sphere")
+holoModel(49, "sphere")
+holoModel(50, "sphere")
+holoModel(51, "sphere")
+holoModel(52, "sphere")
+holoModel(53, "sphere")
+holoModel(54, "sphere")
+holoModel(55, "sphere")
+holoModel(56, "sphere")
+holoModel(57, "sphere")
+holoModel(58, "sphere")
+holoModel(63, "sphere")
+holoModel(57, "sphere")
+holoModel(58, "sphere")
+holoModel(75, "sphere")
+##Nil
+holoMaterial(30, "models/shiny")
+holoMaterial(31, "models/shiny")
+holoMaterial(32, "models/shiny")
+holoMaterial(33, "models/shiny")
+holoMaterial(34, "models/shiny")
+holoMaterial(35, "models/shiny")
+holoMaterial(36, "models/shiny")
+holoMaterial(37, "models/shiny")
+holoMaterial(38, "models/shiny")
+holoMaterial(39, "models/shiny")
+holoMaterial(40, "models/shiny")
+holoMaterial(41, "models/shiny")
+holoMaterial(43, "models/shiny")
+holoMaterial(44, "models/shiny")
+holoMaterial(45, "models/shiny")
+holoMaterial(46, "models/shiny")
+holoMaterial(47, "models/shiny")
+holoMaterial(48, "models/shiny")
+holoMaterial(49, "models/shiny")
+holoMaterial(50, "models/shiny")
+holoMaterial(51, "models/shiny")
+holoMaterial(52, "models/shiny")
+holoMaterial(53, "models/shiny")
+holoMaterial(54, "models/shiny")
+###Black holes
+X26=cos(Time/0.4)*8
+Y26=sin(Time/0.4)*8
+X27=cos(Time/0.3)*6
+Y27=sin(Time/0.3)*6
+X28=cos(Time/0.5)*10
+Y28=sin(Time/0.5)*10
+X29=cos(Time/0.2)*4
+Y29=sin(Time/0.2)*4
+
+X31=cos(Time/0.7)*7
+Y31=sin(Time/0.7)*6
+X32=cos(Time/0.3)*9
+Y32=sin(Time/0.3)*8
+X33=cos(Time/0.9)*12
+Y33=sin(Time/0.9)*12
+X34=cos(Time/0.1)*4
+Y34=sin(Time/0.1)*6
+##SGC-X5745
+holoCreate(58)
+holoPos(58, entity():pos()+vec(X25,Y25,0))
+holoScale(58, vec(0.5,0.5,0.5))
+#Debris
+holoCreate(59)
+holoPos(59, holoEntity(58):pos()+vec(X26,Y26,0))
+holoScale(59, vec(0.1,0.1,0.1))
+
+holoCreate(60)
+holoPos(60, holoEntity(58):pos()+vec(X27,Y27,0))
+holoScale(60, vec(0.1,0.1,0.1))
+
+holoCreate(61)
+holoPos(61, holoEntity(58):pos()+vec(X28,Y28,0))
+holoScale(61, vec(0.1,0.1,0.1))
+
+holoCreate(62)
+holoPos(62, holoEntity(58):pos()+vec(X29,Y29,0))
+holoScale(62, vec(0.1,0.1,0.1))
+##NST-J1357
+holoCreate(63)
+holoPos(63, entity():pos()+vec(X30,Y30,0))
+holoScale(63, vec(0.5,0.5,0.5))
+#Debris
+holoCreate(64)
+holoPos(64, holoEntity(63):pos()+vec(X26,Y26,0))
+holoScale(64, vec(0.1,0.1,0.1))
+
+holoCreate(65)
+holoPos(65, holoEntity(63):pos()+vec(X27,Y26,0))
+holoScale(65, vec(0.1,0.1,0.1))
+
+holoCreate(66)
+holoPos(66, holoEntity(63):pos()+vec(X28,Y28,0))
+holoScale(66, vec(0.1,0.1,0.1))
+
+holoCreate(67)
+holoPos(67, holoEntity(63):pos()+vec(X29,Y29,0))
+holoScale(67, vec(0.1,0.1,0.1))
+
+holoCreate(68)
+holoPos(68, holoEntity(63):pos()+vec(X31,Y31,0))
+holoScale(68, vec(0.1,0.1,0.1))
+
+holoCreate(69)
+holoPos(69, holoEntity(63):pos()+vec(X3))

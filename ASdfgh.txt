@@ -1,0 +1,16 @@
+@name Spinny button
+@inputs Button
+@outputs 
+@persist Ang
+@trigger 
+interval(1)
+
+if(Button == 1) {
+    Ang = Ang + 1
+} else {
+Ang = Ang + 0
+}
+Pitch = abs(sin(Ang)*360)
+    
+    holoCreate(1)
+    holoAng(1, ang(Pitch,0,0))

@@ -1,0 +1,317 @@
+@name Fall thing
+@inputs Ramp:entity
+@outputs Players:array
+@persist E:entity O:entity Row1:array Row2:array Row3:array Row4:array Found:array Players:array T Start Block:entity
+@persist Distance Size Length Model:string Blocks
+@trigger 
+interval(1000)
+runOnChat(1)
+
+if(first()) {
+    E = entity()
+    O = owner()
+    Distance = 140
+    Size = 16
+    Length = sqrt(Size)
+    
+    for(I = 1, Length) {
+            X = (I-(0.5*Length+0.5))
+            Row1[I, vector] = vec(X*Distance, -Distance*1.5, 500)
+            Row2[I, vector] = vec(X*Distance, -Distance*0.5, 500)
+            Row3[I, vector] = vec(X*Distance, Distance*0.5, 500)
+            Row4[I, vector] = vec(X*Distance, Distance*1.5, 500)
+    }
+
+    Model = "models/hunter/blocks/cube3x3x025.mdl"
+
+holoCreate(100)
+holoEntity(100):setTrails(1000,1000,1000, "trails/smoke", vec(100,100,100),255)
+holoAlpha(100, 0)
+
+holoCreate(101)
+holoEntity(101):setTrails(1000,1000,1000, "trails/smoke", vec(100,100,100),255)
+holoAlpha(101, 0)
+
+holoCreate(102)
+holoEntity(102):setTrails(1000,1000,1000, "trails/smoke", vec(100,100,100),255)
+holoAlpha(102, 0)
+
+holoCreate(103)
+holoEntity(103):setTrails(1000,1000,1000, "trails/smoke", vec(100,100,100),255)
+holoAlpha(103, 0)
+
+holoCreate(104)
+holoEntity(104):setTrails(1000,1000,1000, "trails/smoke", vec(100,100,100),255)
+holoAlpha(104, 0)
+
+holoCreate(105)
+holoEntity(105):setTrails(1000,1000,1000, "trails/smoke", vec(100,100,100),255)
+holoAlpha(105, 0)
+
+holoCreate(106)
+holoEntity(106):setTrails(1000,1000,1000, "trails/smoke", vec(100,100,100),255)
+holoAlpha(106, 0)
+
+holoCreate(107)
+holoEntity(107):setTrails(1000,1000,1000, "trails/smoke", vec(100,100,100),255)
+holoAlpha(107, 0)
+
+holoCreate(108)
+holoEntity(108):setTrails(1000,1000,1000, "trails/smoke", vec(100,100,100),255)
+holoAlpha(108, 0)
+
+holoCreate(109)
+holoEntity(109):setTrails(1000,1000,1000, "trails/smoke", vec(100,100,100),255)
+holoAlpha(109, 0)
+
+holoCreate(110)
+holoEntity(110):setTrails(1000,1000,1000, "trails/smoke", vec(100,100,100),255)
+holoAlpha(110, 0)
+
+holoCreate(111)
+holoEntity(111):setTrails(1000,1000,1000, "trails/smoke", vec(100,100,100),255)
+holoAlpha(111, 0)
+
+holoCreate(112)
+holoEntity(112):setTrails(1000,1000,1000, "trails/smoke", vec(100,100,100),255)
+holoAlpha(112, 0)
+
+holoCreate(113)
+holoEntity(113):setTrails(1000,1000,1000, "trails/smoke", vec(100,100,100),255)
+holoAlpha(113, 0)
+
+holoCreate(114)
+holoEntity(114):setTrails(1000,1000,1000, "trails/smoke", vec(100,100,100),255)
+holoAlpha(114, 0)
+
+holoCreate(115)
+holoEntity(115):setTrails(1000,1000,1000, "trails/smoke", vec(100,100,100),255)
+holoAlpha(115, 0)
+}
+
+
+if(T < 18) {
+    T = T + 1
+    
+    if(T <= 4) {
+        holoCreate(T)
+        holoPos(T, E:pos()+Row1[T, vector])
+    }
+    
+    if(T >= 5 & T <= 8) {
+        holoCreate(T)
+        holoPos(T, E:pos()+Row2[T-4, vector])
+    }
+    
+    if(T >= 9 & T <= 12) {
+        holoCreate(T)
+        holoPos(T, E:pos()+Row3[T-8, vector])
+    }
+
+    if(T >= 13 & T <= 16) {
+        holoCreate(T)
+        holoPos(T, E:pos()+Row4[T-12, vector])
+    }
+    
+
+if(T < 17) {
+    P = propSpawn(Model, holoEntity(T):pos(), 1)
+    P:propGravity(0)
+    P:setMass(50000)
+    P:setMaterial("models/shiny")
+    P:setColor(vec(randint(255),randint(255),randint(255)))
+}
+        
+        
+}
+
+if(T == 17) {
+    findIncludeModel(Model)
+    findInSphere(E:pos(),1000000000000)
+    Found = findToArray()
+
+        noCollide(Found[1, entity], Found[2, entity])
+        noCollide(Found[1, entity], Found[5, entity])
+        noCollide(Found[1, entity], Found[6, entity])
+        
+          
+    for(I = 1, 16) {
+                
+        noCollide(Found[I, entity], Found[I-1, entity])
+        noCollide(Found[I, entity], Found[I-4, entity])
+        noCollide(Found[I, entity], Found[I-3, entity])
+        noCollide(Found[I, entity], Found[I-5, entity])
+    }
+}
+
+if(changed(T) & T == 18) {
+    findClearWhiteList()
+}
+if(T == 18) {
+    
+    
+    findIncludeClass("player")
+    findInBox(E:pos()+vec(400,400,300), E:pos()+vec(-400,-400,800))
+    Players = findToArray()
+
+    
+    
+    if(O:lastSaid():lower() == "!restart" & chatClk(O)) {      
+        for(I = 1, 16) {
+            Found[I, entity]:propFreeze(1)
+            Found[I, entity]:setPos(holoEntity(I):pos())
+            Found[I, entity]:setAng(ang(0,0,0))
+            Found[I, entity]:setMass(randint(50000,50000))
+            Ramp:propNotSolid(0)
+            
+            Start = 0
+            
+            timer("reset", 1000)
+            
+        }
+    }
+    
+    if(O:lastSaid():lower() == "!start" & chatClk(O)) {  
+ 
+        if(Players:count() > 1  ) {
+            Ramp:propNotSolid(1) 
+            for(I = 1, 16) {
+                Start = 1
+                
+                Found[I, entity]:propFreeze(0)
+                timer("start", 1000)
+            }
+        } else {
+            timer("failedstart", 1000)
+        
+        }
+    }
+
+    
+    if(O:lastSaid():lower() == "!block" & chatClk(O)) { 
+        Blocks = 1
+        timer("block", 1000)
+        
+    }
+    
+    if(O:lastSaid():lower() == "!noblock" & chatClk(O)) { 
+        Blocks = 0
+        timer("noblock", 1000)
+        
+    }
+    
+        
+    
+    if(Start == 1) {
+        for(I = 100, 115) {
+            holoPos(I, E:pos()+vec(randint(-400,400),randint(-400,400),500+randint(-200,150)))
+        }
+        if(Players:count() == 1) {
+            Ramp:propNotSolid(0)
+            timer("win", 1000)
+            
+            Start = 0
+        }
+    }
+    
+     if(O:lastSaid():lower() == "!smoke" & chatClk(O)) {  
+        timer("smoke", 1000)
+    }
+    
+}
+    
+if(clk("reset")) {
+    concmd("say > Game reset")
+    Blocks = 0
+        holoEntity(100):setTrails(1000,1000,0, "trails/smoke", vec(100,100,100),255)
+        holoEntity(101):setTrails(1000,1000,0, "trails/smoke", vec(100,100,100),255)
+        holoEntity(102):setTrails(1000,1000,0, "trails/smoke", vec(100,100,100),255)
+        holoEntity(103):setTrails(1000,1000,0, "trails/smoke", vec(100,100,100),255)
+        holoEntity(104):setTrails(1000,1000,0, "trails/smoke", vec(100,100,100),255)
+        holoEntity(105):setTrails(1000,1000,0, "trails/smoke", vec(100,100,100),255)
+        holoEntity(106):setTrails(1000,1000,0, "trails/smoke", vec(100,100,100),255)
+        holoEntity(107):setTrails(1000,1000,0, "trails/smoke", vec(100,100,100),255)
+        holoEntity(108):setTrails(1000,1000,0, "trails/smoke", vec(100,100,100),255)
+        holoEntity(109):setTrails(1000,1000,0, "trails/smoke", vec(100,100,100),255)
+        holoEntity(110):setTrails(1000,1000,0, "trails/smoke", vec(100,100,100),255)
+        holoEntity(111):setTrails(1000,1000,0, "trails/smoke", vec(100,100,100),255)
+        holoEntity(112):setTrails(1000,1000,0, "trails/smoke", vec(100,100,100),255)
+        holoEntity(113):setTrails(1000,1000,0, "trails/smoke", vec(100,100,100),255)
+        holoEntity(114):setTrails(1000,1000,0, "trails/smoke", vec(100,100,100),255)
+        holoEntity(115):setTrails(1000,1000,0, "trails/smoke", vec(100,100,100),255)
+}
+
+if(clk("start")) {
+    concmd("say > Game started with " + Players:count() + " players")
+}
+if(clk("failedstart")) {
+    concmd("say > Not enough players to begin")
+}
+if(clk("win")) {
+    concmd("say > " + Players[1, entity]:name() + " won!")
+    
+    for(I = 1, 16) {
+        Found[I, entity]:propFreeze(1)
+    }
+    
+        holoEntity(100):setTrails(1000,1000,0, "trails/smoke", vec(100,100,100),255)
+        holoEntity(101):setTrails(1000,1000,0, "trails/smoke", vec(100,100,100),255)
+        holoEntity(102):setTrails(1000,1000,0, "trails/smoke", vec(100,100,100),255)
+        holoEntity(103):setTrails(1000,1000,0, "trails/smoke", vec(100,100,100),255)
+        holoEntity(104):setTrails(1000,1000,0, "trails/smoke", vec(100,100,100),255)
+        holoEntity(105):setTrails(1000,1000,0, "trails/smoke", vec(100,100,100),255)
+        holoEntity(106):setTrails(1000,1000,0, "trails/smoke", vec(100,100,100),255)
+        holoEntity(107):setTrails(1000,1000,0, "trails/smoke", vec(100,100,100),255)
+        holoEntity(108):setTrails(1000,1000,0, "trails/smoke", vec(100,100,100),255)
+        holoEntity(109):setTrails(1000,1000,0, "trails/smoke", vec(100,100,100),255)
+        holoEntity(110):setTrails(1000,1000,0, "trails/smoke", vec(100,100,100),255)
+        holoEntity(111):setTrails(1000,1000,0, "trails/smoke", vec(100,100,100),255)
+        holoEntity(112):setTrails(1000,1000,0, "trails/smoke", vec(100,100,100),255)
+        holoEntity(113):setTrails(1000,1000,0, "trails/smoke", vec(100,100,100),255)
+        holoEntity(114):setTrails(1000,1000,0, "trails/smoke", vec(100,100,100),255)
+        holoEntity(115):setTrails(1000,1000,0, "trails/smoke", vec(100,100,100),255)
+}
+
+if(clk("smoke")) {
+    ##    UNDO COMMENSTS
+        holoEntity(100):setTrails(1000,1000,1000, "trails/smoke", vec(100,100,100),255)
+        holoEntity(101):setTrails(1000,1000,1000, "trails/smoke", vec(100,100,100),255)
+        holoEntity(102):setTrails(1000,1000,1000, "trails/smoke", vec(100,100,100),255)
+        holoEntity(103):setTrails(1000,1000,1000, "trails/smoke", vec(100,100,100),255)
+        holoEntity(104):setTrails(1000,1000,1000, "trails/smoke", vec(100,100,100),255)
+        holoEntity(105):setTrails(1000,1000,1000, "trails/smoke", vec(100,100,100),255)
+        holoEntity(106):setTrails(1000,1000,1000, "trails/smoke", vec(100,100,100),255)
+        holoEntity(107):setTrails(1000,1000,1000, "trails/smoke", vec(100,100,100),255)
+        holoEntity(108):setTrails(1000,1000,1000, "trails/smoke", vec(100,100,100),255)
+        holoEntity(109):setTrails(1000,1000,1000, "trails/smoke", vec(100,100,100),255)
+        holoEntity(110):setTrails(1000,1000,1000, "trails/smoke", vec(100,100,100),255)
+        holoEntity(111):setTrails(1000,1000,1000, "trails/smoke", vec(100,100,100),255)
+        holoEntity(112):setTrails(1000,1000,1000, "trails/smoke", vec(100,100,100),255)
+        holoEntity(113):setTrails(1000,1000,1000, "trails/smoke", vec(100,100,100),255)
+        holoEntity(114):setTrails(1000,1000,1000, "trails/smoke", vec(100,100,100),255)
+        holoEntity(115):setTrails(1000,1000,1000, "trails/smoke", vec(100,100,100),255)
+}
+if(clk("block")) {
+    if(Blocks) {
+        Block = propSpawn("models/hunter/blocks/cube05x05x05.mdl", E:pos()+vec(randint(-350,350),randint(-350,350),700), 0)
+        Block:setMass(2000)
+        Block:applyForce(vec(0,0,-400000))
+        Block:setTrails(40,0,1, "trails/laser", vec(255,255,255),255)
+        Block:soundPlay(100, 1, "ambient/alarms/warningbell1.wav")
+        timer("blockremove", 1000)
+    }
+
+        
+}
+if(clk("noblock")) {
+    Block = propSpawn("models/hunter/blocks/cube05x05x05.mdl", E:pos()+vec(randint(-400,400),randint(-400,400),700), 0)
+    Block:setMass(2000)
+    Block:applyForce(vec(0,0,-10000))
+    Block:setTrails(40,0,1, "trails/laser", vec(255,255,255),255)
+    
+    timer("blockremove", 3000)
+}
+if(clk("blockremove")) {
+    Block:propDelete()
+    timer("block", 1000)
+}

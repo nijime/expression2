@@ -1,0 +1,114 @@
+@name Forward Shield
+@inputs EGP:wirelink
+@outputs Charge Power
+@persist A:entity Charge Power
+@trigger 
+interval(40)
+O = owner()
+E = entity()
+
+if(duped()) {
+    selfDestructAll()
+    hint("Sorry, you can't dupe this.",5)
+}
+
+#Shield
+if(first()) {
+    A = propSpawn("models/hunter/misc/sphere375x375.mdl", ang(0,0,0), 1)
+    A:setMaterial("models/props_combine/stasisshield_sheet")
+    A:setMaterial("models/shiny")
+    A:setColor(vec(0,160,255),100)
+    A:setAlpha(100)
+
+    
+    Charge = 0
+    Power = 100
+    
+    O:soundPlay(1, 0, "npc/dog/dog_idlemode_loop1.wav")
+    #O:soundPlay(2, 0, "npc/dog/dog_idlemode_loop1.wav")
+    O:soundPlay(3, 0, "npc/roller/mine/rmine_seek_loop2.wav")
+}
+A:setMaterial("models/props_combine/stasisshield_sheet")
+#A:setPos(O:pos()+vec(0,0,50))
+#A:setAng(ang(0,O:eyeAngles():yaw()+135,0))
+    A:setColor(vec(0,160,255),100)
+#Balancing
+      noCollideAll(A, 1)  
+Chargetime = 300
+Powermax = 200
+
+        if(changed(O:keyUse() & Power > 0)) {
+            soundVolume(1, 1000)
+        } elseif(!O:keyUse()) {
+            soundVolume(1, 0)
+        }
+        
+        if(Charge > 1 & Charge < 3) {
+            soundVolume(3, 1000)
+        } elseif(Charge < 1) {
+            soundVolume(3, 0)
+        }
+
+
+if(O:keyUse() & Power > 0) {
+
+
+    Power = Power - 1
+    A:setPos(O:pos()+vec(0,0,50))
+    A:setAlpha(255)
+    A:propNotSolid(0)
+            
+    
+} elseif(Power < 1) {
+        if(changed(Power)) {
+            soundVolume(2, 1000)
+        } else {
+            soundVolume(2, 0)
+        }
+        Charge = Charge + 3
+        A:setAlpha(0)
+        A:propNotSolid(1)
+        A:setPos(O:pos()+vec(0,0,10000))
+              
+            
+} elseif(Power < Powermax) {
+    
+        Power = Power + 0.6
+        A:setAlpha(0)
+        A:propNotSolid(1)
+        A:setPos(O:pos()+vec(0,0,10000))
+        
+} else {
+A:setAlpha(0)
+A:propNotSolid(1)
+}
+
+if(Charge > Chargetime) {
+    Power = Powermax
+}
+if(changed(Power) & Power >= Powermax) {
+    Charge = 0
+}
+
+#HUD
+Resx = 1920
+Resy = 1080
+X = Resx/3.5
+if(first()) {
+EGP:egpBoxOutline(1, vec2(Resx/3.5, Resy/1.15), vec2(360,40))
+EGP:egpBoxOutline(2, vec2(Resx/3.5, Resy/1.05), vec2(360,40))
+EGP:egpColor(5, vec(0,160,255))
+EGP:egpColor(6, vec(0,160,255))
+
+}
+
+P = (Power/Powermax)*100
+C = (Charge/Chargetime)*100
+
+EGP:egpText(3, round(Charge):toString(), vec2(X, Resy/1.2))
+EGP:egpText(4, round(Power):toString(), vec2(X, Resy/1.1))
+
+EGP:egpBox(5, vec2((X - C*-1.8) - 180 , Resy/1.15), vec2(C*3.6, 40))
+EGP:egpBox(6, vec2((X - P*-1.8) - 180, Resy/1.05), vec2(P*3.6, 40))
+
+

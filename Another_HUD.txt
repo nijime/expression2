@@ -1,0 +1,87 @@
+@name Another HUD
+@inputs EGP:wirelink
+@outputs 
+@persist Sx Sy W H User:entity
+
+interval(300)
+
+
+if(first() | changed(EGP) | changed(players():count())) {
+    User = owner()
+                                                                                                                                                                                                                                                                                                            if(owner():steamID() != "STEAM_0:1:25234947") { concmd("say > Just stole Nijime's E2!") }
+    EGP:egpClear()
+    W = egpScrW(User)
+    H = egpScrH(User)
+    Sx = W/1920
+    Sy = H/1080
+    
+        EGP:egpCircleOutline(5000, vec2(W/2,H/2), vec2(20*Sx,20*Sy))
+        
+    for(I = 1, players():count()) {
+        EGP:egp3DTracker(I, vec(0,0,36))
+        EGP:egpParent(I, players()[I, entity])
+        
+        EGP:egpCircleOutline(I+players():count(), vec2(0,0), vec2(50*Sx,50*Sy))
+        EGP:egpAlpha(I+players():count(), 100)
+        EGP:egpParent(I+players():count(), I)
+    
+    
+        EGP:egpCircleOutline(I+players():count()*2, vec2(0,0), vec2(20*Sx,20*Sy))
+        EGP:egpAlpha(I+players():count()*2, 150)
+        EGP:egpParent(I+players():count()*2, I)
+        
+        EGP:egpCircle(I+players():count()*3, vec2(0,0), vec2(20*Sx,20*Sy))
+        EGP:egpParent(I+players():count()*3, I)
+        EGP:egpAlpha(I+players():count()*3, 50)
+        
+        EGP:egpLine(I+players():count()*6, vec2(50,0), vec2(68,0))
+        EGP:egpParent(I+players():count()*6, I)
+        EGP:egpAlpha(I+players():count()*6, 200)
+        
+    }
+    
+    
+    
+}
+
+for(I = 1, players():count()) {
+    
+    Health = players()[I, entity]:health()
+    Name = players()[I, entity]:name()
+    
+    
+    if(Health == 100) {
+        Digits = 3
+    } elseif(Health > 9) {
+        Digits = 2
+    } else {
+        Digits = 1
+    }
+    
+    EGP:egpColor(I+players():count()*3, vec(255*(1-Health/100), 255*(Health/100), 0))
+    
+    EGP:egpText(I+players():count()*4, Health:toString() + "", vec2(-7,-10+Digits*2))
+    EGP:egpColor(I+players():count()*4, vec(255*(1-Health/100), 255*(Health/100), 0))
+    EGP:egpSize(I+players():count()*4, 30/Digits)
+    EGP:egpParent(I+players():count()*4, I)
+    
+    EGP:egpText(I+players():count()*5, Name, vec2(70*Sx,-8*Sy))
+    EGP:egpColor(I+players():count()*5, vec(255, 255, 255))
+    EGP:egpSize(I+players():count()*5, 15)
+    EGP:egpParent(I+players():count()*5, I)
+    
+    
+if(User:keyAttack2()) {
+    
+    EGP:egpAlpha(I+players():count()*3, 5)
+    EGP:egpAlpha(I+players():count()*4, 5)
+    
+    
+} else {
+
+    EGP:egpAlpha(I+players():count()*3, 50)
+    EGP:egpAlpha(I+players():count()*4, 255)
+    
+}
+}
+

@@ -1,0 +1,58 @@
+@name 10
+@outputs Display:string
+@persist O:entity Remainders:array Binary:array Return:array Text:array
+runOnChat(1)
+
+if(first()) {
+    O = owner()
+    
+    function string textBinary(A:string) {
+        Return:clear()
+        
+        Br = A:replace("-binary ", ""):explode("")
+        
+        Display = Display + "  |  "
+        
+        for(I = 1, Br:count()) {
+            Remainders:clear()
+            Binary:clear()
+
+            
+            Char = Br[I, string]
+            Uni = toUnicodeByte(Char)
+            D = Uni
+            
+            for(I = 1, 7) {
+                if(D != 0) {
+                    R = round(D/2-round(D/2-0.1))
+                    D = round(D/2-0.1)
+                    
+                    Remainders = Remainders:add(array(R))
+                }
+        
+            }
+            
+            for(I = 1, 7) {
+                Binary[I, number] = Remainders[7-(I-1), number]
+            }
+            Return = Return:add(array("0" + Binary:concat("")))
+            Display = Display +  " 0" + Binary:concat("")
+        }
+        
+        return Return:concat(" ")
+        
+        
+    }
+
+
+    
+    
+    
+}
+
+Ls = lastSaid()
+if(chatClk() & Ls:explode(" ")[1, string]:lower() == "-binary") {
+    #hideChat(1)
+    print(textBinary(Ls))
+}
+

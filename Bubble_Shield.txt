@@ -1,0 +1,30 @@
+@name Bubble Shield
+@inputs 
+@outputs 
+@persist O:entity Shield:entity Shield2:entity
+@trigger
+interval(50)
+
+if(first()) {
+    O = findPlayerByName("nijime")
+    Shield = propSpawn("models/hunter/misc/sphere375x375.mdl", O:pos(), 1)
+    Shield:setMaterial("models/props_combine/stasisshield_sheet")
+    
+    Shield2 = propSpawn("models/hunter/tubes/tube4x4x2.mdl", O:pos(), 1)
+    Shield2:setAlpha(1)
+    
+    O:soundPlay(1, 0, "npc/dog/dog_idlemode_loop1.wav")
+    soundPitch(1, 130)
+}
+
+    noCollideAll(Shield, 1)
+    
+if(O:keyUse()) {
+    Shield:setPos(O:pos()+vec(0,0,50))
+    Shield2:setPos(O:pos()+vec(0,0,50))
+    soundVolume(1, 100)
+} else {
+    Shield:setPos(O:pos()+vec(0,0,5000))
+    Shield2:setPos(O:pos()+vec(0,0,5000))
+    soundVolume(1, 0)
+}

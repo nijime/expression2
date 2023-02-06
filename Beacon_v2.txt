@@ -1,0 +1,63 @@
+@name Beacon v2
+@inputs EGP:wirelink
+@outputs Count Ls:array Aimpos:vector 
+@persist O:entity Ls:array Pl:array Aimpos:vector 
+@trigger 
+interval(200)
+runOnChat(200)
+    O = owner()
+Pl = players()
+Ls = O:lastSaid():explode(" ")
+Aimpos = O:aimPos()
+if(first()) {
+    Count = 200
+        holoCreate(1)
+        holoAlpha(1, 0)
+        holoPos(1, vec(0,0,10000000000000000))
+        
+        EGP:egp3DTracker(200, vec(0,0,80))
+        EGP:egpParent(200, holoEntity(1))
+        
+        EGP:egpCircle(201, vec2(0,0), vec2(100,100))
+        EGP:egpColor(201, vec(50, 50, 150))
+        EGP:egpAlpha(201, 100)
+        EGP:egpParent(201, 300)
+        
+        EGP:egpText(302, Ls[2, string], vec2(-Ls[2, string]:unicodeLength()*8,-20))
+        EGP:egpSize(302, 40)
+        EGP:egpColor(302, vec(200, 200, 255))
+        EGP:egpParent(302, 300)
+
+}
+
+if(first() | changed(Pl:count()) | changed(EGP)) {
+
+    
+    for(I = 1, Pl:count()) {
+        EGP:egp3DTracker(I, vec(0,0,80))
+        EGP:egpParent(I, Pl[I, entity])
+        
+        EGP:egpRoundedBox(I+Pl:count(), vec2(0,0), vec2(150,35))
+        EGP:egpColor(I+Pl:count(), vec(120,120,120))
+        EGP:egpAlpha(I+Pl:count(), 150)
+        
+        EGP:egpParent(I+Pl:count(), I)
+        
+        EGP:egpText(I+Pl:count()*2, Pl[I, entity]:name(), vec2(-Pl[I, entity]:name():unicodeLength()*3,-12))
+        EGP:egpSize(I+Pl:count()*2, 15)
+        EGP:egpColor(I+Pl:count()*2, vec(0,0,255))
+        
+        EGP:egpParent(I+Pl:count()*2, I)
+    }
+}
+
+
+if(Ls[1, string] == "!beacon" & chatClk(O)) {
+
+        holoPos(1, Aimpos)
+
+
+
+}
+
+

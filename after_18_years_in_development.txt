@@ -1,0 +1,188 @@
+@name after 18 years in development
+@inputs X Y W A S D Space Shift
+@outputs Mass
+@persist E:entity Mass
+@trigger 
+@model models/hunter/plates/plate2x2.mdl
+interval(160)
+
+
+
+
+print(ops())
+
+
+
+
+
+E:applyForce(E:forward()*(W-S)*5000*(E:angles():pitch()-1))
+
+
+E:applyForce((-E:vel()*150*Mass)+vec(0,0,((Space-Shift)*16000*Mass)+((Space-Shift)*(90-E:angles():pitch())*50)))
+E:applyAngForce((-E:angVel()*2000*Mass)+ang(-Y*9000*Mass,(A-D)*60000*Mass, X*7000-(A-D)*10000*Mass))
+
+if(first()) {
+E = entity()
+E:propGravity(0)
+E:setMass(1000)
+H = -50
+    holoCreate(1, E:pos()+vec(-90,0,35+H), vec(1,1.2,1), E:angles()+ang(120,0,90), vec(255,255,255), "models/hunter/blocks/cube05x2x025.mdl")
+    holoParent(1, E)
+
+    holoCreate(2, E:pos()+vec(-150,0,65+H), vec(1,2.5,1), E:angles()+ang(90,0,90), vec(255,255,255), "models/hunter/blocks/cube05x2x025.mdl")
+    holoParent(2, E)
+
+    holoCreate(3, E:pos()+vec(-120,0,77+H), vec(1,1.5,1), E:angles()+ang(80,0,90), vec(255,255,255), "models/hunter/blocks/cube05x2x025.mdl")
+    holoParent(3, E)
+    
+    holoCreate(4, E:pos()+vec(45,0,85+H), vec(1,2.1,1), E:angles()+ang(92,0,90), vec(255,255,255), "models/hunter/blocks/cube05x2x025.mdl")
+    holoParent(4, E)
+    
+    holoCreate(5, E:pos()+vec(152,0,72+H), vec(1,0.4,1), E:angles()+ang(130,0,90), vec(255,255,255), "models/hunter/blocks/cube05x2x025.mdl")
+    holoParent(5, E)
+    
+    holoCreate(6, E:pos()+vec(190,0,50+H), vec(1,0.7,1), E:angles()+ang(115,0,90), vec(255,255,255), "models/hunter/blocks/cube05x2x025.mdl")
+    holoParent(6, E)
+    
+    holoCreate(7, E:pos()+vec(227,0,25+H), vec(1,0.4,1), E:angles()+ang(140,0,90), vec(255,255,255), "models/hunter/blocks/cube05x2x025.mdl")
+    holoParent(7, E)
+    
+    holoCreate(8, E:pos()+vec(227,0,10+H), vec(1,0.4,1), E:angles()+ang(60,0,90), vec(255,255,255), "models/hunter/blocks/cube05x2x025.mdl")
+    holoParent(8, E)
+    
+    holoCreate(9, E:pos()+vec(117,0,-3+H), vec(0.5,2.1,1), E:angles()+ang(90,0,90), vec(255,255,255), "models/hunter/blocks/cube05x2x025.mdl")
+    holoParent(9, E)
+########
+    holoCreate(10, E:pos()+vec(30,0,10), vec(3,2.8,0.8), E:angles()+ang(2,0,0), vec(255,255,255), "models/props_lab/kennel_physics.mdl")
+    holoParent(10, E)
+    
+    holoCreate(11, E:pos()+vec(70,90,30), vec(5,1,1), E:angles()+ang(-2,100,90), vec(255,255,255), "models/props_junk/TrashBin01a.mdl")
+    holoParent(11, E)
+    
+    holoCreate(12, E:pos()+vec(70,-90,30), vec(5,1,1), E:angles()+ang(-2,-100,-90), vec(255,255,255), "models/props_junk/TrashBin01a.mdl")
+    holoParent(12, E)
+    
+    holoCreate(13, E:pos()+vec(25,100,30), vec(5,1,1), E:angles()+ang(-2,20,-90), vec(255,255,255), "models/props_junk/TrashBin01a.mdl")
+    holoParent(13, E)
+    
+    holoCreate(14, E:pos()+vec(24,-100,30), vec(5,1,1), E:angles()+ang(-2,-20,90), vec(255,255,255), "models/props_junk/TrashBin01a.mdl")
+    holoParent(14, E)
+    
+    holoCreate(15, E:pos()+vec(30,70,10), vec(1.6,2.1,0.8), E:angles()+ang(0,20,0), vec(255,255,255), "models/props_lab/kennel_physics.mdl")
+    holoParent(15, E)
+    
+    holoCreate(16, E:pos()+vec(30,-70,10), vec(1.6,2.1,0.8), E:angles()+ang(0,-20,0), vec(255,255,255), "models/props_lab/kennel_physics.mdl")
+    holoParent(16, E)
+    
+    holoCreate(17, E:pos()+vec(-70,-30,0), vec(1.1,0.8,1.1), E:angles()+ang(-20,160,0), vec(255,255,255), "models/props_combine/headcrabcannister01a.mdl")
+    holoParent(17, E)
+    
+    holoCreate(18, E:pos()+vec(-70,30,0), vec(1.1,0.8,1.1), E:angles()+ang(-20,-160,0), vec(255,255,255), "models/props_combine/headcrabcannister01a.mdl")
+    holoParent(18, E)
+    
+    holoCreate(19, E:pos()+vec(-80,0,-10), vec(2.1,1.8,3.1), E:angles()+ang(120,0,0), vec(255,255,255), "models/props_junk/TrashBin01a.mdl")
+    holoParent(19, E)
+    
+    holoCreate(20, E:pos()+vec(-93,0,20), vec(2.1,1.8,3.8), E:angles()+ang(-98,0,180), vec(255,255,255), "models/props_junk/TrashBin01a.mdl")
+    holoParent(20, E)
+    
+    holoCreate(21, E:pos()+vec(-170,0,20), vec(1.4,1.4,5.8), E:angles()+ang(-90,0,180), vec(255,255,255), "models/props_junk/TrashBin01a.mdl")
+    holoParent(21, E)
+    
+    holoCreate(22, E:pos()+vec(-150,0,0), vec(1.4,1.4,5.8), E:angles()+ang(-80,0,0), vec(255,255,255), "models/props_junk/TrashBin01a.mdl")
+    holoParent(22, E)
+    
+    holoCreate(23, E:pos()+vec(30,-32,0), vec(1.5,1.1,1), E:angles()+ang(70,-90,10), vec(255,255,255), "models/props_combine/breendesk.mdl")
+    holoParent(23, E)
+    
+    holoCreate(24, E:pos()+vec(10,32,0), vec(1.5,1.1,1), E:angles()+ang(70,90,-10), vec(255,255,255), "models/props_combine/breendesk.mdl")
+    holoParent(24, E)
+    
+    holoCreate(25, E:pos()+vec(200,0,5), vec(0.7,0.6,0.4), E:angles()+ang(0,90,25), vec(255,255,255), "models/hunter/plates/plate1x2.mdl")
+    holoParent(25, E)
+    
+    holoCreate(26, E:pos()+vec(156,0,30), vec(0.7,0.5,0.4), E:angles()+ang(0,90,35), vec(255,255,255), "models/hunter/plates/plate1x2.mdl")
+    holoParent(26, E)
+    
+    holoCreate(27, E:pos()+vec(147,23,18), vec(0.7,0.5,0.4), E:angles()+ang(50,140,60), vec(255,255,255), "models/hunter/plates/plate1x2.mdl")
+    holoParent(27, E)
+    
+    holoCreate(28, E:pos()+vec(147,-23,18), vec(0.7,0.5,0.4), E:angles()+ang(50,-140,-60), vec(255,255,255), "models/hunter/plates/plate1x2.mdl")
+    holoParent(28, E)
+    
+    holoCreate(29, E:pos()+vec(190,20,-3), vec(0.5,0.7,0.4), E:angles()+ang(60,145,60), vec(255,255,255), "models/hunter/plates/plate1x2.mdl")
+    holoParent(29, E)
+    
+    holoCreate(30, E:pos()+vec(190,-20,-3), vec(0.5,0.7,0.4), E:angles()+ang(60,-145,-60), vec(255,255,255), "models/hunter/plates/plate1x2.mdl")
+    holoParent(30, E)
+    
+    holoCreate(31, E:pos()+vec(120,-33,8), vec(0.75,0.8,0.8), E:angles()+ang(150,-170,-60), vec(255,255,255), "models/props_combine/headcrabcannister01a.mdl")
+    holoParent(31, E)
+    
+    holoCreate(32, E:pos()+vec(120,33,8), vec(0.75,0.8,0.8), E:angles()+ang(150,170,60), vec(255,255,255), "models/props_combine/headcrabcannister01a.mdl")
+    holoParent(32, E)
+    
+    holoCreate(33, E:pos()+vec(180,25,-12), vec(0.7,0.4,0.4), E:angles()+ang(165,173,60), vec(255,255,255), "models/props_combine/headcrabcannister01a.mdl")
+    holoParent(33, E)
+    
+    holoCreate(34, E:pos()+vec(180,-25,-12), vec(0.7,0.4,0.4), E:angles()+ang(165,-173,-60), vec(255,255,255), "models/props_combine/headcrabcannister01a.mdl")
+    holoParent(34, E)
+    
+    holoCreate(35, E:pos()+vec(227,0,-25), vec(0.8,1.3,0.9), E:angles()+ang(-30,0,0), vec(255,255,255), "models/props_junk/TrashBin01a.mdl")
+    holoParent(35, E)
+    
+    holoCreate(36, E:pos()+vec(215,0,-43), vec(0.8,1.2,1.2), E:angles()+ang(60,0,0), vec(255,255,255), "models/props_junk/TrashBin01a.mdl")
+    holoParent(36, E)
+    
+    holoCreate(37, E:pos()+vec(70,15,32), vec(1.4,1.1,3.2), E:angles()+ang(-90,0,0), vec(255,255,255), "models/props_junk/TrashBin01a.mdl")
+    holoParent(37, E)
+    
+    holoCreate(38, E:pos()+vec(70,-15,32), vec(1.4,1.1,3.2), E:angles()+ang(-90,0,0), vec(255,255,255), "models/props_junk/TrashBin01a.mdl")
+    holoParent(38, E)
+    
+    holoCreate(39, E:pos()+vec(155,0,-45), vec(1.2,1.2,2.3), E:angles()+ang(100,0,0), vec(255,255,255), "models/props_junk/TrashBin01a.mdl")
+    holoParent(39, E)
+
+    holoCreate(40, E:pos()+vec(95,0,-20), vec(1.2,1.2,1.8), E:angles()+ang(130,0,0), vec(255,255,255), "models/props_junk/TrashBin01a.mdl")
+    holoParent(40, E)
+    
+    holoCreate(41, E:pos()+vec(185,15,-30), vec(1.2,1.2,1.3), E:angles()+ang(100,-10,0), vec(255,255,255), "models/props_borealis/bluebarrel001.mdl")
+    holoParent(41, E)
+    
+    holoCreate(42, E:pos()+vec(185,-15,-30), vec(1.2,1.2,1.3), E:angles()+ang(100,10,0), vec(255,255,255), "models/props_borealis/bluebarrel001.mdl")
+    holoParent(42, E)
+    
+    holoCreate(43, E:pos()+vec(120,30,-5), vec(1.2,1.2,1.8), E:angles()+ang(120,-13,0), vec(255,255,255), "models/props_borealis/bluebarrel001.mdl")
+    holoParent(43, E)
+    
+    holoCreate(44, E:pos()+vec(120,-30,-5), vec(1.2,1.2,1.8), E:angles()+ang(120,13,0), vec(255,255,255), "models/props_borealis/bluebarrel001.mdl")
+    holoParent(44, E)
+    
+    
+    
+    
+    for(I = 1, 50) {
+        holoMaterial(I, "phoenix_storms/gear")
+        holoColor(I, vec(150,150,150))
+        holoPos(I, holoEntity(I):pos()+vec(-50,0,-10))
+        
+        E:getConstraints()[I, entity]:propGravity(0)
+        Mass = 1.1
+    }
+    holoAlpha(1, 0)
+    holoAlpha(2, 0)
+    holoAlpha(3, 0)
+    holoAlpha(4, 0)
+    holoAlpha(5, 0)
+    holoAlpha(6, 0)
+    holoAlpha(7, 0)
+    holoAlpha(8, 0)
+    holoAlpha(9, 0)
+    
+    holoColor(25, vec4(255,230,230,100))
+    holoColor(26, vec4(255,230,230,100))
+    holoColor(27, vec4(255,230,230,100))
+    holoColor(28, vec4(255,230,230,100))
+    holoColor(29, vec4(255,230,230,100))
+    holoColor(30, vec4(255,230,230,100))
+}

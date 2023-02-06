@@ -1,0 +1,138 @@
+@name soler sistem
+@inputs 
+@outputs 
+@persist Time
+@trigger
+#@model models/sprops/geometry/sphere_72.mdl
+Holomodel = "hq_sphere"
+if(duped()) {
+    selfDestruct()
+}
+if(first()) {
+    holoCreate(1)
+    holoCreate(2)
+    holoCreate(3)
+    holoCreate(4)
+    holoCreate(5)
+    holoCreate(6)
+    holoCreate(7)
+    holoCreate(8)
+    holoCreate(9)
+    holoCreate(10)
+    holoCreate(11)
+    
+    holoModel(1, Holomodel)
+    holoModel(2, Holomodel)
+    holoModel(3, Holomodel)
+    holoModel(4, Holomodel)
+    holoModel(5, Holomodel)
+    holoModel(6, Holomodel)
+    holoModel(7, Holomodel)
+    holoModel(8, Holomodel)
+    holoModel(9, Holomodel)
+    holoModel(10, Holomodel)
+    holoModel(11, Holomodel)
+    
+    holoEntity(1):setTrails(10,10,10, "trails/laser", vec(255,100,0),255)
+    holoEntity(2):setTrails(10,10,20, "trails/laser", vec(255,255,100),255)
+    holoEntity(3):setTrails(10,10,30, "trails/laser", vec(0,255,0),255)
+    holoEntity(4):setTrails(10,10,40, "trails/laser", vec(100,255,0),255)
+    holoEntity(5):setTrails(10,10,50, "trails/laser", vec(0,255,0),255)
+    holoEntity(6):setTrails(10,10,60, "trails/laser", vec(255,0,255),255)
+    holoEntity(7):setTrails(10,10,70, "trails/laser", vec(0,255,255),255)
+    holoEntity(8):setTrails(10,10,80, "trails/laser", vec(255,255,0),255)
+    holoEntity(9):setTrails(10,10,90, "trails/laser", vec(255,255,255),255)
+    holoEntity(10):setTrails(10,10,90, "trails/laser", vec(100,255,100),255)
+    holoEntity(11):setTrails(10,10,90, "trails/laser", vec(100,100,255),255)
+    
+}
+interval(60)
+
+E = entity()
+O = owner()
+
+Time = Time + 1
+
+Scale = 10
+Timescale = 100
+Earth = 0.015
+
+D1 = Scale * 0.387
+D2 = Scale * 0.723
+D3 = Scale * 1
+D4 = Scale * 1.524
+D5 = Scale * 5.203
+D6 = Scale * 9.523
+D7 = Scale * 19.208
+D8 = Scale * 30.087
+D9 = Scale * 39.746
+D10 = Scale * 97
+D11 = Scale * 937
+
+S1 = Scale * 0.376 * Earth
+S2 = Scale * 0.949 * Earth
+S3 = Scale * 1 * Earth
+S4 = Scale * 0.533 * Earth
+S5 = Scale * 11.2 * Earth
+S6 = Scale * 9.463 * Earth
+S7 = Scale * 4.062 * Earth
+S8 = Scale * 3.882 * Earth
+S9 = Scale * 0.258 * Earth
+S10 = Scale * 0.183 * Earth
+S11 = Scale * 0.137 * Earth
+
+X1 = sin(Time/Scale/0.240*Timescale)
+Y1 = cos(Time/Scale/0.240*Timescale)
+
+X2 = sin(Time/Scale/0.616*Timescale)
+Y2 = cos(Time/Scale/0.616*Timescale)
+
+X3 = sin(Time/Scale/1*Timescale)
+Y3 = cos(Time/Scale/1*Timescale)
+
+X4 = sin(Time/Scale/1.9*Timescale)
+Y4 = cos(Time/Scale/1.9*Timescale)
+
+X5 = sin(Time/Scale/12*Timescale)
+Y5 = cos(Time/Scale/12*Timescale)
+
+X6 = sin(Time/Scale/29.5*Timescale)
+Y6 = cos(Time/Scale/29.5*Timescale)
+
+X7 = sin(Time/Scale/84*Timescale)
+Y7 = cos(Time/Scale/84*Timescale)
+
+X8 = sin(Time/Scale/165*Timescale)
+Y8 = cos(Time/Scale/165*Timescale)
+
+X9 = sin(Time/Scale/248*Timescale)
+Y9 = cos(Time/Scale/248*Timescale)
+
+X10 = sin(Time/Scale/560*Timescale)
+Y10 = cos(Time/Scale/560*Timescale)
+
+X11 = sin(Time/Scale/11400*Timescale)
+Y11 = cos(Time/Scale/11400*Timescale)
+holoScale(1, vec(S1,S1,S1))
+holoScale(2, vec(S2,S2,S2))
+holoScale(3, vec(S3,S3,S3))
+holoScale(4, vec(S4,S4,S4))
+holoScale(5, vec(S5,S5,S5))
+holoScale(6, vec(S6,S6,S6))
+holoScale(7, vec(S7,S7,S7))
+holoScale(8, vec(S8,S8,S8))
+holoScale(9, vec(S9,S9,S9))
+holoScale(10, vec(S10,S10,S10))
+holoScale(11, vec(S11,S11,S11))
+
+holoPos(1, E:pos()+vec(X1*D1,Y1*D1,0))
+holoPos(2, E:pos()+vec(X2*D2,Y2*D2,0))
+holoPos(3, E:pos()+vec(X3*D3,Y3*D3,0))
+holoPos(4, E:pos()+vec(X4*D4,Y4*D4,0))
+holoPos(5, E:pos()+vec(X5*D5,Y5*D5,0))
+holoPos(6, E:pos()+vec(X6*D6,Y6*D6,0))
+holoPos(7, E:pos()+vec(X7*D7,Y7*D7,0))
+holoPos(8, E:pos()+vec(X8*D8,Y8*D8,0))
+holoPos(9, E:pos()+vec(X9*D9,Y9*D9,0))
+holoPos(10, E:pos()+vec(X10*D10,Y10*D10,0))
+holoPos(11, E:pos()+vec(X11*D11,Y11*D11,0))

@@ -1,0 +1,42 @@
+@name 0 ops
+@persist O:entity
+interval(100)
+runOnChat(1)
+runOnLast(1)
+if(holoCanCreate()) {
+    #findByClass("player")
+    #findExcludePlayer("nijime")
+
+    for(I = 1, 60) {
+        holoCreate(I)
+        holoScale(I, vec(-15))
+        holoModel(I, "hq_sphere")
+        holoMaterial(I, "models/props_combine/tprings_globe")
+        holoParent(I, 1)
+        holoColor(I, vec(randint(255), randint(255), randint(255)))
+        #holoVisible(I, Target, 1)
+    }
+    O = noentity()
+    
+    findInSphere(entity():pos(), 1000)
+    Found = findToArray()
+    for(I = 1, Found:count()) {
+        #Found[I, entity]:propFreeze(1)
+        #noCollideAll(Found[I, entity], 0)
+    }
+    entity():isWeldedTo():setTrails(20,0,20, "trails/laser", vec(255,255,255),255)
+    
+}
+Ls = owner():lastSaid():explode(" ")
+if(Ls[1, string]:lower() == "-f") {
+    hideChat(1)
+    O = findPlayerByName(Ls[2, string])
+    holoUnparent(1)
+    holoPos(1, O:boxCenterW()+vec(0,0,20))
+    holoParentAttachment(1, O, "eyes")
+} else {
+
+
+}
+
+    

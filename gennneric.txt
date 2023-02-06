@@ -1,0 +1,13 @@
+@name gennneric
+@inputs 
+@outputs 
+@persist 
+@trigger 
+interval(500)
+O = owner()
+E = entity()
+
+if(O:keyUse()) {
+    P = propSpawn("models/props_phx/mk-82.mdl", O:aimPos(), 1)
+    P:propBreak()
+}

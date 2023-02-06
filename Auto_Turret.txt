@@ -1,0 +1,377 @@
+@name Auto Turret
+@inputs Turret:entity
+@outputs Fire Active
+@persist H S Warm Range Agression Warned Excluded:array Found:array
+@model models/props_phx/construct/metal_plate1.mdl
+
+interval(90)
+runOnChat(1)
+if(first() | duped()) {
+    #include "e2funcs"
+    function entity ply(A:string) {
+        return findPlayerByName(A)
+    }
+    function findExcludeArray(Arr:array) {
+        for(I = 1, Arr:count()) {
+            findExcludePlayer(Arr[I, entity])
+        }
+    }
+      
+    Excluded = array(ply("Nijime"), ply("phoenix"), ply("Reaper"), ply("Haunted"), ply("annoying"), stID("STEAM_0:0:47810664"))
+    
+    Agression = 3
+    Range = 1000
+    E = entity()
+    O = owner()
+    E:setAlpha(0)
+    S = 1.4
+    H = 0
+    Grey = vec(120,120,120)
+    holoCreate(1, E:toWorld(vec(0*S,0*S,0*S)), vec(4*S,4*S,1*S), E:toWorld(ang(0,0,0)), vec(255,255,255), "hq_torus_thick")
+    holoParent(1, E)
+    holoColor(1, Grey+vec(100,100,100))
+    holoMaterial(1, "phoenix_storms/gear")
+    
+    holoCreate(2, E:toWorld(vec(0*S,0*S,1*S)), vec(3.4*S,3.4*S,1.2*S), E:toWorld(ang(0,0,0)), vec(255,255,255), "hq_torus")
+    holoParent(2, E)
+    holoMaterial(2, "phoenix_storms/stripes")
+    
+    holoCreate(4, E:toWorld(vec(0*S,0*S,0*S)), vec(0.9*S,0.9*S,2*S), E:toWorld(ang(0,0,0)), vec(255,255,255), "hq_cylinder")
+    holoParent(4, E)
+    holoColor(4, Grey)
+    holoMaterial(4, "phoenix_storms/gear")
+    
+    holoCreate(5, holoEntity(4):toWorld(vec(0*S,0*S,-12*S)), vec(3*S,3*S,0.3*S), holoEntity(4):toWorld(ang(0,0,0)), vec(255,255,255), "hq_cylinder")
+    holoParent(5, holoEntity(4))
+    holoColor(5, Grey)
+    holoMaterial(5, "phoenix_storms/gear")
+    
+    holoCreate(6, holoEntity(4):toWorld(vec(0*S,0*S,12*S)), vec(3.1*S,3.1*S,1.8*S), holoEntity(4):toWorld(ang(0,0,0)), vec(255,255,255), "hq_torus")
+    holoParent(6, holoEntity(4))
+    holoMaterial(6, "phoenix_storms/stripes")
+    
+    holoCreate(7, holoEntity(4):toWorld(vec(0*S,0*S,12*S)), vec(3*S,3*S,1.2*S), holoEntity(4):toWorld(ang(0,0,0)), vec(255,255,255), "hq_dome")
+    holoParent(7, holoEntity(4))
+    holoColor(7, Grey)
+    holoMaterial(7, "phoenix_storms/gear")
+    
+    holoCreate(8, holoEntity(4):toWorld(vec(0*S,0*S,16*S)), vec(0.7*S,2.5*S,0.3*S), holoEntity(4):toWorld(ang(0,0,0)), vec(255,255,255), "hq_rcube")
+    holoParent(8, holoEntity(4))
+    holoColor(8, vec(50,120,255))
+    holoMaterial(8, "phoenix_storms/gear")
+    
+    holoCreate(9, holoEntity(4):toWorld(vec(0*S,0*S,16*S)), vec(0.7*S,2.5*S,0.3*S), holoEntity(4):toWorld(ang(0,90,0)), vec(255,255,255), "hq_rcube")
+    holoParent(9, holoEntity(4))
+    holoColor(9, vec(50,120,255))
+    holoMaterial(9, "phoenix_storms/gear")
+    
+    holoCreate(10, holoEntity(4):toWorld(vec(0*S,0*S,18*S)), vec(0.45*S,0.45*S,0.3*S), holoEntity(4):toWorld(ang(0,0,0)), vec(255,255,255), "hq_cylinder")
+    holoParent(10, holoEntity(4))
+    holoColor(10, vec(255,0,0))
+    holoAlpha(10, 120)
+    holoMaterial(10, "models/shiny")
+    
+    holoCreate(11, holoEntity(4):toWorld(vec(0*S,0*S,19.8*S)), vec(0.45*S,0.45*S,0.3*S), holoEntity(4):toWorld(ang(0,0,0)), vec(255,255,255), "hq_dome")
+    holoParent(11, holoEntity(4))
+    holoColor(11, Grey)
+    holoColor(11, vec(255,0,0))
+    holoAlpha(11, 120)
+    holoMaterial(11, "models/shiny")
+    
+    #[
+    lightCreate(1)
+    lightPos(1, holoEntity(11):pos()+vec(0,0,10))
+    lightParent(1, holoEntity(11))
+    lightDistance(1, 0.4)
+    lightColor(1, vec(255,0,0))
+    ]#
+    holoCreate(12, holoEntity(4):toWorld(vec(0*S,-10*S,-7*S)), vec(1*S,0.2*S,1.0*S), holoEntity(4):toWorld(ang(0,0,0)), vec(255,255,255), "")
+    holoParent(12, holoEntity(4))
+    holoColor(12, Grey)
+    holoMaterial(12, "phoenix_storms/gear")
+    
+    holoCreate(13, holoEntity(4):toWorld(vec(0*S,-10*S,-1*S)), vec(1*S,0.8*S,0.2*S), holoEntity(4):toWorld(ang(0,0,90)), vec(255,255,255), "hq_cylinder")
+    holoParent(13, holoEntity(4))
+    holoColor(13, Grey)
+    holoMaterial(13, "phoenix_storms/gear")
+    
+    holoCreate(14, holoEntity(4):toWorld(vec(0  *S,10*S,-7*S)), vec(1*S,0.2*S,1.0*S), holoEntity(4):toWorld(ang(0,0,0)), vec(255,255,255), "")
+    holoParent(14, holoEntity(4))
+    holoColor(14, Grey)
+    holoMaterial(14, "phoenix_storms/gear")
+    
+    holoCreate(15, holoEntity(4):toWorld(vec(0*S,10*S,-1*S)), vec(1*S,0.8*S,0.2*S), holoEntity(4):toWorld(ang(0,0,90)), vec(255,255,255), "hq_cylinder")
+    holoParent(15, holoEntity(4))
+    holoColor(15, Grey)
+    holoMaterial(15, "phoenix_storms/gear")
+    
+    holoCreate(16, holoEntity(4):toWorld(vec(0*S,8*S,1*S)), vec(1*S,0.8*S,0.2*S), holoEntity(4):toWorld(ang(0,0,90)), vec(255,255,255), "hq_cylinder")
+    holoParent(16, holoEntity(4))
+    holoColor(16, Grey)
+    holoMaterial(16, "phoenix_storms/gear")
+    
+    holoCreate(17, holoEntity(4):toWorld(vec(0*S,-8*S,1*S)), vec(1*S,0.8*S,0.2*S), holoEntity(4):toWorld(ang(0,0,90)), vec(255,255,255), "hq_cylinder")
+    holoParent(17, holoEntity(4))
+    holoColor(17, Grey)
+    holoMaterial(17, "phoenix_storms/gear")
+    
+    holoCreate(18, holoEntity(4):toWorld(vec(0*S,0*S,1*S)), vec(0.5*S,0.5*S,1.3*S), holoEntity(4):toWorld(ang(0,0,90)), vec(255,255,255), "hq_cylinder")
+    holoParent(18, holoEntity(4))
+    holoColor(18, Grey)
+    holoMaterial(18, "phoenix_storms/gear")
+    
+    holoCreate(19, holoEntity(4):toWorld(vec(0*S,0*S,1*S)), vec(0.95*S,1.0*S,0.5*S), holoEntity(4):toWorld(ang(0,0,0)), vec(255,255,255), "hq_rcube")
+    holoParent(19, holoEntity(4))
+    holoColor(19, Grey)
+    holoMaterial(19, "phoenix_storms/gear")
+
+    holoCreate(20, holoEntity(19):toWorld(vec(2*S,0*S,0*S)), vec(0.9*S,0.7*S,0.9*S), holoEntity(19):toWorld(ang(0,0,0)), vec(255,255,255), "hq_rcube")
+    holoParent(20, holoEntity(19))
+    holoColor(20, Grey)
+    holoMaterial(20, "phoenix_storms/gear")
+    
+    holoCreate(21, holoEntity(19):toWorld(vec(7*S,0*S,0*S)), vec(1.1*S,1.1*S,0.9*S), holoEntity(19):toWorld(ang(90,0,0)), vec(255,255,255), "hq_torus_thick")
+    holoParent(21, holoEntity(19))
+    holoColor(21, Grey)
+    holoMaterial(21, "phoenix_storms/gear")
+    
+    holoCreate(22, holoEntity(19):toWorld(vec(4*S,0*S,0*S)), vec(1.1*S,1.1*S,0.5*S), holoEntity(19):toWorld(ang(90,0,0)), vec(255,255,255), "hq_tube")
+    holoParent(22, holoEntity(19))
+    holoColor(22, Grey)
+    holoMaterial(22, "phoenix_storms/gear")
+    
+    holoCreate(23, holoEntity(19):toWorld(vec(6.5*S,0*S,0*S)), vec(0.5*S,0.5*S,0.2*S), holoEntity(19):toWorld(ang(90,0,0)), vec(255,255,255), "hq_cylinder")
+    holoParent(23, holoEntity(19))
+    holoColor(23, Grey)
+    holoMaterial(23, "phoenix_storms/gear")
+##
+    holoCreate(24, holoEntity(19):toWorld(vec(14*S,0*S,0*S)), vec(0.0*S,0.0*S,0.0*S), holoEntity(19):toWorld(ang(90,0,0)), vec(255,255,255), "hq_cylinder")
+    holoParent(24, holoEntity(19))
+    
+    holoCreate(25, holoEntity(24):toWorld(vec(1.4*S, 1.4*S, 2*S)), vec(0.15*S,0.15*S,1.3*S), holoEntity(24):toWorld(ang(0,0,0)), vec(255,255,255), "hq_cylinder")
+    holoParent(25, holoEntity(24))
+    holoMaterial(25, "phoenix_storms/gear")
+    
+    holoCreate(26, holoEntity(24):toWorld(vec(1.4*S, -1.4*S, 2*S)), vec(0.15*S,0.15*S,1.3*S), holoEntity(24):toWorld(ang(0,0,0)), vec(255,255,255), "hq_cylinder")
+    holoParent(26, holoEntity(24))
+    holoMaterial(26, "phoenix_storms/gear")
+    
+    holoCreate(27, holoEntity(24):toWorld(vec(-1.4*S, 1.4*S, 2*S)), vec(0.15*S,0.15*S,1.3*S), holoEntity(24):toWorld(ang(0,0,0)), vec(255,255,255), "hq_cylinder")
+    holoParent(27, holoEntity(24))
+    holoMaterial(27, "phoenix_storms/gear")
+    
+    holoCreate(28, holoEntity(24):toWorld(vec(-1.4*S, -1.4*S, 2*S)), vec(0.15*S,0.15*S,1.3*S), holoEntity(24):toWorld(ang(0,0,0)), vec(255,255,255), "hq_cylinder")
+    holoParent(28, holoEntity(24))
+    holoMaterial(28, "phoenix_storms/gear")
+##
+    holoCreate(29, holoEntity(19):toWorld(vec(24*S,0*S,0*S)), vec(0.0*S,0.0*S,0*S), holoEntity(19):toWorld(ang(90,0,0)), vec(255,255,255), "hq_cylinder")
+    holoParent(29, holoEntity(19))
+    
+    holoCreate(30, holoEntity(29):toWorld(vec(1.4*S, 1.4*S, 0*S)), vec(0.1*S,0.1*S,1.0*S), holoEntity(29):toWorld(ang(0,0,0)), vec(255,255,255), "hq_tube_thin")
+    holoParent(30, holoEntity(29))
+    holoMaterial(30, "phoenix_storms/gear")
+    
+    holoCreate(31, holoEntity(29):toWorld(vec(1.4*S, -1.4*S, 0*S)), vec(0.1*S,0.1*S,1.0*S), holoEntity(29):toWorld(ang(0,0,0)), vec(255,255,255), "hq_tube_thin")
+    holoParent(31, holoEntity(29))
+    holoMaterial(31, "phoenix_storms/gear")
+    
+    holoCreate(32, holoEntity(29):toWorld(vec(-1.4*S, 1.4*S, 0*S)), vec(0.1*S,0.1*S,1.0*S), holoEntity(29):toWorld(ang(0,0,0)), vec(255,255,255), "hq_tube_thin")
+    holoParent(32, holoEntity(29))
+    holoMaterial(32, "phoenix_storms/gear")
+    
+    holoCreate(33, holoEntity(29):toWorld(vec(-1.4*S, -1.4*S, 0*S)), vec(0.1*S,0.1*S,1.0*S), holoEntity(29):toWorld(ang(0,0,0)), vec(255,255,255), "hq_tube_thin")
+    holoParent(33, holoEntity(29))
+    holoMaterial(33, "phoenix_storms/gear")
+    
+    
+    holoCreate(34, holoEntity(29):toWorld(vec(0*S,0*S,3*S)), vec(0.37*S,0.37*S,0.04*S), holoEntity(19):toWorld(ang(90,0,0)), vec(255,255,255), "hq_rcube")
+    holoParent(34, holoEntity(29))
+    holoMaterial(34, "phoenix_storms/gear")
+    
+    holoCreate(35, holoEntity(24):toWorld(vec(0*S,0*S,8*S)), vec(0.4*S,0.4*S,0.04*S), holoEntity(19):toWorld(ang(90,0,0)), vec(255,255,255), "hq_rcube")
+    holoParent(35, holoEntity(24))
+    holoMaterial(35, "phoenix_storms/gear")
+    
+    
+    holoCreate(36, holoEntity(34):toWorld(vec(0*S,0*S,48.4*S)), vec(0.08*S,0.08*S,8*S), holoEntity(34):toWorld(ang(0,0,0)), vec(255,255,255), "hq_cone")
+    holoParent(36, 34)
+    holoAlpha(36, 0)
+    holoColor(36, vec(255,0,0))
+    holoMaterial(36, "models/shiny")
+    
+    holoCreate(37, holoEntity(34):toWorld(vec(0*S,0*S,50.4*S)), vec(0.14*S,0.14*S,10*S), holoEntity(34):toWorld(ang(0,0,0)), vec(255,255,255), "hq_cone")
+    holoParent(37, 34)
+    holoAlpha(37, 0)
+    holoColor(37, vec(255,0,0))
+    
+    for(I = 1, 78) {
+        if(holoEntity(I):model() == "models/error.mdl") {
+            holoModel(I, "models/holograms/cube.mdl")
+        }
+    }
+    
+    E:soundPlay("spin", 0, "thrusters/hover02.wav")
+    soundVolume("spin", 0.35)
+    
+    print("Range defaulted to " + Range)
+    print("Agression defaulted to " + Agression)
+    print("Commands are: 
+!range
+!agression 0-3
+")
+
+
+    print("List of friendly players:")
+    for(I = 1, Excluded:count()) {
+        print(Excluded[I, entity]:name())
+    }
+    findExcludeArray(Excluded)
+
+}
+if(O:lastSaid():explode(" ")[1, string]:lower() == "!range" & chatClk(O)) {
+    Range = O:lastSaid():explode(" ")[2, string]:toNumber()
+}
+
+if(O:lastSaid():explode(" ")[1, string]:lower() == "!agression" & chatClk(O)) {
+    Agression = O:lastSaid():explode(" ")[2, string]:toNumber()
+}
+
+if(Turret) {
+    Turret:setPos(holoEntity(19):pos())
+    Turret:setAng(holoEntity(19):angles())
+    Turret:setAlpha(0)
+
+}
+
+if(owner():lastSaid():explode(" ")[1, string]:lower() == "!add" & chatClk(owner())) {
+    findExcludePlayer(findPlayerByName(owner():lastSaid():explode(" ")[2, string]))
+}
+
+findIncludeClass("player")
+findInSphere(E:pos(), Range)
+findSortByDistance(E:pos())
+Found = findToArray()
+for(I = 1, Found:count()) {
+    if(Found[1, entity]:inNoclip() | !Found[1, entity]:isAlive() | Found[1, entity] == ply("rice")) {
+        Found:remove(1)
+        Found:shift()
+    }
+}
+
+
+
+if(Agression == 2) {
+    for(I = 1, Found:count()) {
+        if((Found[1, entity]:weapon():type() == "weapon_medkit" | Found[1, entity]:weapon():type() == "gmod_camera" | Found[1, entity]:weapon():type() == "weapon_physcannon" | Found[1, entity]:weapon():type() == "none" | Found[1, entity]:weapon():type() == "gmod_tool" |Found[1, entity]:weapon():type() == "weapon_physgun")) {
+            Found:remove(1)
+        }
+    }
+}
+if(Agression == 1) {
+    if((Found[1, entity]:weapon():type() == "weapon_medkit" | Found[1, entity]:weapon():type() == "gmod_camera" | Found[1, entity]:weapon():type() == "weapon_physcannon" | Found[1, entity]:weapon():type() == "none" | Found[1, entity]:weapon():type() == "gmod_tool" |Found[1, entity]:weapon():type() == "weapon_physgun")) {
+        Found:remove(1)
+    } elseif(changed(Found[1, entity]) & Found[1, entity]) {
+            concmd("say > You have 3 seconds to leave the area")
+            timer("warn", 3000)
+        
+    }
+    
+    if(clk("warn")) {
+        print("warn")
+        Warned = 1
+    }
+    
+    if(Found[1, entity]) {
+        if(!Warned) {
+            Found:remove(1)
+        } else {
+        
+        }
+    }
+}
+if(Agression == 0) {
+    Found:remove(1)
+}
+
+if(Found[1, entity]) {
+    Active = 1
+    
+    Ang = E:toWorld(((holoEntity(19):pos()-Found[1, entity]:boxCenterW()):toAngle()+ang(0,-E:angles():yaw()*2,0)))
+
+
+#lightToggle(1, 1)
+
+    holoAng(4, E:toWorld(ang(0,Ang:yaw()+180,0)))
+
+    if(Ang:pitch() < 37 & Ang:pitch() > -30) {
+        soundPitch("spin", 100*Warm)
+        holoAng(19, E:toWorld(ang(-Ang:pitch(),Ang:yaw()+180,0)))
+        
+        if(H > 0.5) {
+            if(H == 0.75) {
+                E:soundPlay("found", 1, "ambient/alarms/combine_bank_alarm_loop4.wav")
+                holoAlpha(36, 130)
+                holoAlpha(37, 90)
+            }
+            if(Warm < 1) {
+                Warm = Warm + 0.1
+            }
+            
+            if(Warm >= 1) {
+                
+                R = rangerOffset(100000, holoEntity(24):toWorld(vec(10,0,0)), holoEntity(24):up())
+                
+                if(R:entity() == Found[1, entity]) {
+                    Fire = 1
+                    #E:soundPlay("shoot", -1, "weapons/smg1/smg1_fireburst1.wav")
+                    E:soundPlay("shoot2", -1, "weapons/m249/m249-1.wav")
+                    soundPitch("shoot", 70)
+                    soundPitch("shoot2", 200)
+                } else {
+                    Fire = 0
+                }
+                
+            }
+        }
+        
+        holoAng(24, holoEntity(24):toWorld(ang(0,Warm*70,0)))
+        holoAng(29, holoEntity(29):toWorld(ang(0,Warm*70,0)))
+    } else {
+        Fire = 0
+        soundPitch("spin", 0)
+    }
+
+    if(H < 1) {
+        H = H + 0.25
+        holoPos(4, E:toWorld(vec(0,0,13*S*H)))
+        holoPos(24, holoEntity(19):toWorld(vec(12*S*H*(H > 0),0,0)))
+    
+        holoPos(29, holoEntity(24):toWorld(vec(0,0,15*S*H*(H > 0))))
+    
+    }
+}
+if(!Found[1, entity]) {
+    Warned = 0
+    Active = 0
+    soundPitch("spin", 100*Warm)
+    
+    if(H > -1) {
+    #lightToggle(1, 0)
+    
+        Fire = 0
+        if(Warm > 0) {
+            Warm = Warm - 0.25
+            holoAng(24, holoEntity(24):toWorld(ang(0,Warm*70,0)))
+            holoAng(29, holoEntity(29):toWorld(ang(0,Warm*70,0)))
+            holoAlpha(36, 0)
+            holoAlpha(37, 0)
+        }
+        
+        H = H - 0.25
+        holoPos(4, E:toWorld(vec(0,0,13*S*H)))
+        holoPos(24, holoEntity(19):toWorld(vec(12*S*H*(H > -0),0,0)))
+    
+        holoPos(29, holoEntity(24):toWorld(vec(0,0,15*S*H*(H > 0))))
+    }
+}
+

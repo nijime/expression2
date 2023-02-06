@@ -1,0 +1,13 @@
+@name holoclip
+@inputs 
+@outputs 
+@persist E:entity
+@trigger 
+interval(250)
+if(first()) {
+    E = entity()
+    holoCreate(1, E:pos()+vec(10,0,10), vec(20,20,20))
+    holoClip(1, E:pos(), E:pos()+vec(20,-20,20), 1)
+
+
+}

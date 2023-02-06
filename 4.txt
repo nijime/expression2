@@ -1,0 +1,31 @@
+@name 4
+@inputs 
+@outputs 
+@persist I X Z S N
+@trigger 
+runOnChat(1)
+E = entity()
+O = owner()
+if(duped()) {
+    selfDestruct()
+}
+Ls = O:lastSaid():lower():explode(" ")
+if(Ls[1, string] == "regen" & chatClk(O)) {
+
+
+    X = Ls[2, string]:toNumber()
+    Z = Ls[3, string]:toNumber()
+    S = Ls[4, string]:toNumber()
+    #N = Ls[5, string]:toNumber()
+
+#holoDeleteAll()
+    
+        for(I = 1, 200) {
+            
+            holoCreate(I)
+            holoPos(I, E:pos()+vec(randint(-X,X),randint(-X,X),I*randint(Z)))
+            holoColor(I, vec(randint(255),randint(255),randint(255))) 
+            holoScale(I, vec(randint(1,10)*S,randint(1,10)*S,randint(1,10)*S)) 
+            holoAng(I, ang(randint(180),randint(180),randint(180)))    
+    }
+}

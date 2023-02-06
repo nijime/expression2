@@ -1,0 +1,47 @@
+@name Egp
+@inputs EGP:wirelink
+@outputs 
+@persist N
+@trigger 
+interval(1)
+O = owner()
+E = entity()
+N = N + 1
+Sin1 = sin(N/30)*100
+Cos1 = cos(N/30)*100
+
+Sin2 = sin(N*2)*130
+Cos2 = cos(N*2)*130
+
+
+EGP:egpCircle(1,vec2(256,256),vec2(256,256))
+EGP:egpColor(1, vec(200,200,200))
+
+EGP:egpCircle(2,vec2(256,256),vec2(30,30))
+EGP:egpColor(2, vec(50,50,50))
+
+EGP:egpBox(3,vec2(256+Cos1,256+Sin1),vec2(140,10))
+EGP:egpAngle(3, -N/30)
+EGP:egpColor(3, vec(50,50,50))
+
+EGP:egpBox(4,vec2(256+Cos2,256+Sin2),vec2(220,10))
+EGP:egpAngle(4, -N*2)
+EGP:egpColor(4, vec(50,50,50))
+
+EGP:egpBox(5,vec2(256,35),vec2(7,70))
+EGP:egpColor(5, vec(50,50,50))
+
+EGP:egpBox(6,vec2(477,256),vec2(7,70))
+EGP:egpColor(6, vec(50,50,50))
+EGP:egpAngle(6, 90)
+
+EGP:egpBox(7,vec2(256,477),vec2(7,70))
+EGP:egpColor(7, vec(50,50,50))
+
+EGP:egpBox(8,vec2(35,256),vec2(7,70))
+EGP:egpColor(8, vec(50,50,50))
+EGP:egpAngle(8, 90)
+
+#EGP:egpBox(9,vec2(350,60),vec2(7,70))
+#EGP:egpColor(9, vec(50,50,50))
+#EGP:egpAngle(9, -30)

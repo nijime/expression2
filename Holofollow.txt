@@ -1,0 +1,64 @@
+@name Holofollow
+@inputs 
+@outputs
+@persist Anim Follow:entity Time O:entity
+@trigger 
+interval(1)
+Time = Time + 1
+if(first()) {
+    
+    holoCreate(1)
+    holoScale(1, vec(1.8,1.8,1.8))
+    holoModel(1, "models/tsbb/big_chungus.mdl")
+    #holoEntity(1):soundPlay(1, 0, "npc/scanner/cbot_fly_loop.wav")
+#O     = owner()
+O = findPlayerByName("nijime")
+#"pnbsd"
+
+}
+
+if(duped()) {
+    selfDestruct()
+}
+#O     = owner()
+E     = entity()
+Holo  = holoEntity(1)
+
+Follow = O
+
+
+
+Dist  = abs((Holo:pos()-Follow:toWorld(vec(-0,-0,0))):length())
+Vec   = Holo:pos() - Follow:toWorld(vec(-0,-0,0))
+Ang   = Vec:toAngle()
+
+Range = rangerOffset(200, Holo:pos()+vec(0,0,80), -Holo:up()):distance()
+
+
+
+
+
+holoAng(1, ang(0, (Ang:yaw()+180), 0 ))
+
+if(Dist >= 100) {
+    
+    Anim =  11
+
+    
+    holoPos(1, Holo:pos()+vec( -Vec:x()/60 , -Vec:y()/60   ,(80-Range)/2  ))
+} 
+if(Dist < 100) {
+    
+    Anim =  27
+
+    
+    holoPos(1, Holo:pos()+vec(0,0,(80-Range)/2   ))
+}
+
+    if(changed(Anim)) {
+        ####holoAnim(1, Anim, 0, Dist/80)
+    }
+    
+
+
+

@@ -1,0 +1,228 @@
+@name Bombsites
+@inputs 
+@outputs 
+@persist [O E BA BB Carrier Curbomb]:entity Winner:string Start T Time RoundTime T2 Ply:array
+
+interval(200)
+runOnChat(1)
+
+if(first()) {
+    E = entity()
+    O = owner()
+    
+    BA = propSpawn("models/hunter/plates/plate2x2.mdl", E:toWorld(vec(0,100,0)), 1)
+    holoCreate(1, BA:pos(), vec(-3), ang(0,0,0), vec(255,0,0), "models/hunter/misc/sphere375x375.mdl")
+    holoParent(1, BA)
+    
+    holoCreate(2, BA:pos(), vec(3), ang(0,0,0), vec(255,0,0), "models/hunter/misc/sphere375x375.mdl")
+    holoParent(2, BA)
+    
+    holoMaterial(1, "models/wireframe")
+    holoMaterial(2, "models/wireframe")
+    
+    BB = propSpawn("models/hunter/plates/plate2x2.mdl", E:toWorld(vec(0,-100,0)), 1)
+    holoCreate(3, BB:pos(), vec(-3), ang(0,0,0), vec(0,255,0), "models/hunter/misc/sphere375x375.mdl")
+    holoParent(3, BB)
+    
+    holoCreate(4, BB:pos(), vec(3), ang(0,0,0), vec(0,255,0), "models/hunter/misc/sphere375x375.mdl")
+    holoParent(4, BB)
+    
+    holoMaterial(3, "models/wireframe")
+    holoMaterial(4, "models/wireframe")
+    
+    Start = 0
+    
+    Winner = ""
+    
+    RoundTime = 225
+    Time = RoundTime
+    
+    holoCreate(5, E:pos(), vec(1.5), ang(0,0,0), vec(255,255,255), "models/weapons/w_c4.mdl")
+    holoCreate(6, E:pos(), vec(1.5), ang(0,0,-135), vec(255,255,255), "models/props_c17/tools_wrench01a.mdl")
+    
+    Ply = players()
+}
+
+Ls = O:lastSaid():lower():explode(" ")
+
+
+if(Ls[1, string] == "!bomb" & chatClk(O)) {
+    Carrier = findPlayerByName(Ls[2, string])
+    
+    timer("newcarry", 600)
+}
+
+
+if(Ls[1, string] == "!end" & chatClk(O)) {
+    Carrier = noentity()
+    
+    Start = 0
+    Winner = ""
+    
+}
+
+if(changed(Carrier:keyUse())) {
+    if(Carrier:keyUse()) {
+        holoAlpha(5, 255)
+    } elseif(Start == 0) {
+        holoAlpha(5, 0)
+    }
+}
+    
+
+if(Carrier & Carrier:keyUse() & Carrier:weapon():type() == "none") {
+    Target = Carrier:aimEntity()
+    
+    
+    if((Target == BA | Target == BB) & (Carrier:pos() - Target:pos()):length() < 300) {
+
+        
+        T = clamp(T + 1.5, 0, 21)
+        
+        holoPos(5, Target:pos()+vec(0,0,23-T))
+        holoAng(5, ang(0,Carrier:eyeAngles():yaw(),0))
+        
+        if(T == 0 | T == 5 | T == 10 | T == 15) {
+            Target:soundPlay("beep", 0.1, "npc/attack_helicopter/aheli_crash_alert2.wav")
+            soundPitch("beep", 100)         
+        }
+    
+        if(T == 20) {
+            Target:soundPlay("beep", 0.1, "npc/attack_helicopter/aheli_crash_alert2.wav")
+            soundPitch("beep", 150)        
+        }
+        
+        
+        if(T > 20) {
+            Time = RoundTime
+            
+            Curbomb = Target
+            
+
+
+            
+            if(Curbomb == BA) {
+                print("> Bomb planted at A")
+            } else {
+                print("> Bomb planted at B")
+            }
+        
+        
+            Carrier = noentity()
+            
+            Start = 1
+            
+        }
+    } else {
+        T = 0
+    }
+
+} else {
+    T = 0
+}
+
+if(changed(Start) & !first()) {
+    timer("newstart", 600)
+}
+
+
+if(clk("newcarry")) {
+    concmd("say    -> " + Carrier:name() + " can plant the bomb")
+}
+
+
+if(clk("newstart")) {
+    
+    if(Start) {
+        Time = 1500
+        
+        concmd("say    -> Round beginning")
+        
+        timer("beep2", 1400)
+        
+    } else {
+        if(Winner != "") {
+            concmd("say    -> " + Winner + " win!")
+            
+            Winner = ""
+            Carrier = noentity()
+            
+            T2 = 0
+        } else {
+            concmd("say    -> Round ended")
+            
+            Carrier = noentity()
+            
+            T2 = 0
+            
+        }
+    }
+}
+if(Start) {
+    Time = clamp(Time - 1, 0, RoundTime)
+    
+    if(!Carrier) {
+        for(I = 1, Ply:count()) {
+            
+            if(Ply[I, entity]:aimEntity() == Curbomb & Ply[I, entity]:keyUse() & Ply[I, entity]:weapon():type() == "none" & (Ply[I, entity]:pos() - Curbomb:pos()):length() < 300) {
+                T2 = T2 + 1
+                holoAng(6, ang(0,Ply[I, entity]:eyeAngles():yaw(),-135))
+            }
+            
+        }
+    }
+    
+    T2 = clamp(T2 - 0.5, 0, 12)
+
+    holoPos(6, Curbomb:pos()+vec(0,0,21-T2))
+
+                
+    if(T2 >= 7) {
+        Winner = "Counter-Terrorists"
+        Start = 0
+        
+        Carrier = noentity()
+
+    }
+    
+    
+    if(clk("beep2")) {
+        print(Time/20*4.5)
+        
+        if(Time < 10) {
+            Curbomb:soundPlay("beep2", 0.1, "npc/attack_helicopter/aheli_crash_alert2.wav")
+            soundPitch("beep2", 40)
+            
+            timer("beep2", 600)
+        } else {
+            Curbomb:soundPlay("beep2", 0.1, "npc/attack_helicopter/aheli_crash_alert2.wav")
+            soundPitch("beep2", 40)
+            
+            timer("beep2", 1400)
+        }
+        
+    }
+}
+
+
+if(Time <= 1 & Start) {
+    Winner = "Terrorists"
+    
+    P1 = propSpawn("models/props_phx/mk-82.mdl", Curbomb:pos()+vec(100,100,40), 1)
+    P1:propBreak()
+    
+    P2 = propSpawn("models/props_phx/mk-82.mdl", Curbomb:pos()+vec(100,-100,40), 1)
+    P2:propBreak()
+    
+    P3 = propSpawn("models/props_phx/mk-82.mdl", Curbomb:pos()+vec(-100,100,40), 1)
+    P3:propBreak()
+    
+    P4 = propSpawn("models/props_phx/mk-82.mdl", Curbomb:pos()+vec(-100,-100,40), 1)
+    P4:propBreak()
+    
+    Start = 0
+    
+    Time = RoundTime
+    
+    holoPos(5, E:pos())
+}

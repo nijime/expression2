@@ -1,0 +1,964 @@
+@name ACF Hexapod
+@inputs Cam:wirelink
+@outputs 
+@persist I Switch1 Switch2 Cycle Range  Yaw Pitch Roll HoloFinished
+@persist L1 L2 L3 SHeight StepDist RangeRange Grounded Time
+@persist [Foot Foot2 Pod Acf_Cannonbase]:entity
+@persist [SPos1 SPos2 EPos1 EPos2 SPos3 SPos4 EPos3 EPos4 SPos5 SPos6 EPos5 EPos6 P1 P2 P3 P4 P5 P6  Pos1 Pos2 Pos3 Pos4 Pos5 Pos6  MoveDir  Up]:vector
+@persist [Front Rear Left Right]:vector
+@persist [R1 R2 R3 R4 R5 R6 R7 R8]:ranger
+@persist [CanStep OnGround]:array
+@persist Acf_CDeg
+#@model models/sprops/cuboids/height12/size_5/cube_96x132x12.mdl
+@model models/hunter/blocks/cube2x2x025.mdl
+
+interval(50)
+
+if(first()) {
+    #include "e2funcs"
+    holoCreate(100)
+    
+    holoCreate(999, E:pos())
+    holoParent(999, E)
+    
+    function number loc(A, B, C) {
+        return acos((A^2 + B^2 - C^2) / (2*A*B))
+    }
+    
+    function leg(I1, I2, I3, L1, L2, Hip:entity, Vec:vector, Base:entity, Y, R, Pi) {
+
+        local Axis = Base:toLocalAxis(Vec-Hip:pos())
+        #local Axis = h(999):toLocalAxis(Vec-Hip:pos())
+        local Ang = Axis:toAngle():setRoll(-bearing(Hip:pos(), Base:angles()+ang(0,Y,0), Vec)+R) + ang(0,-0,180)
+        local Dist = min(Axis:length(), L1+L2)    
+        
+        local Quat = quat(Ang) * qRotation(vec(Pi*0.15, loc(Dist, L1, L2)+(90),Pi*0.8):rotateAroundAxis(Axis, 0))
+
+
+        holoAng(I1, Base:toWorld(Quat:toAngle()))
+        holoAng(I2, holoEntity(I1):toWorld(ang(loc(L2,L1,Dist)+180,0,0)))
+        
+        #holoAng(I2, h(I1):toWorld((Vec - h(I2):pos()):toAngle()+ang(200,180,90)))
+        #holoPos(I3, Vec)
+        
+    }
+    
+    function number canStep(Num) {
+       
+        
+    }
+    
+    L1 = 30
+    L2 = 100
+    L3 = 130
+    
+    holoCreate(1, E:toWorld(vec(50, 50, 0)), vec(1), E:toWorld(ang(0,90,0)), vec(255,255,255), "models/mechanics/wheels/wheel_smooth_24.mdl")
+    holoParent(1, E)
+
+    holoCreate(2, h(1):toWorld(vec(L1, 0, -L1)), vec(1.3), h(1):toWorld(ang(0,0,0)), vec(40), "hq_sphere")
+    holoParent(2, 1)
+    
+    holoCreate(3, h(2):toWorld(vec(0, 0, L2)), vec(0), h(2):toWorld(ang(0,0,0)), vec(0,255,0), "hq_sphere")
+    holoParent(3, 2)
+    
+    holoCreate(4, h(3):toWorld(vec(0, 0, L3)), vec(0), h(3):toWorld(ang(0,0,0)), vec(0,0,255))
+    holoParent(4, 3)
+    
+
+
+    holoCreate(5, E:toWorld(vec(0, 70, 0)), vec(1), E:toWorld(ang(0,90,0)), vec(255,255,255), "models/mechanics/wheels/wheel_smooth_24.mdl")
+    holoParent(5, E)
+
+    holoCreate(6, h(5):toWorld(vec(L1, 0, -L1)), vec(1.3), h(5):toWorld(ang(0,0,0)), vec(40), "hq_sphere")
+    holoParent(6, 5)
+    
+    holoCreate(7, h(6):toWorld(vec(0, 0, L2*1.2)), vec(0), h(6):toWorld(ang(0,0,0)), vec(0,255,0), "hq_sphere")
+    holoParent(7, 6)
+    
+    holoCreate(8, h(7):toWorld(vec(0, 0, L3*1.2)), vec(0), h(7):toWorld(ang(0,0,0)), vec(0,0,255))
+    holoParent(8, 7)
+    
+    
+    
+    holoCreate(9, E:toWorld(vec(-50, 50, 0)), vec(1), E:toWorld(ang(0,90,0)), vec(255,255,255), "models/mechanics/wheels/wheel_smooth_24.mdl")
+    holoParent(9, E)
+
+    holoCreate(10, h(9):toWorld(vec(L1, 0, -L1)), vec(1.3), h(9):toWorld(ang(0,0,0)), vec(40), "hq_sphere")
+    holoParent(10, 9)
+    
+    holoCreate(11, h(10):toWorld(vec(0, 0, L2)), vec(0), h(10):toWorld(ang(0,0,0)), vec(0,255,0), "hq_sphere")
+    holoParent(11, 10)
+    
+    holoCreate(12, h(11):toWorld(vec(0, 0, L3)), vec(0), h(11):toWorld(ang(0,0,0)), vec(0,0,255))
+    holoParent(12, 11)
+    
+    
+    
+    
+    holoCreate(13, E:toWorld(vec(50, -50, 0)), vec(1), E:toWorld(ang(0,90,0)), vec(255,255,255), "models/mechanics/wheels/wheel_smooth_24.mdl")
+    holoParent(13, E)
+
+    holoCreate(14, h(13):toWorld(vec(L1, 0, -L1)), vec(1.3), h(13):toWorld(ang(0,0,0)), vec(40), "hq_sphere")
+    holoParent(14, 13)
+    
+    holoCreate(15, h(14):toWorld(vec(0, 0, L2)), vec(0), h(14):toWorld(ang(0,0,0)), vec(0,255,0), "hq_sphere")
+    holoParent(15, 14)
+    
+    holoCreate(16, h(15):toWorld(vec(0, 0, L3)), vec(0), h(15):toWorld(ang(0,0,0)), vec(0,0,255))
+    holoParent(16, 15)
+    
+
+
+    holoCreate(17, E:toWorld(vec(0, -70, 0)), vec(1), E:toWorld(ang(0,90,0)), vec(255,255,255), "models/mechanics/wheels/wheel_smooth_24.mdl")
+    holoParent(17, E)
+
+    holoCreate(18, h(17):toWorld(vec(L1, 0, -L1)), vec(1.3), h(17):toWorld(ang(0,0,0)), vec(40), "hq_sphere")
+    holoParent(18, 17)
+    
+    holoCreate(19, h(18):toWorld(vec(0, 0, L2*1.2)), vec(0), h(18):toWorld(ang(0,0,0)), vec(0,255,0), "hq_sphere")
+    holoParent(19, 18)
+    
+    holoCreate(20, h(19):toWorld(vec(0, 0, L3*1.2)), vec(0), h(19):toWorld(ang(0,0,0)), vec(0,0,255))
+    holoParent(20, 19)
+    
+    
+    
+    holoCreate(21, E:toWorld(vec(-50, -50, 0)), vec(1), E:toWorld(ang(0,90,0)), vec(255,255,255), "models/mechanics/wheels/wheel_smooth_24.mdl")
+    holoParent(21, E)
+
+    holoCreate(22, h(21):toWorld(vec(L1, 0, -L1)), vec(1.3), h(21):toWorld(ang(0,0,0)), vec(40), "hq_sphere")
+    holoParent(22, 21)
+    
+    holoCreate(23, h(22):toWorld(vec(0, 0, L2)), vec(0), h(22):toWorld(ang(0,0,0)), vec(0,255,0), "hq_sphere")
+    holoParent(23, 22)
+    
+    holoCreate(24, h(23):toWorld(vec(0, 0, L3)), vec(0), h(23):toWorld(ang(0,0,0)), vec(0,0,255))
+    holoParent(24, 23)
+    
+    
+    Pos1 = vec(120,180,50)
+    Pos2 = vec(120,-180,50)
+    
+    Pos3 = vec(0,225,50)
+    Pos4 = vec(0,-225,50)
+    
+    Pos5 = vec(-120,180,50)
+    Pos6 = vec(-120,-180,50)
+    
+    SHeight = 100
+    
+    StepDist = 20
+    
+    
+    E:setMass(50000)
+    E:propGravity(0)
+    E:setAlpha(0)
+    
+    Pod = seatSpawn("models/nova/airboat_seat.mdl", E:pos()+vec(0,0,40), E:toWorld(ang(0,-90,0)), 0)
+    Pod:parentTo(E)
+    Pod:setMass(50)
+    Pod:propGravity(0)
+    Pod:setAlpha(0)
+    
+    Cam["Parent", entity] = E
+    Cam["Position", vector] = vec(0,0,0)
+    
+    
+    CanStep = array(1,1,1,1,1,1)
+    OnGround = array(1,1,1,1,1,1)
+    
+    Range = 550
+    
+    Grounded = 1
+    
+    Acf_Cannonbase = propSpawn("models/sprops/geometry/fhex_120.mdl", E:toWorld(vec(-38,0, 32)), E:toWorld(ang(0,0,90)), 1)
+    
+    Acf_CDeg = 30
+    
+}
+
+
+CamDir = Cam["CamDir", vector]
+
+holoAng(999, ang(0,0,0))
+
+VelMod = E:vel():normalized() * (100*(E:vel():length()/200))^1
+
+Cycle = clamp(Cycle + 0.05, 0, 0.95)
+
+RangeRange = Range - !Grounded*180
+
+######################
+###### Leg shit ######
+######################
+
+    if(Cycle > 0 & Cycle <= 0.2) {         
+        R1 = rangerOffset(RangeRange, E:toWorld(Pos1) + VelMod, -Up)
+        R2 = rangerOffset((R1:pos() - h(1):pos()):length(), h(1):toWorld(vec(0,0,0)), (R1:pos() - h(1):pos()):normalized())
+        
+        if(CanStep[1, number]) {
+          
+        P1 = bezier(SPos1, mix(SPos1, EPos1, 0.5) + Up*SHeight*((SPos1 - EPos1):length() > StepDist), EPos1, abs(Cycle)*5)
+        
+        }
+        
+        if(Cycle < 0.15) {
+            
+            R3 = rangerOffset(RangeRange, E:toWorld(Pos2) + VelMod, -Up)
+            R4 = rangerOffset((R3:pos() - h(13):pos()):length(), h(13):toWorld(vec(0,0,0)), (R3:pos() - h(13):pos()):normalized())
+            
+            
+            if(((R3:pos() - R4:pos()):length() < 25)*(R3:hit())) {
+                
+                SPos2 = h(16):pos()
+                EPos2 = R4:pos()
+                
+                #CanStep[1, number] = 1
+            
+            } else {
+            
+                SPos2 = h(16):pos()
+                EPos2 = h(16):pos()
+                
+                #CanStep[1, number] = 0
+            
+            }
+        
+        }
+        
+        if(Cycle >= 0.2 & CanStep) {
+            
+            if(R1:hit()) {
+                OnGround[1, number] = 1
+                
+            } else {
+                OnGround[1, number] = 0
+                
+            }
+            
+            if((SPos1 - EPos1):length() > StepDist) {
+                h(4):soundPlay(1, 1, "npc/dog/dog_footstep_run" + randint(1, 9):toString() + ".wav")
+                soundPitch(1, 160)
+            
+            }
+        }
+    }
+
+
+
+############################################################################################################
+
+
+
+    if(Cycle > 0.15 & Cycle <= 0.35) {
+        R3 = rangerOffset(RangeRange, E:toWorld(Pos2) + VelMod, -Up)
+        R4 = rangerOffset((R3:pos() - h(13):pos()):length(), h(13):toWorld(vec(0,0,0)), (R3:pos() - h(13):pos()):normalized())
+        
+        if(CanStep[2, number]) {
+          
+        P2 = bezier(SPos2, mix(SPos2, EPos2, 0.5) + Up*SHeight*((SPos2 - EPos2):length() > StepDist), EPos2, abs((Cycle-0.15))*5)
+        
+        }
+        
+        if(Cycle < 0.3) {
+            
+            R5 = rangerOffset(RangeRange, E:toWorld(Pos3) + VelMod, -Up)
+            R6 = rangerOffset((R5:pos() - h(5):pos()):length(), h(5):toWorld(vec(0,0,0)), (R5:pos() - h(5):pos()):normalized())
+
+
+            if(((R5:pos() - R6:pos()):length() < 25)*(R5:hit())) {
+                
+                SPos3 = h(8):pos()
+                EPos3 = R6:pos()
+                
+                #CanStep[2, number] = 1
+            
+            } else {
+            
+                SPos3 = h(8):pos()
+                EPos3 = h(8):pos()
+                
+                #CanStep[2, number] = 0
+            
+            }
+            
+        }
+        
+        if(Cycle >= 0.35 & CanStep) {
+            
+            if(R3:hit()) {
+                OnGround[2, number] = 1
+                
+            } else {
+                OnGround[2, number] = 0
+                
+            }
+            
+            if((SPos2 - EPos2):length() > StepDist) {
+                h(16):soundPlay(1, 1, "npc/dog/dog_footstep_run" + randint(1, 9):toString() + ".wav")
+                soundPitch(2, 160)
+            
+            }
+        }
+    }
+
+
+
+############################################################################################################
+
+
+
+    if(Cycle > 0.3 & Cycle <= 0.5) {
+        R5 = rangerOffset(RangeRange, E:toWorld(Pos3) + VelMod/1.4, -Up)
+        R6 = rangerOffset((R5:pos() - h(5):pos()):length(), h(5):toWorld(vec(0,0,0)), (R5:pos() - h(5):pos()):normalized())
+        
+        if(CanStep[3, number]) {
+          
+        P3 = bezier(SPos3, mix(SPos3, EPos3, 0.5) + Up*SHeight*((SPos3 - EPos3):length() > StepDist), EPos3, abs((Cycle-0.3))*5)
+        
+        }
+        
+        if(Cycle < 0.45) {
+            
+            R1 = rangerOffset(RangeRange, E:toWorld(Pos1) + VelMod/1.6, -Up)
+            R2 = rangerOffset((R1:pos() - h(17):pos()):length(), h(17):toWorld(vec(0,0,0)), (R1:pos() - h(17):pos()):normalized())
+
+
+            if(((R1:pos() - R2:pos()):length() < 25)*(R1:hit())) {
+                
+                SPos1 = h(4):pos()
+                EPos1 = R2:pos()
+                
+                #CanStep[3, number] = 1
+            
+            } else {
+            
+                SPos1 = h(4):pos()
+                EPos1 = h(4):pos()
+                
+                #CanStep[3, number] = 0
+            
+            }
+            
+        }
+        
+        if(Cycle >= 0.5 & CanStep) {
+            
+            if(R5:hit()) {
+                OnGround[3, number] = 1
+                
+            } else {
+                OnGround[3, number] = 0
+                
+            }
+            
+            if((SPos3 - EPos3):length() > StepDist) {
+                h(8):soundPlay(1, 1, "npc/dog/dog_footstep_run" + randint(1, 9):toString() + ".wav")
+                soundPitch(1, 120)
+            
+            }
+        }
+    }
+
+
+
+############################################################################################################
+############################################################################################################
+############################################################################################################
+
+  
+    if(Cycle > 0 & Cycle <= 0.2) {
+        R7 = rangerOffset(RangeRange,E:toWorld(Pos4) + VelMod/1.4, -Up)
+        R8 = rangerOffset((R7:pos() - h(17):pos()):length(), h(17):toWorld(vec(0,0,0)), (R8:pos() - h(17):pos()):normalized())
+        
+        if(CanStep[4, number]) {
+          
+        P4 = bezier(SPos4, mix(SPos4, EPos4, 0.5) + Up*SHeight*((SPos4 - EPos4):length() > StepDist), EPos4, abs((Cycle))*5)
+            
+        }
+        
+        if(Cycle < 0.15) {
+            
+            R9 = rangerOffset(RangeRange, E:toWorld(Pos5) + VelMod/1.3, -Up)
+            R10 = rangerOffset((R9:pos() - h(9):pos()):length(), h(9):toWorld(vec(0,0,0)), (R9:pos() - h(9):pos()):normalized())
+
+
+            if(((R9:pos() - R10:pos()):length() < 25)*(R9:hit())) {
+                
+                SPos5 = h(12):pos()
+                EPos5 = R10:pos()
+                
+                #CanStep[4, number] = 1
+            
+            } else {
+            
+                SPos5 = h(12):pos()
+                EPos5 = h(12):pos()
+                
+                #CanStep[4, number] = 0
+            
+            }
+            
+        }
+        
+        if(Cycle >= 0.2 & CanStep) {
+            
+            if(R7:hit()) {
+                OnGround[4, number] = 1
+                
+            } else {
+                OnGround[4, number] = 0
+                
+            }
+            
+            if((SPos4 - EPos4):length() > StepDist) {
+                h(20):soundPlay(2, 1, "npc/dog/dog_footstep_run" + randint(1, 9):toString() + ".wav")
+                soundPitch(2, 160)
+            
+            }
+        }
+    }
+
+
+
+############################################################################################################
+
+
+ 
+    if(Cycle > 0.15 & Cycle <= 0.35) {
+        R9 = rangerOffset(RangeRange, E:toWorld(Pos5) + VelMod, -Up)
+        R10 = rangerOffset((R9:pos() - h(9):pos()):length(), h(9):toWorld(vec(0,0,0)), (R9:pos() - h(9):pos()):normalized())
+        
+        if(CanStep[5, number]) {
+         
+        P5 = bezier(SPos5, mix(SPos5, EPos5, 0.5) + Up*SHeight*((SPos5 - EPos5):length() > StepDist), EPos5, abs((Cycle-0.15))*5)
+            
+        }
+        
+        if(Cycle < 0.3) {
+            
+            R11 = rangerOffset(RangeRange, E:toWorld(Pos6) + VelMod/1.3, -Up)
+            R12 = rangerOffset((R11:pos() - h(21):pos()):length(), h(21):toWorld(vec(0,0,0)), (R11:pos() - h(21):pos()):normalized())
+
+            if(((R11:pos() - R12:pos()):length() < 25)*(R11:hit())) {
+                
+                SPos6 = h(24):pos()
+                EPos6 = R12:pos()
+                
+                #CanStep[5, number] = 1
+            
+            } else {
+            
+                SPos6 = h(24):pos()
+                EPos6 = h(24):pos()
+                
+                #CanStep[5, number] = 0
+            
+            }
+            
+        }       
+        if(Cycle >= 0.35 & CanStep) {
+            
+            if(R5:hit()) {
+                OnGround[5, number] = 1
+                
+            } else {
+                OnGround[5, number] = 0
+                
+            }
+            
+            if((SPos5 - EPos5):length() > StepDist) {
+                h(12):soundPlay(2, 1, "npc/dog/dog_footstep_run" + randint(1, 9):toString() + ".wav")
+                soundPitch(1, 120)
+            
+            }
+        }
+    }
+
+
+
+############################################################################################################
+
+
+
+    if(Cycle > 0.3 & Cycle <= 0.5) {
+        R13 = rangerOffset(RangeRange, E:toWorld(Pos6) + VelMod, -Up)
+        R14 = rangerOffset((R13:pos() - h(21):pos()):length(), h(21):toWorld(vec(0,0,0)), (R13:pos() - h(21):pos()):normalized())
+        
+        if(CanStep[6, number]) {
+            
+        P6 = bezier(SPos6, mix(SPos6, EPos6, 0.5) + Up*SHeight*((SPos6 - EPos6):length() > StepDist), EPos6, abs((Cycle-0.3))*5)
+
+        }
+        
+        if(Cycle < 0.45 & CanStep) {
+            
+            R7 = rangerOffset(RangeRange, E:toWorld(Pos4) + VelMod, -Up)
+            R8 = rangerOffset((R7:pos() - h(1):pos()):length(), h(1):toWorld(vec(0,0,0)), (R7:pos() - h(1):pos()):normalized())
+
+                
+            if(((R7:pos() - R8:pos()):length() < 25)*(R7:hit())) {
+                
+                SPos4 = h(20):pos()
+                EPos4 = R8:pos()
+                
+                #CanStep[6, number] = 1
+            
+            } else {
+            
+                SPos4 = h(20):pos()
+                EPos4 = h(20):pos()
+                
+                #CanStep[6, number] = 0
+            
+            }
+
+        }
+        
+        if(Cycle >= 0.5) {
+            
+            if(R7:hit()) {
+                OnGround[6, number] = 1
+                
+            } else {
+                OnGround[6, number] = 0
+                
+            }
+            
+            if((SPos6 - EPos6):length() > StepDist) {
+                h(24):soundPlay(2, 1, "npc/dog/dog_footstep_run" + randint(1, 9):toString() + ".wav")
+                soundPitch(2, 160)
+            
+            }
+        }
+    }
+
+
+############################################################################################################
+
+
+
+if(Cycle >= 0.5) {
+    Cycle = 0    
+}
+
+######################
+######################
+######################
+
+
+Grounded = (OnGround[1, number] + OnGround[2, number] + OnGround[3, number] + OnGround[4, number] + OnGround[5, number] + OnGround[6, number]) > 2
+
+if(!Grounded) {
+    
+    local Z = 320
+    
+    if(!OnGround[1, number]) { P1 = E:toWorld(Pos1-vec(0,0,Z)) }
+    if(!OnGround[2, number]) { P2 = E:toWorld(Pos2-vec(0,0,Z)) }
+    if(!OnGround[3, number]) { P3 = E:toWorld(Pos3-vec(0,0,Z)) }
+    if(!OnGround[4, number]) { P4 = E:toWorld(Pos4-vec(0,0,Z)) }
+    if(!OnGround[5, number]) { P5 = E:toWorld(Pos5-vec(0,0,Z)) }
+    if(!OnGround[6, number]) { P6 = E:toWorld(Pos6-vec(0,0,Z)) }
+    
+    E:propGravity(1)
+
+} else {
+    
+    E:propGravity(0)
+    
+}
+
+
+local Ang1 = (h(4):pos() - h(1):pos()):toAngle():yaw()
+holoAng(1, E:toWorld( ang(0, Ang1 - E:angles():yaw(), 0)) )
+leg(2, 3, 4, L2, L3, h(2), P1, E, 0, -65, 0)
+
+local Ang2 = (h(8):pos() - h(5):pos()):toAngle():yaw()
+holoAng(5, E:toWorld( ang(0, Ang2 - E:angles():yaw(), 0)) )
+leg(6, 7, 8, L2*1.2, L3*1.2, h(6), P3, E, 0, -90, 0)
+
+local Ang3 = (h(12):pos() - h(9):pos()):toAngle():yaw()
+holoAng(9, E:toWorld( ang(0, Ang3 - E:angles():yaw(), 0)) )
+leg(10, 11, 12, L2, L3, h(10), P5, E, 0, -115, 0)
+
+
+local Ang4 = (h(16):pos() - h(13):pos()):toAngle():yaw()
+holoAng(13, E:toWorld( ang(0, Ang4 - E:angles():yaw(), 0)) )
+leg(14, 15, 16, L2, L3, h(14), P2, E, 0, 65, 0)
+
+local Ang5 = (h(20):pos() - h(17):pos()):toAngle():yaw()
+holoAng(17, E:toWorld( ang(0, Ang5 - E:angles():yaw(), 0)) )
+leg(18, 19, 20, L2*1.2, L3*1.2, h(18), P4, E, 0, 90, 0)
+
+local Ang6 = (h(24):pos() - h(21):pos()):toAngle():yaw()
+holoAng(21, E:toWorld( ang(0, Ang6 - E:angles():yaw(), 0)) )
+leg(22, 23, 24, L2, L3, h(22), P6, E, 0, 115, 0)
+
+
+
+
+Front = (h(4):pos() + h(16):pos())/2
+Rear  = (h(12):pos() + h(24):pos())/2
+Left = (h(4):pos() + h(12):pos())/2
+Right = (h(16):pos() + h(24):pos())/2
+
+local Avg = (Front + Rear)/2
+
+
+
+
+Dri = Pod:driver()
+
+W = Dri:keyForward()
+A = Dri:keyLeft()
+S = Dri:keyBack()
+D = Dri:keyRight()
+Shift = Dri:keySprint()
+
+CamDir = E:forward()
+
+CanStepMult = 1#(CanStep[1, number] + CanStep[2, number] + CanStep[3, number] + CanStep[4, number] + CanStep[5, number] + CanStep[6, number])/6
+
+if(!CanStep[1, number]) { P1 = h(4):pos() }
+if(!CanStep[2, number]) { P2 = h(16):pos() }
+if(!CanStep[3, number]) { P3 = h(8):pos() }
+if(!CanStep[4, number]) { P4 = h(20):pos() }
+if(!CanStep[5, number]) { P5 = h(12):pos() }
+if(!CanStep[6, number]) { P6 = h(24):pos() }
+
+
+#Pitch = -acos( (Front:setZ(0) - Rear:setZ(0)):length() / (Front - Rear):length() ) * ( (Front - Rear):z() / abs( (Front - Rear):z() ) )
+Pitch = E:toLocal(E:toWorld(ang(-acos( (Front:setZ(0) - Rear:setZ(0)):length() / (Front - Rear):length() ) * ( (Front - Rear):z() / abs( (Front - Rear):z() ) ), 0, 0))):pitch()
+Yaw   = angnorm( (Front - Rear):toAngle():yaw() )
+#Roll = acos( (Left:setZ(0) - Right:setZ(0)):length() / (Left - Right):length() ) * ( (Left - Right):z() / abs( (Left - Right):z() ) )
+Roll =  E:toLocal(E:toWorld(ang(0, 0, acos( (Left:setZ(0) - Right:setZ(0)):length() / (Left - Right):length() ) * ( (Left - Right):z() / abs( (Left - Right):z() ) )))):roll()
+
+
+Up    = E:up()
+
+local Pos   = ((Avg + Up*100) - E:pos()) * (( (Avg + Up*100) - E:pos()):length() > 15)
+
+
+if(Dri) {
+
+    Hover = Grounded ? Pos : (scaleVec(E:vel(), 0.5, 0.5, 0.8) + vec(0,0,-14))
+    Move = (CamDir*(250-abs(A-D)*80) + CamDir*(Shift*(140-abs(A-D)*40)))*(W-S)
+    #Ang = ang(Pitch - E:angles():pitch(), 0, Roll - E:angles():roll())*5
+    #Ang = (ang(Pitch, 0, Roll) - E:angles()):setYaw(0)*50
+    #Ang = (ang(Pitch, 0, Roll) - E:angles()):setYaw(0)*50
+} else {
+
+    Hover = Grounded ? Pos : scaleVec(E:vel(), 0.5, 0.5, 0.8) + vec(0,0,0)
+    Move = vec(0,0,0)
+    #Ang = (ang(Pitch, 0, Roll) - E:angles()):setYaw(0)*50
+    
+}
+
+    Ang = (ang(Pitch, 0, Roll) - E:angles()):setYaw(0)*50
+
+    E:applyForce(
+    ( 
+    -E:vel()*0.8 
+    + Hover
+    + Move * Grounded
+    )
+    * E:mass()
+    )
+    
+    E:applyAngForce(
+    (
+    -E:angVel()*15
+    + E:toLocal(E:toWorld(ang(0, (A-D), 0)))*750
+    + Ang 
+    )
+    *E:mass()
+    )
+    
+    
+    
+    CamDir = Dri:eye()
+    
+    
+    ######gay acf rotation turret gay shit ok#######
+    Acf_Cannonbase:setPos(E:toWorld(vec(-38,0,32)))
+    
+    CYaw = -CamDir:dot(E:right()) * Acf_CDeg
+    #CPitch =
+    Acf_Cannonbase:setAng(E:toWorld(ang(0, CYaw, 90)))
+
+    
+    
+    ################################################
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+I = I + 1
+if(first()) {
+    
+    Vec1 = vec(0,0,5)
+    
+    holoCreate(140, E:toWorld(vec(0, 0, 0)+Vec1), vec(1,1,1.2), E:toWorld(ang(0,90,90)), vec(255), "models/sprops/geometry/fhex_144.mdl")
+    holoParent(140, E)
+    holoMaterial(140, "")
+    
+    #holoCreate(141, E:toWorld(vec(-97, 0, 0)+Vec1), vec(0.8,1,1.1)*0.8, E:toWorld(ang(0,90,90)), vec(255), "models/sprops/geometry/fhex_144.mdl")
+    holoParent(141, 140)
+    holoMaterial(141, "")
+    
+    holoCreate(142, E:toWorld(vec(62.7, 0, -11.5)+Vec1), vec(1), E:toWorld(ang(0,90,225)), vec(255), "models/sprops/geometry/hhex_72.mdl")
+    holoParent(142, 140)
+    holoMaterial(142, "")
+    
+    holoCreate(143, E:toWorld(vec(33, 42.7, -11.5)+Vec1), vec(1.13,1,1), E:toWorld(ang(0,154.3,225)), vec(255), "models/sprops/geometry/hhex_72.mdl")
+    holoParent(143, 140)
+    holoMaterial(143, "")
+
+    holoCreate(144, E:toWorld(vec(33, -42.7, -11.5)+Vec1), vec(1.13,1,1), E:toWorld(ang(0,-154.3,135)), vec(255), "models/sprops/geometry/hhex_72.mdl")
+    holoParent(144, 140)
+    holoMaterial(144, "")
+    
+    holoCreate(145, E:toWorld(vec(-33, 42.7, -11.5)+Vec1), vec(1.13,1,1), E:toWorld(ang(0,-154.3,225)), vec(255), "models/sprops/geometry/hhex_72.mdl")
+    holoParent(145, 140)
+    holoMaterial(145, "")
+
+    holoCreate(146, E:toWorld(vec(-33, -42.7, -11.5)+Vec1), vec(1.13,1,1), E:toWorld(ang(0,154.3,135)), vec(255), "models/sprops/geometry/hhex_72.mdl")
+    holoParent(146, 140)
+    holoMaterial(146, "")
+    
+    holoCreate(147, E:toWorld(vec(-62.7, 0, -11.5)+Vec1), vec(1), E:toWorld(ang(0,90,-225)), vec(255), "models/sprops/geometry/hhex_72.mdl")
+    holoParent(147, 140)
+    holoMaterial(147, "")
+    
+    holoCreate(148, E:toWorld(vec(0, 0, -17.5)), vec(1,1,1.2)*0.66, E:toWorld(ang(0,90,90)), vec(255), "models/sprops/geometry/fhex_144.mdl")
+    holoParent(148, 140)
+    holoMaterial(148, "")
+
+
+
+
+    holoCreate(149, E:toWorld(vec(0, 86, 16)), vec(1.2,1,1), E:toWorld(ang(0,0,27)), vec(255), "models/sprops/geometry/hhex_72.mdl")
+    holoParent(149, E)
+    holoMaterial(149, "")
+
+    holoCreate(150, E:toWorld(vec(51, 77.3, 16.2)), vec(0.8,1,1.1), E:toWorld(ang(0,-25,219)), vec(255), "models/sprops/geometry/hhex_72.mdl")
+    holoParent(150, E)
+    holoMaterial(150, "")
+    
+    holoCreate(151, h(150):toWorld(vec(34, 0.5, -0.2)), vec(0.8,1,1.1), h(150):toWorld(ang(0,0,180)), vec(255), "models/sprops/geometry/hhex_72.mdl")
+    holoParent(151, 150)
+    holoMaterial(151, "")
+    
+    holoCreate(152, E:toWorld(vec(-51, 77.3, 16.2)), vec(0.8,1,1.1), E:toWorld(ang(0,180+25,-219)), vec(255), "models/sprops/geometry/hhex_72.mdl")
+    holoParent(152, E)
+    holoMaterial(152, "")
+    
+    holoCreate(153, h(152):toWorld(vec(34, -0.5, -0.2)), vec(0.8,1,1.1), h(152):toWorld(ang(0,0,180)), vec(255), "models/sprops/geometry/hhex_72.mdl")
+    holoParent(153, 152)
+    holoMaterial(153, "")
+    
+    
+    
+    
+    holoCreate(154, E:toWorld(vec(0, -86, 16)), vec(1.2,1,1), E:toWorld(ang(0,0,-27)), vec(255), "models/sprops/geometry/hhex_72.mdl")
+    holoParent(154, E)
+    holoMaterial(154, "")
+
+    holoCreate(155, E:toWorld(vec(51, -77.3, 16.2)), vec(0.8,1,1.1), E:toWorld(ang(0,25,-219)), vec(255), "models/sprops/geometry/hhex_72.mdl")
+    holoParent(155, E)
+    holoMaterial(155, "")
+    
+    holoCreate(156, h(155):toWorld(vec(34, -0.5, -0.2)), vec(0.8,1,1.1), h(155):toWorld(ang(0,0,180)), vec(255), "models/sprops/geometry/hhex_72.mdl")
+    holoParent(156, 155)
+    holoMaterial(156, "")
+    
+    holoCreate(157, E:toWorld(vec(-51, -77.3, 16.2)), vec(0.8,1,1.1), E:toWorld(ang(0,180-25,219)), vec(255), "models/sprops/geometry/hhex_72.mdl")
+    holoParent(157, E)
+    holoMaterial(157, "")
+    
+    holoCreate(158, h(157):toWorld(vec(34, 0.5, -0.2)), vec(0.8,1,1.1), h(157):toWorld(ang(0,0,180)), vec(255), "models/sprops/geometry/hhex_72.mdl")
+    holoParent(158, 157)
+    holoMaterial(158, "")
+
+
+
+    holoCreate(159, E:toWorld(vec(0, 50.3, 29.1)), vec(0.9,2,1), E:toWorld(ang(0,0,0)), vec(255), "models/sprops/rectangles/size_3_5/rect_30x48x3.mdl")
+    holoParent(159, E)
+    holoMaterial(159, "")
+    
+    holoCreate(160, h(159):toWorld(vec(42.7, -13.1, -0.5)), vec(1.62,2,1), h(159):toWorld(ang(0,-25,0)), vec(255), "models/sprops/rectangles/size_3_5/rect_30x48x3.mdl")
+    holoParent(160, 159)
+    holoMaterial(160, "")
+    
+    holoCreate(161, h(159):toWorld(vec(-42.7, -13.1, -0.5)), vec(1.62,2,1), h(159):toWorld(ang(0,25,0)), vec(255), "models/sprops/rectangles/size_3_5/rect_30x48x3.mdl")
+    holoParent(161, 159)
+    holoMaterial(161, "")
+    
+
+    holoCreate(162, E:toWorld(vec(0, -50.3, 29.1)), vec(0.9,2,1), E:toWorld(ang(0,180,0)), vec(255), "models/sprops/rectangles/size_3_5/rect_30x48x3.mdl")
+    holoParent(162, E)
+    holoMaterial(162, "")
+    
+    holoCreate(163, h(162):toWorld(vec(42.7, -13.1, -0.5)), vec(1.62,2,1), h(162):toWorld(ang(0,-25,0)), vec(255), "models/sprops/rectangles/size_3_5/rect_30x48x3.mdl")
+    holoParent(163, 162)
+    holoMaterial(163, "")
+    
+    holoCreate(164, h(162):toWorld(vec(-42.7, -13.1, -0.5)), vec(1.62,2,1), h(162):toWorld(ang(0,25,0)), vec(255), "models/sprops/rectangles/size_3_5/rect_30x48x3.mdl")
+    holoParent(164, 162)
+    holoMaterial(164, "")
+    
+    
+        Sc = vec(0.7,0.7,0.7)
+        Offset = vec(-178,0,12)
+        
+    holoCreate(164+1, E:toWorld((vec(0, 50.3, 29.1)+Offset)*Sc), vec(0.9,2,1)*Sc, E:toWorld(ang(0,0,0)), vec(255), "models/sprops/rectangles/size_3_5/rect_30x48x3.mdl")
+    holoParent(164+1, E)
+    holoMaterial(164+1, "")
+    
+    holoCreate(165+1, h(164+1):toWorld((vec(42.7, -13.1, -0.5))*Sc), vec(1.62,2,1)*Sc, h(164+1):toWorld(ang(0,-25,0)), vec(255), "models/sprops/rectangles/size_3_5/rect_30x48x3.mdl")
+    holoParent(165+1, 164+1)
+    holoMaterial(165+1, "")
+    
+    holoCreate(166+1, h(164+1):toWorld((vec(-42.7, -13.1, -0.5))*Sc), vec(1.62,2,1)*Sc, h(164+1):toWorld(ang(0,25,0)), vec(255), "models/sprops/rectangles/size_3_5/rect_30x48x3.mdl")
+    holoParent(166+1, 164+1)
+    holoMaterial(166+1, "")
+    
+
+    holoCreate(167+1, E:toWorld((vec(0, -50.3, 29.1)+Offset)*Sc), vec(0.9,2,1)*Sc, E:toWorld(ang(0,180,0)), vec(255), "models/sprops/rectangles/size_3_5/rect_30x48x3.mdl")
+    holoParent(167+1, E)
+    holoMaterial(167+1, "")
+    
+    holoCreate(168+1, h(167+1):toWorld((vec(42.7, -13.1, -0.5))*Sc), vec(1.62,2,1)*Sc, h(167+1):toWorld(ang(0,-25,0)), vec(255), "models/sprops/rectangles/size_3_5/rect_30x48x3.mdl")
+    holoParent(168+1, 167+1)
+    holoMaterial(168+1, "")
+    
+    holoCreate(169+1, h(167+1):toWorld((vec(-42.7, -13.1, -0.5))*Sc), vec(1.62,2,1)*Sc, h(167+1):toWorld(ang(0,25,0)), vec(255), "models/sprops/rectangles/size_3_5/rect_30x48x3.mdl")
+    holoParent(169+1, 167+1)
+    holoMaterial(169+1, "")
+    
+    
+    
+    holoCreate(149+22, E:toWorld((vec(0, 86, 16)+Offset)*Sc), vec(1.2,1,1)*Sc, E:toWorld(ang(0,0,27)), vec(255), "models/sprops/geometry/hhex_72.mdl")
+    holoParent(149+22, E)
+    holoMaterial(149+22, "")
+
+    holoCreate(150+22, E:toWorld((vec(51, 77.3, 16.2)+Offset)*Sc), vec(0.8,1,1.1)*Sc, E:toWorld(ang(0,-25,219)), vec(255), "models/sprops/geometry/hhex_72.mdl")
+    holoParent(150+22, E)
+    holoMaterial(150+22, "")
+    
+    holoCreate(151+22, h(150+22):toWorld(vec(34, 0.5, -0.2)*Sc), vec(0.8,1,1.1)*Sc, h(150+22):toWorld(ang(0,0,180)), vec(255), "models/sprops/geometry/hhex_72.mdl")
+    holoParent(151+22, 150+22)
+    holoMaterial(151+22, "")
+    
+    holoCreate(152+22, E:toWorld((vec(-51, 77.3, 16.2)+Offset)*Sc), vec(0.8,1,1.1)*Sc, E:toWorld(ang(0,180+25,-219)), vec(255), "models/sprops/geometry/hhex_72.mdl")
+    holoParent(152+22, E)
+    holoMaterial(152+22, "")
+    
+    holoCreate(153+22, h(152+22):toWorld(vec(34, -0.5, -0.2)*Sc), vec(0.8,1,1.1)*Sc, h(152+22):toWorld(ang(0,0,180)), vec(255), "models/sprops/geometry/hhex_72.mdl")
+    holoParent(153+22, 152+22)
+    holoMaterial(153+22, "")
+    
+    
+    
+    
+    holoCreate(154+22, E:toWorld((vec(0, -86, 16)+Offset)*Sc), vec(1.2,1,1)*Sc, E:toWorld(ang(0,0,-27)), vec(255), "models/sprops/geometry/hhex_72.mdl")
+    holoParent(154+22, E)
+    holoMaterial(154+22, "")
+
+    holoCreate(155+22, E:toWorld((vec(51, -77.3, 16.2)+Offset)*Sc), vec(0.8,1,1.1)*Sc, E:toWorld(ang(0,25,-219)), vec(255), "models/sprops/geometry/hhex_72.mdl")
+    holoParent(155+22, E)
+    holoMaterial(155+22, "")
+    
+    holoCreate(156+22, h(155+22):toWorld(vec(34, -0.5, -0.2)*Sc), vec(0.8,1,1.1)*Sc, h(155+22):toWorld(ang(0,0,180)), vec(255), "models/sprops/geometry/hhex_72.mdl")
+    holoParent(156+22, 155+22)
+    holoMaterial(156+22, "")
+    
+    holoCreate(157+22, E:toWorld((vec(-51, -77.3, 16.2)+Offset)*Sc), vec(0.8,1,1.1)*Sc, E:toWorld(ang(0,180-25,219)), vec(255), "models/sprops/geometry/hhex_72.mdl")
+    holoParent(157+22, E)
+    holoMaterial(157+22, "")
+    
+    holoCreate(158+22, h(157+22):toWorld(vec(34, 0.5, -0.2)*Sc), vec(0.8,1,1.1)*Sc, h(157+22):toWorld(ang(0,0,180)), vec(255), "models/sprops/geometry/hhex_72.mdl")
+    holoParent(158+22, 157+22)
+    holoMaterial(158+22, "")
+    
+    
+    
+    
+
+    
+    #P = propSpawn("models/sprops/geometry/hhex_72.mdl", E:toWorld(vec(62.7,0,-11.5)), E:toWorld(ang(0,90,225)), 1)
+    #P:parentTo(E)
+    
+    #P = propSpawn("models/sprops/geometry/hhex_72.mdl", E:toWorld(vec(62.7,0,-11.5)), E:toWorld(ang(0,90,225)), 1)
+    #P:parentTo(E)
+    
+    
+    
+    
+    
+    
+    
+}
+#include "ACF_Hexapod_Legs"

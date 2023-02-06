@@ -1,0 +1,103 @@
+@name Hover Controls 3
+@inputs Seat:entity Base:entity Turret:entity 
+@outputs Attack1
+@persist
+@persist W A S D Shift Attack1 LookP LookY LookR Cons:array
+@trigger 
+#@model models/hunter/plates/plate1x1.mdl
+interval(30)
+
+     if(first()) { 
+        Cons = Base:getConstraints()
+        for(I = 1, Cons:count()) {
+            Cons[I, entity]:propGravity(0)
+        }
+
+    holoCreate(1)
+    holoPos(1, Base:pos()+vec(40,0, 30))
+    holoAlpha(1, 0)
+    holoParent(1, Base)
+    
+    Base:soundPlay(1, 0, "npc/scanner/combat_scan_loop6.wav")
+    Base:soundPlay(2, 0, "npc/scanner/combat_scan_loop4.wav") 
+
+}
+
+Driver = Seat:driver()
+W = Driver:keyForward()
+A = Driver:keyLeft()
+S = Driver:keyBack()
+D = Driver:keyRight()
+Shift = Driver:keySprint()
+Attack1 = Driver:keyAttack1()
+
+Base:propGravity(0)
+
+Turret:setPos(holoEntity(1):pos())
+
+
+
+
+if(Shift) {
+
+        soundVolume(1, 1000)
+
+    Sprint = 3
+} else {
+
+        soundVolume(1, 0)
+Sprint = 1
+}
+
+if(W) {
+    Forward = 35000*Sprint
+    Yaw = 3 * Sprint
+}
+if(S) {
+    Forward = -35000*Sprint
+    Yaw = -3 * Sprint
+} 
+if(!W & !S) {
+Forward = 0
+}
+
+if(A) {
+    Roll = -10
+}
+if(D) {
+    Roll = 10 
+}
+if(!A & !D) {
+Roll = 0
+}
+
+Range = rangerOffset(1000, Base:pos()+vec(0,0,-20), -Base:up()):distance()
+Hover1 = (-Base:vel():z()/3 + (40-Range))*200
+Hover2 = (-Base:vel():z()/3 + (5-Range))*200
+
+
+
+LookP = -Base:angVel():pitch()/3+     (0-Base:angles():pitch())
+LookY = -Base:angVel():yaw()/3+       (A-D)*30+(Base:vel():dot(Base:forward())/100+(Seat:angles():roll()/-20))+Yaw
+LookR = -Base:angVel():roll()/5+      (Roll-Base:angles():roll())
+
+if(Driver) {
+    
+        soundVolume(2, 1000)
+
+    
+    Base:applyForce(vec(-Base:vel():x()*100     , -Base:vel():y()*100 ,Hover1))
+    Base:applyForce(-Base:forward()*Forward)
+    
+    Turret:setAng((Driver:aimPos()-Turret:pos()):toAngle())
+} else {
+
+        soundVolume(2, 0)
+
+    Base:applyForce(vec(-Base:vel():x()*100     , -Base:vel():y()*100 ,Hover2))
+}
+
+
+Base:applyAngForce(ang(LookP*20000,LookY*20000, LookR*20000))
+
+

@@ -1,0 +1,36 @@
+@name Breaching charge
+@persist E:entity T Found:entity
+@model models/weapons/w_c4.mdl
+
+interval(1000)
+
+if(first()) {
+    E = entity()
+    T = 5
+    
+}
+findIncludeClass("prop_physics")
+findInSphere(E:pos(), 200)
+Found = findClosest(E:pos())
+if(!Found) {
+    T = 5
+}
+if(Found) {
+    T = T - 1
+}
+if(changed(T)) {
+    E:soundPlay(1, 0.1, "npc/attack_helicopter/aheli_crash_alert2.wav")
+    print(T + "s")
+}
+if(T == 0) {
+    P = propSpawn("models/props_phx/ww2bomb.mdl", E:pos(), 1)
+    Found:propFreeze(0)
+    for(I = 1, 10) {
+        Found:constraintBreak("weld", Found:getConstraints()[I, entity])
+        (Found:getConstraints())[I, entity]:propFreeze(0)
+        Found:propFreeze(0)
+    }
+    
+    P:propBreak()
+    selfDestruct()
+}

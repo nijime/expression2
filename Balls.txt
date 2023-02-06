@@ -1,0 +1,209 @@
+@name Balls
+@persist [E Seat]:entity R:ranger T I Music:array M Color:vector On Beep Fly
+@model models/holograms/hq_icosphere.mdl
+interval(100)
+if(first() | duped()) {
+    E = entity()
+    E:propFreeze(1)
+    ##models/holograms/icosphere2.mdl
+    Color = vec(255,100,170)
+    holoCreate(1, E:pos(), vec(1.5,1.5,1.5), ang(0,0,0), Color, "hq_sphere")
+    holoParent(1, E)
+    
+    holoCreate(2, E:pos(), vec(1.6,1.6,1.6), ang(0,0,0), Color/2, "hq_sphere")
+    holoParent(2, E)
+    holoAlpha(2, 120)
+    
+    holoCreate(3, E:pos(), vec(1.8,1.8,1.8), ang(0,0,0), Color/4, "hq_sphere")
+    holoParent(3, E)
+    holoAlpha(3, 70)
+    
+    holoEntity(1):setTrails(30,1,1, "trails/smoke", Color, 255)
+    
+    findIncludeModel("models/nova/airboat_seat.mdl")
+    findInSphere(E:pos(), 100)
+    Seat = findClosest(E:pos())
+    
+    findClearWhiteList()
+
+
+
+
+
+    On = 1
+    
+    Beep = 1
+    
+    Fly = 0
+
+}
+if(T < 2) {
+    T = T + 1
+    if(T == 1) {
+        T = T + 1
+        #E:constraintBreak("weld", Seat)
+    }
+}
+
+
+rangerFilter(array(E, Seat))
+R = rangerOffset(15, E:pos(), vec(0,0,-1))
+
+if(On & R:hit()) {
+    E:applyForce(vec(0,0,E:mass()*350*M))
+}
+if(changed(R:hit()) & R:hit() & On) {
+    I = I + 1
+    E:soundPlay(1, 1, "buttons/blip1.wav")
+    soundPitch(1, randint(70,150))
+    
+    if(Beep) {
+        A = propSpawn("models/props_phx/ww2bomb.mdl", E:pos(), 1)
+        A:propBreak()
+        
+        soundStop(10)
+        
+        Beep = 0
+        
+                holoColor(1, vec(70,70,70))
+                holoEntity(1):setTrails(30,1,1, "trails/smoke", vec(70,70,70), 255)
+                
+        On = 0
+        
+        E:propGravity(1)
+    }
+}
+
+if(changed(Seat)) {
+    Seat:setMass(0)
+    #noCollideAll(Seat, 1)
+    
+    Seat:setAlpha(0)
+}
+
+Seat:setPos(holoEntity(1):pos()-vec(0,0,20))
+Seat:propFreeze(1)
+
+if(Seat:driver()) {
+    Seat:propNotSolid(1)
+    
+    if(On & Seat:driver():keySprint()) {
+        M = 2
+        
+        E:applyForce(Seat:driver():eye()*E:mass()*30*M)
+    }
+    
+    if(On & Seat:driver():keyWalk()) {
+        M = 0.25
+        
+        E:applyForce(Seat:driver():eye()*E:mass()*30*M)
+    }
+    
+    if(On & !Seat:driver():keySprint() & !Seat:driver():keyWalk()) {
+        M = 1
+        
+        E:applyForce(Seat:driver():eye()*E:mass()*30*M)
+    }
+    
+    if(!On & !Fly) {
+        M = 0
+        E:applyForce(Seat:driver():eye():setZ(clamp(Seat:driver():eye():z(), -0.5, 0.5))*E:mass()*100*Seat:driver():keyForward())
+    }
+    
+    if(!On & Fly) {
+        M = 0
+        E:applyForce(Seat:driver():eye()*E:mass()*300*Seat:driver():keyForward())
+    }
+    
+    if(!Beep & changed(Seat:driver():keyReload()) & !Seat:driver():keyReload()) {
+        On = !On
+        if(On) {
+            Fly = 0
+            
+            E:propGravity(1)
+            
+            holoColor(1, Color)
+            holoEntity(1):setTrails(30,1,1, "trails/smoke", Color, 255)
+        } else {
+            Fly = 0
+            
+            holoColor(1, vec(70,70,70))
+            holoEntity(1):setTrails(30,1,1, "trails/smoke", vec(80,80,80), 255)
+            
+            E:propGravity(1)
+        }
+    }
+    
+    if(changed(Seat:driver():keyPressed("f")) & !Seat:driver():keyPressed("f")) {
+        Beep = !Beep
+        if(Beep) {
+            On = 1
+            Fly = 0
+            
+            holoColor(1, vec(255,0,0))
+            holoEntity(1):setTrails(30,1,1, "trails/smoke", vec(255,0,0), 255)
+            
+            timer("beep1", 5000)
+            
+            E:soundPlay(10, 0, "ambient/fire/gascan_ignite1.wav")
+            #soundPitch(10, 180)
+            
+            E:propGravity(1)
+            
+        } else {
+            Fly = 0
+            
+            holoColor(1, Color)
+            holoEntity(1):setTrails(30,1,1, "trails/smoke", Color, 255)
+            
+            E:propGravity(1)
+        }
+        
+    }
+    
+    if(changed(Seat:driver():keyPressed("v")) & !Seat:driver():keyPressed("v")) {
+        Fly = !Fly
+        if(Fly) {
+            On = 0
+            
+            holoColor(1, Color)
+            holoEntity(1):setTrails(30,1,1, "trails/smoke", Color, 255)
+            
+            timer("beep1", 5000)
+            
+            E:soundPlay(10, 0, "ambient/fire/gascan_ignite1.wav")
+            #soundPitch(10, 180)
+            
+            E:propGravity(0)
+            
+        } else {
+            On = 0
+            
+            holoColor(1, vec(70,70,70))
+            holoEntity(1):setTrails(30,1,1, "trails/smoke", vec(80,80,80), 255)
+            
+            E:propGravity(1)
+        }
+        
+    }
+
+} else {
+    Seat:propNotSolid(0)
+    M = 1
+}
+
+
+#[if(clk("beep1")) {
+    A = propSpawn("models/props_phx/ww2bomb.mdl", E:pos(), 1)
+    A:propBreak()
+    
+    soundStop(10)
+    
+    Beep = 0
+    
+            holoColor(1, vec(70,70,70))
+            holoEntity(1):setTrails(30,1,1, "trails/smoke", vec(70,70,70), 255)
+            
+    On = 0
+}
+]#

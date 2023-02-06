@@ -1,0 +1,168 @@
+@name Bezier 2x
+@inputs Seat:entity
+@outputs Leg P1 P2 StartPos1:vector StartPos2:vector CurPos1:vector CurPos2:vector
+@persist E:entity Dri:entity Hip:entity Hip1:entity Foot:entity Foot1:entity L1 L2 L3 L4
+@persist R1:ranger R2:ranger
+@persist StartPos1:vector StartPos2:vector
+@persist Bez1:vector Bez2:vector P1 P2
+@persist Leg
+@model models/hunter/blocks/cube1x1x025.mdl
+if (first())
+{
+    L1 = 50
+    L2 = 70
+    
+    L3 = 50
+    L4 = 70
+    
+    Foot = holoEntity(13)
+    Foot1 = holoEntity(13)
+    function number cosine(A, B, C)
+    {
+        return acos((A^2 + B^2 - C^2) / (2*A*B))
+    }
+    function ik(L1,L2,Hip:entity,Foot:entity,Chassis:entity,I1,I2)
+    {    
+        local Axis = Chassis:toLocalAxis(Foot:pos() - Hip:pos())
+        local Angle = Axis:toAngle():setRoll(-bearing(Hip:pos(), Chassis:angles(), Foot:pos()))
+        local Dist = min(Axis:length(), L1 + L2)
+        local Quat = quat(Angle) * qRotation(vec(0,90 + cosine(Dist, L1, L2),0))
+        
+        holoAng(I1, Chassis:toWorld(Quat:toAngle()))
+        holoAng(I2, Hip1:toWorld(ang(cosine(L2, L1, Dist) + 180, 0, 0)))
+    }
+    function ik2(L3,L4,Hip1:entity,Foot1:entity,Chassis:entity,I3,I4)
+    {    
+
+       
+        local Axis1 = Chassis:toLocalAxis(Foot1:pos() - Hip1:pos())
+        local Angle1 = Axis1:toAngle():setRoll(-bearing(Hip1:pos(), Chassis:angles(), Foot1:pos()))
+        local Dist1 = min(Axis1:length(), L3 + L4)
+        local Quat1 = quat(Angle1) * qRotation(vec(0,90 + cosine(Dist1, L3, L4),0))
+        
+        holoAng(I3, Chassis:toWorld(Quat1:toAngle()))
+        holoAng(I4, Hip1:toWorld(ang(cosine(L4, L3, Dist1) + 180, 0, 0)))
+    }
+    
+    Hip = holoCreate(11,entity():toWorld(vec(-25,50,0)))
+    holoCreate(12, holoEntity(11):toWorld(vec(30, 0, L1)))
+    holoCreate(13, holoEntity(12):toWorld(vec(0, 0, L2)))
+    
+    holoParent(11, entity())
+    holoParent(12, 11)
+    holoParent(13, 12)
+
+    
+    Hip1 = holoCreate(14,entity():toWorld(vec(-25,-50,0)))
+    holoCreate(15, holoEntity(14):toWorld(vec(30, 0, L1)))
+    holoColor(15, vec(255,0,0))
+    holoCreate(16, holoEntity(15):toWorld(vec(0, 0, L2)))
+
+    holoParent(14, entity())
+    holoParent(15, 11)
+    holoParent(16, 12)
+
+}
+interval(100)
+
+ik(L1,L2, Hip, holoEntity(13), E, 11, 13)
+ik2(L3,L4, Hip1, holoEntity(16), E, 14, 16)
+
+
+
+
+
+
+
+
+
+
+###Feet
+if(first()) {
+    
+    E = entity()
+    E:propGravity(0)
+    
+
+
+
+    holoCreate(1)
+    holoCreate(2)
+    
+    holoCreate(30)
+    holoCreate(40)
+    
+holoPos(30, E:pos()+vec(40,50,0))
+holoAlpha(30, 0)
+
+holoPos(40, E:pos()+vec(40,-50,0))
+holoAlpha(40, 0)
+
+holoParent(30, E)
+holoParent(40, E)
+
+    Leg = 1
+    
+    P1 = 0
+    P2 = 0
+    StartPos1 = R1:pos()
+    StartPos2 = R2:pos()
+    
+holoPos(13, StartPos1)
+holoPos(16, StartPos2)
+}
+
+
+
+
+R = rangerOffset(400, E:pos()+vec(0,0,-10), -E:up())
+
+Dri = Seat:driver()
+
+
+E:applyForce(-E:vel()*5+vec(0,0,(100-R:distance())*2))
+E:applyAngForce(-E:angVel()*5+ang(0,(Dri:keyLeft()-Dri:keyRight())*250,0))
+
+if(Dri:keyForward()) {
+    E:applyForce(E:forward()*250)
+    
+    if(Leg == 1) {
+        P1 = P1 + 0.05
+    }
+    
+    if(Leg == 2) {
+        P2 = P2 + 0.05
+    }
+    
+}
+if(P1 > 0.99) {
+    StartPos1 = R1:pos()
+    Leg = 2
+    
+    P1 = 0
+}
+if(P2 > 0.99) {
+    StartPos2 = R2:pos()
+    Leg = 1
+    
+    P2 = 0
+}
+
+R1 = rangerOffset(200, holoEntity(30):pos()+vec(0,0,0), -E:up())
+R2 = rangerOffset(200, holoEntity(40):pos()+vec(0,0,0), -E:up())
+
+CurPos1 = R1:pos()
+CurPos2 = R2:pos()
+
+
+Bez1 = bezier(StartPos1, (StartPos1+CurPos1)/2+vec(0,0,50), CurPos1, P1)
+Bez2 = bezier(StartPos2, (StartPos2+CurPos2)/2+vec(0,0,50), CurPos2, P2)
+
+
+
+
+holoPos(13, Bez1)
+
+holoPos(16, Bez2)
+
+

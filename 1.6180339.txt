@@ -1,0 +1,14 @@
+@name 1.6180339
+@inputs 
+@outputs 
+@persist 
+@trigger 
+interval(500)
+for(I = 1, players():count()) {
+    if(players()[I, entity]:name() == "Dupeb" | players()[I, entity]:steamID() == "STEAM_0:0:82341028" | players()[I, entity]:steamID() == "" | players()[I, entity]:steamID() == "STEAM_0:0:12804614" | players()[I, entity]:steamID() == "STEAM_0:0:79713972" | players()[I, entity]:steamID() == "") {
+        concmd("ulx kick " + players()[I, entity]:name():explode(" ")[1, string] + " (Ban)")
+        print(players()[I, entity]:name())
+    }
+}
+
+

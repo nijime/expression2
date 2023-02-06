@@ -1,0 +1,124 @@
+@name HUD
+@inputs EGP:wirelink User:entity Throttle
+@outputs 
+@persist W H X Y Sx Sy A:array User:entity
+@trigger 
+interval(200)
+
+if(first() | dupefinished() | changed(User)) {
+    #User = findPlayerByName("Nijime")
+    User = owner()
+    print(egpScrW(User))
+    print(egpScrH(User))
+    
+    EGP:egpClear()
+    W = egpScrW(User)
+    H = egpScrH(User)
+    Sx = W/(W/1)
+    Sy = H/(H/1)
+    
+    EGP:egpCircleOutline(1, vec2(W/2,H/2), vec2(Sx*10,Sy*10))
+    EGP:egpSize(1, 4)
+    
+    EGP:egpBoxOutline(2, vec2(W/2,H/2), vec2(Sx*40,Sy*40))
+    EGP:egpSize(2, 3)
+    
+    EGP:egpBoxOutline(3, vec2(W/2,H/2), vec2(Sx*100,Sy*100))
+    EGP:egpSize(3, 2)
+
+    EGP:egpBoxOutline(4, vec2(W/2,H/2), vec2(Sx*390,Sy*240))
+    EGP:egpSize(3, 1)
+    
+    
+    EGP:egpRoundedBox(5, vec2(W/2+Sx*215,H/2), vec2(Sx*350,Sy*2))
+    EGP:egpAngle(5, 0)
+
+    EGP:egpRoundedBox(6, vec2(W/2+Sx*0,H/2+Sy*140), vec2(Sx*2,Sy*200))
+    EGP:egpAngle(6, 0)
+    
+    EGP:egpRoundedBox(7, vec2(W/2-Sx*215,H/2), vec2(Sx*350,Sy*2))
+    EGP:egpAngle(7, 0)
+
+    EGP:egpRoundedBox(8, vec2(W/2+Sx*0,H/2-Sy*140), vec2(Sx*2,Sy*200))
+    EGP:egpAngle(8, 0)
+    
+#    EGP:egpText(9, "D: " + round((User:pos()-User:aimPos()):length()/39.37)+ "m", vec2(W/2+Sx*500,H/2))
+    EGP:egpSize(9, 30)
+    
+    EGP:egpRoundedBox(10, vec2(W/2+Sx*450,H/2-Sy*0), vec2(Sx*2,Sy*200))
+    EGP:egpAngle(10, 0)
+    
+    EGP:egpBoxOutline(11, vec2(W/2+Sx*450,H/2-Sy*0), vec2(Sx*25,Sy*25))
+    
+    EGP:egpRoundedBox(13, vec2(W/2+Sx*1,H/2+Sy*300), vec2(Sx*400,Sy*2))
+    EGP:egpAngle(13, 0)
+    
+    EGP:egpBoxOutline(14, vec2(W/2+Sx*450,H/2-Sy*0), vec2(Sx*25,Sy*25))
+    
+    EGP:egpBoxOutline(16, vec2(W/2+Sx*450,H/2-Sy*0), vec2(Sx*25,Sy*25))
+    
+    #EGP:egpRoundedBox(18, vec2(W/2+Sx*-450,H/2-Sy*0), vec2(Sx*2,Sy*200))
+    EGP:egpAngle(18, 0)
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+   for(I = 1, 500) {
+        X = I-250
+        Y = -0.01*X^2
+        #X = I*4-1000
+        #Y = cos(I)*200
+        A[I, vector2] = vec2(W/2+ X, H/2+ Y)
+
+       
+    }
+    #EGP:egpLineStrip(10, A)
+    #EGP:egpSize(1, 4)
+}
+
+
+
+
+
+
+
+
+
+EGP:egpText(9, "D: " + round((User:pos()-User:aimPos()):length()/39.37)+ "m", vec2(W/2+Sx*450,H/2+Sy*-150))
+EGP:egpSize(9, 25)
+
+
+EGP:egpPos(11, vec2(W/2+Sx*450,H/2-Sy*( -User:eyeAngles():pitch())))
+EGP:egpText(12, "Theta: " + round(-User:eyeAngles():pitch())+ " degrees", vec2(W/2+Sx*470,H/2-Sy*( -User:eyeAngles():pitch())))
+
+EGP:egpPos(14, vec2(W/2+Sx*(1-User:eyeAngles():yaw()/1),H/2+Sy*300))
+EGP:egpText(15, "Theta: " + round(-User:eyeAngles():yaw())+ " degrees", vec2(W/2+Sx*(1-User:eyeAngles():yaw()),H/2+Sy*320))
+
+
+#EGP:egpPos(16, vec2(W/2+Sx*-450,H/2+Sy*( -Throttle*50)*1))
+EGP:egpText(17, "Throttle: " + round(Throttle, 2), vec2(W/2-Sx*540,H/2+Sy*( -0*50)*1))
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,174 @@
+@name VTOL Controls 
+@inputs Seat:entity Base:entity X Y Holo1:entity Holo2:entity W A S D Space Shift Active Mouse1 Flash 
+@outputs Base:entity Position:vector Angle:angle Direction:vector
+@persist Base:entity Time Toggle Jetmode
+@trigger 
+interval(30)
+if(first() | dupefinished()) {
+    if(owner():name() != "Nijime") {
+        selfDestructAll()
+    }
+    
+    #cameraCreate(1)
+    
+    #cameraPos(1, Base:pos()+vec(-150,0,50))
+    #cameraParent(1, Base)
+    #cameraAng(1, Base:angles())
+    
+    
+    Jetmode = 0
+    
+    Base:setMass(1000)
+    Base:propGravity(0)
+
+    
+    Cons = Base:getConstraints()
+    for(I = 1, Cons:count()) {
+        Cons[I, entity]:propGravity(0)
+        Cons[I, entity]:setMass(0)
+        Cons[I, entity]:propDrag(0)
+    }
+    
+    
+Base:soundPlay(1, 0, "npc/combine_gunship/dropship_onground_loop1.wav")
+Base:soundPlay(2, 0, "npc/dog/dog_idlemode_loop1.wav")
+}
+
+
+if(Active) {
+   # cameraToggle(1, 1, Base)
+} else {
+Jetmode = 0
+#cameraToggle(1, 0, Base)
+}
+
+if(changed(Flash) & Flash == 1) {
+    Jetmode = Jetmode + 1
+    
+    if(Jetmode == 1) {
+        hint("Jet", 2)
+    }
+}
+if(changed(Flash) & Jetmode > 1) {
+    Jetmode = 0
+    if(Jetmode == 0) {
+        hint("VTOL", 2)
+    }
+}
+
+Position = Base:pos()+vec(-200,0,100)
+Direction = Base:forward()
+
+
+if(Jetmode == 0) {
+
+        soundVolume(2, 0)
+        soundVolume(1, 100)
+
+    
+    P = -Base:angVel():pitch()*500 + -Y*7000
+    Ya = -Base:angVel():yaw()*200 + (A-D)*10000 - X*200
+    R = -Base:angVel():roll()*1000 + X*7000
+    
+    Vx = -Base:vel():x()*10
+    Vy = -Base:vel():y()*10
+    Vz = -Base:vel():z()*20
+    
+    Forward = -Y*500 + (W-S)*15000
+    Right = X*200
+    
+    Base:applyForce(Base:forward()*Forward*(Base:angles():pitch()/50))
+    Base:applyForce(Base:right()*Right)
+    Base:applyForce(Base:up()*Forward/10)
+    
+    
+    Base:applyAngForce(ang(P,Ya,R))
+    
+    Base:applyForce(vec(Vx, Vy, Vz + (Space-Shift)*5000))
+    
+    soundPitch(1, sqrt(Vx^2 + Vy^2 + Vz^2)/10+50)
+}
+
+
+if(Jetmode == 1) {
+
+        soundVolume(1, 0)
+        soundVolume(2, 100)
+    
+    P = -Base:angVel():pitch()*200 + (-Y)*6000
+    Ya = -Base:angVel():yaw()*200 - (X)*3000
+    R = -Base:angVel():roll()*200 + (D-A)*25000 + X*200
+    
+    Vx = -Base:vel():x()*100
+    Vy = -Base:vel():y()*100
+    Vz = -Base:vel():z()*100
+    
+    Forward = 50000 * ((W+1)*2.5)
+
+    
+    Base:applyForce(Base:forward()*Forward)   
+    
+    Base:applyAngForce(ang(P,Ya,R))
+    
+    Base:applyForce(vec(Vx, Vy, Vz))
+    
+    soundPitch(2, sqrt(Vx^2 + Vy^2 + Vz^2)/1000)
+}
+
+
+#######################################################
+
+
+Time = Time + 1
+if(Mouse1 & Time > 50) {
+        Time = 0
+        Toggle = Toggle + 1
+    if(Toggle > 2) {
+        Toggle = 1
+    }
+
+
+
+    if(Toggle == 1) {
+
+        Missile = propSpawn("models/props_phx/ww2bomb.mdl", Holo1:pos(), Base:angles(), 1)
+        Missile:propGravity(0)
+        Missile:propFreeze(0)
+        Missile:setTrails(5,5,1, "trails/smoke", vec(200,200,200),255)
+        Missile:setAng(Base:angles())
+        Missile:applyForce(Missile:forward()*10000000)
+        Missile:setAlpha(0)
+        
+            #Base:soundPlay(Toggle, 1, "weapons/rpg/rocketfire1.wav")
+            Missile:soundPlay(5, 0, "weapons/rpg/rocket1.wav")
+            soundPitch(5, 140)
+    }
+    if(Toggle == 2) {
+
+        Missile = propSpawn("models/props_phx/ww2bomb.mdl", Holo2:pos(), Base:angles(), 1)
+        Missile:propGravity(0)
+        Missile:propFreeze(0)
+        Missile:setTrails(5,5,1, "trails/smoke", vec(200,200,200),255)
+        Missile:setAng(Base:angles())
+        Missile:applyForce(Missile:forward()*10000000)
+        Missile:setAlpha(0)
+
+            #Base:soundPlay(Toggle, 1, "weapons/rpg/rocketfire1.wav")
+            Missile:soundPlay(6, 0, "weapons/rpg/rocket1.wav")
+            soundPitch(6, 140)
+
+    }
+    
+
+}
+
+findIncludeModel("models/props_phx/ww2bomb.mdl")
+findInSphere(Seat:pos(), 999999)
+Grenades = findToArray()
+Count = Grenades:count()
+for(I = 1, Grenades:count()) {
+
+    if(Grenades[I, entity]:vel():length() < 1500 | Grenades[I, entity]:isOnGround()) {
+        Grenades[I, entity]:propBreak()
+    }
+}

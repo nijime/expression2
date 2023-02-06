@@ -1,0 +1,155 @@
+@name generic
+@inputs Thrust:entity Body:entity Pod:entity Turret:entity Thruster:entity Thruster2:entity Gun:entity
+@outputs On Pitch Yaw Left:entity Right:entity Shoot Campos:vector Camdir:angle Cameraon Camactive
+@persist Rot Time Shoot
+@trigger 
+runOnTick(10)
+runOnChat(1)
+Time = Time + 1
+O = owner()
+E = entity()
+Driver = Pod:driver()
+
+            Turret:setPos(Body:pos()+vec(0,0,-40)) #-135 0 -80
+            if(O:lastSaid():lower() == "turparent" & chatClk(O)) {
+            Turret:parentTo(Body)
+            #concmd("say Done!")
+            hint("Done!", 5)
+        }
+            if(O:lastSaid():lower() == "turdelete" & chatClk(O)) {
+            Turret:propDelete()
+            #concmd("say Done!")
+            hint("Done!", 5)
+        }
+            Gun:setPos(Turret:pos()+vec(0,0,-10))
+            Gun:setAng(ang(-Driver:eyeAngles():pitch()-260,Driver:eyeAngles():yaw()+180,Driver:eyeAngles():roll()+90))
+
+
+Campos = Body:pos()+vec(0,0,-100)
+Camdir = ang(0,Body:angles():yaw()+180,0)
+
+Pitch = O:eyeAngles():pitch()-Body:angles():pitch()
+Yaw = O:eyeAngles():yaw()+Body:angles():yaw()
+
+Body:setPos(Thrust:pos()+vec(0,0,-50))
+if(Driver:keyLeft() & !Driver:keySprint()) {
+    Rot = Rot + 1
+}
+if(Driver:keyRight() & !Driver:keySprint()) {
+    Rot = Rot - 1
+}
+
+
+if(Driver) {
+    Thrust:applyForce(Body:up()*abs(Driver:eyeAngles():pitch())*1)
+}
+if(!Driver) {
+    Body:setAng(ang(0,Rot,0))
+}
+
+
+Pod:propGravity(0)
+Pod:setMass(0)
+if(Driver:keyForward()) {
+    Thrust:applyForce(Body:up()*120)
+    Thrust:applyForce(-Body:forward()*Driver:eyeAngles():pitch()*18)
+}
+
+
+
+if(Driver:keyBack()) {
+
+    Thrust:applyForce(-Body:up()*((abs(Driver:eyeAngles():yaw() - Body:angles():yaw()) - 90)/2))
+    Thrust:applyForce(-Body:forward()*Driver:eyeAngles():pitch()*2)
+}
+
+
+
+
+
+Thruster:propGravity(0)
+Thruster2:propGravity(0)
+
+if(Driver:keyJump()) {
+
+     Thrust:applyForce(vec(0,0,140))
+}
+
+if(Driver:keySprint() & Driver:keyRight()) {
+    Thrust:applyForce((-Body:right()*abs(Driver:eyeAngles():yaw()-Body:angles():yaw()))/2)
+}
+
+if(Driver & !Driver:keyJump() & !Driver:keySprint()) {
+    Thrust:applyForce(vec(-Thrust:vel():x()/4,-Thrust:vel():y()/4,0))
+}
+
+if(Driver:keySprint() & Driver:keyLeft()) {
+    Thrust:applyForce((-Body:right()*-abs(Driver:eyeAngles():yaw()-Body:angles():yaw()))/2)
+}
+
+if(Driver:keySprint() & !Driver:keyForward() & !Driver:keyLeft() & !Driver:keyRight()) {
+    Thrust:applyForce(vec(0,0,-50))
+}
+
+if(Driver:keySprint() & Driver:keyForward() & !Driver:keyLeft() & !Driver:keyRight()) {
+    Thrust:applyForce(-Body:up()*250)
+}
+
+
+                                                                             Body:setAng(ang((-Driver:eyeAngles():pitch()+0)/2,Rot,0))
+
+
+if(Thrust:vel():z() < 0 & !Driver:keySprint() & !Driver:keyForward() & !Driver:keyBack()) {
+    Thrust:applyForce(vec(0,0,abs(Thrust:vel():z()*5)))
+}
+
+
+if(first()) {
+    Rot = Rot + 0
+for(I = 1, Thrust:getConstraints():count()) {
+    Thrust:getConstraints()[I, entity]:setMass(0)
+}
+}
+
+
+if(Driver:keyAttack1()) {
+    Turret:soundPlay(1, 50, "npc/combine_gunship/gunship_fire_loop1.wav", 50)
+    soundPitch(1, 227)
+    Shoot = 1
+} else {
+Shoot = 0
+soundPurge()
+}
+
+
+Range=rangerOffset(40,Thrust:pos()+vec(0,40,-200),-Thrust:up())
+Height=Range:distance()
+if(Height < 40) {
+    Thrust:applyForce(vec(0,0,-Thrust:vel():z()*3))
+    Thrust:propGravity(0)
+    Pod:propGravity(0)
+}
+
+if(Height > 39 & !Driver:keyJump()) {
+    Thrust:propGravity(1)
+Pod:propGravity(1)
+}
+
+if(O:lastSaid() == "Toggleflir on" & chatClk(O)) {
+    Camactive = 0
+    Camactive = Camactive + 10
+}
+if(O:lastSaid() == "Toggleflir off" & chatClk(O)) {
+    Camactive = 0
+    Camactive = Camactive - 10
+}
+if(Camactive >= 1) {
+    Cameraon = 1
+}
+if(Camactive <= 1) {
+    Cameraon = 0
+}
+
+
+
+

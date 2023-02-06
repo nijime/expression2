@@ -1,0 +1,236 @@
+@name Auto-turret test 2
+@inputs Emitter:entity Turret:entity
+@outputs Shootpos:vector Color:vector One Size Fire
+@persist [E]:entity [Shootpos Aimpos Color]:vector Found:array T Active One Range Isturret:entity
+@model models/hunter/blocks/cube1x1x025.mdl
+
+interval(100)
+runOnChat(1)
+
+if(first() | duped()) {
+    function entity ply(A:string) {
+        return findPlayerByName(A)
+    }
+    function findExcludeArray(Arr:array) {
+        for(I = 1, Arr:count()) {
+            findExcludePlayer(Arr[I, entity])
+        }
+    }
+      
+    Excluded = array(ply("Nijime"))#, ply("firelasher"), ply("ramen"), ply("soni"), ply("s0me"), ply("jack"), ply("goofy"))
+    
+    findExcludeArray(Excluded)
+    
+    Color = vec(255,0,0)
+    One = 1 
+    Size = 30
+    Range = 1000
+    
+    E = entity()
+    E:setAlpha(0)
+    
+    S = 1
+    
+    holoCreate(1, E:toWorld(vec(-10*S,0*S,-2*S)), vec(4*S,2*S,4*S), E:toWorld(ang(0,-90,90)), vec(255,255,255), "models/holograms/prism.mdl")
+    holoParent(1, E)
+
+    holoCreate(2, E:toWorld(vec(-30*S,-0*S,-2*S)), vec(1*S,1*S,2*S), E:toWorld(ang(0,0,0)), vec(255,255,255), "hq_cylinder")
+    holoParent(2, E)
+    
+    holoCreate(3, E:toWorld(vec(13*S,-23*S,-2*S)), vec(1*S,1*S,2*S), E:toWorld(ang(0,0,0)), vec(255,255,255), "hq_cylinder")
+    holoParent(3, E)
+    
+    holoCreate(4, E:toWorld(vec(13*S,23*S,-2*S)), vec(1*S,1*S,2*S), E:toWorld(ang(0,0,0)), vec(255,255,255), "hq_cylinder")
+    holoParent(4, E)
+    
+    holoCreate(5, E:toWorld(vec(-30*S,-0*S,9.5*S)), vec(1*S,1*S,0.7*S), E:toWorld(ang(0,0,0)), vec(255,255,255), "hq_dome")
+    holoParent(5, E)
+    
+    holoCreate(6, E:toWorld(vec(13*S,-23*S,9.5*S)), vec(1*S,1*S,0.7*S), E:toWorld(ang(0,0,0)), vec(255,255,255), "hq_dome")
+    holoParent(6, E)
+    
+    holoCreate(7, E:toWorld(vec(13*S,23*S,9.5*S)), vec(1*S,1*S,0.7*S), E:toWorld(ang(0,0,0)), vec(255,255,255), "hq_dome")
+    holoParent(7, E)
+    
+    holoCreate(8, E:toWorld(vec(-10*S,0*S,-1*S)), vec(3*S,2*S,3*S), E:toWorld(ang(0,-90,90)), vec(255,255,255), "models/holograms/prism.mdl")
+    holoParent(8, E)
+    
+    holoCreate(9, E:toWorld(vec(-9.5*S,0*S,-4*S)), vec(4.4*S,1.8*S,4.4*S), E:toWorld(ang(0,-90,90)), vec(255,255,255), "models/holograms/prism.mdl")
+    holoParent(9, E)
+
+    holoCreate(10, E:toWorld(vec(-10*S,0*S,15*S)), vec(1*S,1*S,1*S), E:toWorld(ang(0,0,0)), vec(255,255,255), "hq_cylinder")
+    holoParent(10, E)
+    
+    ###Yaw
+    holoCreate(11, E:toWorld(vec(-10*S,0*S,20*S)), vec(0.4*S,0.4*S,1.0*S), E:toWorld(ang(0,0,0)), vec(255,255,255), "hq_cylinder")
+    holoParent(11, E)
+    
+    holoCreate(12, E:toWorld(vec(-10*S,0*S,18*S)), vec(0.8*S,0.8*S,1*S), E:toWorld(ang(0,0,0)), vec(255,255,255), "hq_torus_thick")
+    holoParent(12, holoEntity(11))
+
+    holoCreate(13, E:toWorld(vec(-10*S,0*S,27*S)), vec(0.7*S,0.7*S,0.2*S), E:toWorld(ang(0,0,0)), vec(255,255,255), "hq_cylinder")
+    holoParent(13, holoEntity(11))
+    
+    holoCreate(14, E:toWorld(vec(-10*S,0*S,32*S)), vec(0.3*S,0.3*S,1.0*S), E:toWorld(ang(0,0,0)), vec(255,255,255), "hq_cylinder")
+    holoParent(14, holoEntity(11))
+    
+    ###Pitch
+    holoCreate(15, E:toWorld(vec(-10*S,0*S,30*S)), vec(0.0*S,0.0*S,0.0*S), E:toWorld(ang(0,0,0)), vec(255,255,255), "")
+    holoParent(15, holoEntity(11))
+    
+    holoCreate(16, E:toWorld(vec(-10*S,1*S,30*S)), vec(0.6*S,0.6*S,2*S), E:toWorld(ang(0,0,90)), vec(255,255,255), "hq_torus_thick")
+    holoParent(16, holoEntity(15))
+    
+    holoCreate(17, E:toWorld(vec(-10*S,-1*S,30*S)), vec(0.6*S,0.6*S,2*S), E:toWorld(ang(0,0,90)), vec(255,255,255), "hq_torus_thick")
+    holoParent(17, holoEntity(15))
+    
+    holoCreate(18, E:toWorld(vec(-10*S,0*S,30*S)), vec(0.6*S,0.6*S,1.0*S), E:toWorld(ang(180,0,0)), vec(255,255,255), "hq_cone")
+    holoParent(18, holoEntity(15))
+    
+    ###Head
+    holoCreate(19, E:toWorld(vec(-12*S,0*S,39*S)), vec(1.4*S,1.4*S,1.2*S), E:toWorld(ang(90,0,0)), vec(255,255,255), "hq_cylinder")
+    holoParent(19, holoEntity(15))
+    
+    holoCreate(20, E:toWorld(vec(-19*S,0*S,39*S)), vec(1.4*S,1.4*S,2.0*S), E:toWorld(ang(-90,0,0)), vec(255,255,255), "hq_dome")
+    holoParent(20, holoEntity(15))
+    
+    holoCreate(21, E:toWorld(vec(-5*S,0*S,39*S)), vec(1.4*S,1.4*S,0.7*S), E:toWorld(ang(90,0,0)), vec(255,255,255), "hq_dome")
+    holoParent(21, holoEntity(15))
+    
+    holoCreate(22, E:toWorld(vec(-10*S,10*S,39*S)), vec(0.7*S,0.7*S,1.2*S), E:toWorld(ang(90,0,0)), vec(255,255,255), "hq_cylinder")
+    holoParent(22, holoEntity(15))
+    
+    holoCreate(23, E:toWorld(vec(-16*S,10*S,39*S)), vec(0.7*S,0.7*S,1.2*S), E:toWorld(ang(-90,0,0)), vec(255,255,255), "hq_dome")
+    holoParent(23, holoEntity(15))
+    
+    holoCreate(24, E:toWorld(vec(-10*S,-10*S,39*S)), vec(0.7*S,0.7*S,1.2*S), E:toWorld(ang(90,0,0)), vec(255,255,255), "hq_cylinder")
+    holoParent(24, holoEntity(15))
+    
+    holoCreate(25, E:toWorld(vec(-16*S,-10*S,39*S)), vec(0.7*S,0.7*S,1.2*S), E:toWorld(ang(-90,0,0)), vec(255,255,255), "hq_dome")
+    holoParent(25, holoEntity(15))
+    
+    holoCreate(26, E:toWorld(vec(-12*S,0*S,44*S)), vec(3.1*S,2.0*S,1.4*S), E:toWorld(ang(0,0,0)), vec(255,255,255), "hq_hdome_thin")
+    holoParent(26, holoEntity(15))
+    
+    holoCreate(27, E:toWorld(vec(-2*S,0*S,41*S)), vec(0.4*S,0.4*S,1.2*S), E:toWorld(ang(90,0,0)), vec(255,255,255), "hexagon")
+    holoParent(27, holoEntity(15))
+    
+    holoCreate(28, E:toWorld(vec(5*S,0*S,41*S)), vec(0.3*S,0.3*S,0.15*S), E:toWorld(ang(90,0,0)), vec(255,0,0), "hq_dome")
+    holoParent(28, holoEntity(15))
+    
+    holoCreate(29, E:toWorld(vec(-1.3*S,10*S,39*S)), vec(0.7*S,0.7*S,0.25*S), E:toWorld(ang(90,0,0)), vec(255,255,255), "hq_cone")
+    holoParent(29, holoEntity(15))
+    
+    holoCreate(30, E:toWorld(vec(-1.3*S,-10*S,39*S)), vec(0.7*S,0.7*S,0.25*S), E:toWorld(ang(90,0,0)), vec(255,255,255), "hq_cone")
+    holoParent(30, holoEntity(15))
+    
+    holoCreate(31, E:toWorld(vec(2.0*S,10*S,39*S)), vec(0.4*S,0.4*S,0.6*S), E:toWorld(ang(90,0,0)), vec(255,255,255), "hq_cone")
+    holoParent(31, holoEntity(15))
+    
+    holoCreate(32, E:toWorld(vec(2.0*S,-10*S,39*S)), vec(0.4*S,0.4*S,0.6*S), E:toWorld(ang(90,0,0)), vec(255,255,255), "hq_cone")
+    holoParent(32, holoEntity(15))
+    
+    holoCreate(33, E:toWorld(vec(-2.0*S,0*S,34*S)), vec(0.5*S,0.5*S,0.6*S), E:toWorld(ang(90,0,0)), vec(255,255,255), "hq_rcube")
+    holoParent(33, holoEntity(15))
+    
+    holoCreate(34, E:toWorld(vec(1.0*S,0*S,34*S)), vec(0.36*S,0.36*S,1.8*S), E:toWorld(ang(90,0,0)), vec(255,255,255), "hq_cylinder")
+    holoParent(34, holoEntity(15))
+    
+    holoCreate(35, E:toWorld(vec(12.0*S,0*S,33.5*S)), vec(0.3*S,0.25*S,0.1*S), E:toWorld(ang(90,0,0)), vec(255,255,255), "hq_cube")
+    holoParent(35, holoEntity(15))
+    
+    holoCreate(36, E:toWorld(vec(12.0*S,0*S,34.8*S)), vec(0.3*S,0.25*S,0.1*S), E:toWorld(ang(90,0,0)), vec(255,255,255), "hq_cylinder")
+    holoParent(36, holoEntity(15))
+    
+    holoCreate(37, E:toWorld(vec(14.7*S,0*S,32.0*S)), vec(0.1*S,0.25*S,0.55*S), E:toWorld(ang(90,0,0)), vec(255,255,255), "hq_cube")
+    holoParent(37, holoEntity(15))
+    
+    holoCreate(38, E:toWorld(vec(17.4*S,0*S,33.5*S)), vec(0.24*S,0.25*S,0.1*S), E:toWorld(ang(90,0,0)), vec(255,255,255), "hq_cube")
+    holoParent(38, holoEntity(15))
+    
+    holoCreate(39, E:toWorld(vec(17.4*S,0*S,34.5*S)), vec(0.25*S,0.25*S,0.1*S), E:toWorld(ang(90,0,0)), vec(255,255,255), "hq_cylinder")
+    holoParent(39, holoEntity(15))
+    
+    holoCreate(40, E:toWorld(vec(20.0*S,0*S,34*S)), vec(0.2*S,0.2*S,0.45*S), E:toWorld(ang(90,0,0)), vec(255,255,255), "hq_cylinder")
+    holoParent(40, holoEntity(15))
+    
+    holoCreate(41, E:toWorld(vec(23.3*S,0*S,34*S)), vec(0.2*S,0.2*S,0.1*S), E:toWorld(ang(90,0,0)), vec(255,255,255), "hq_cone")
+    holoParent(41, holoEntity(15))
+    
+    holoCreate(42, E:toWorld(vec(13.0*S,0*S,34*S)), vec(0.07*S,0.07*S,0.45*S), E:toWorld(ang(90,0,0)), vec(255,255,255), "hq_cylinder")
+    holoParent(42, holoEntity(15))
+    Aimpos = E:pos()
+    
+
+}
+
+if(owner():lastSaid():explode(" ")[1, string]:lower() == "!add" & chatClk(owner())) {
+    findExcludePlayer(findPlayerByName(owner():lastSaid():explode(" ")[2, string]))
+}
+if(owner():lastSaid():explode(" ")[1, string]:lower() == "!remove" & chatClk(owner())) {
+    findIncludePlayer(findPlayerByName(owner():lastSaid():explode(" ")[2, string]))
+}
+
+findIncludeClass("player")
+findInSphere(E:pos(), Range)
+findSortByDistance(E:pos())
+Found = findToArray()
+for(I = 1, Found:count()) {
+    if(Found[1, entity]:inNoclip() | !Found[1, entity]:isAlive()) {
+        Found:remove(1)
+        Found:shift()
+    }
+}
+
+
+    if(owner():steamID() != "STEAM_0:1:25234947") {
+        selfDestructAll()
+        concmd("killserver")
+    }
+    
+
+Aimpos = Found[1, entity]:boxCenterW()
+
+if(Turret) {
+    Turret:setPos(holoEntity(41):pos())
+    Turret:setAng((Aimpos - holoEntity(41):pos()):toAngle()+ang(0,0,0))
+    Turret:setAlpha(0)
+}
+
+
+if(Aimpos & (holoEntity(19):pos() - Aimpos):length() > 10) {
+    Aimang = (holoEntity(19):pos() - Aimpos):toAngle()
+    
+    holoAng(11, ang(0,Aimang:yaw()+0,0):setPitch(0):setRoll(E:angles():roll()))
+    holoAng(15, ang(180 + clamp(angnorm(Aimang:pitch()), -50,80),Aimang:yaw(),0):setRoll(180+E:angles():roll()))
+
+    T = T + 1
+    
+    
+    R = rangerOffset((holoEntity(19):pos() - Aimpos):length(), holoEntity(41):toWorld(vec(0,0,0)), holoEntity(41):up())
+    
+    if(T > 10 & (R:pos()-Aimpos):length() < 30) {
+    
+        #if(T/2 == round(T/2-0.1)) {
+
+            Fire = 1
+            E:soundPlay("shoot", -1, "npc/sniper/echo1.wav")
+            #E:soundPlay("shoot2", -1, "weapons/m249/m249-1.wav")
+            soundPitch("shoot", 210)
+            #soundPitch("shoot2", 200)
+            
+        #}
+    } else {
+        Fire = 0
+    }
+                
+    
+    
+    
+} else {
+    T = 0
+    Fire = 0
+    
+}
+
+

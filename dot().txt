@@ -1,0 +1,12 @@
+@name dot()
+@inputs 
+@outputs Dot
+@persist 
+@trigger 
+interval(1)
+
+Dot = entity():pos():dot(vec(2,2,2))
+if(first()) {
+print(Dot)
+selfDestruct()
+}

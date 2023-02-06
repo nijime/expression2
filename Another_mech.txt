@@ -1,0 +1,580 @@
+@name Another mech
+@inputs CamAng:angle CamDir:vector
+@outputs Activated  Direction:vector Angle:angle Position:vector
+@persist [E Pod]:entity
+@persist [MainR RL RR]:ranger
+@persist [P1 P2 S1 S2 Off]:vector
+@persist S T Height Mass L1 L2 Leg T1 T2 W1 Speed TurnSpeed Activated Turn Yaw Jump JumpForce Jump2 JumpCd Time
+
+
+interval(130)
+
+Time = Time + 1
+
+if(first() | duped()) {
+    Target_Count = 120
+    
+    Activated = 1
+    
+    function entity h(N) {
+        return holoEntity(N)
+    }
+    
+    E = entity()
+    E:setMass(0)
+    E:propGravity(0)
+    #E:setAlpha(0)
+    
+    Pod = E:isWeldedTo()
+    Pod:setMass(50000)
+    Pod:propGravity(0)
+    
+    S = 1
+    
+    Off = vec(35*S,0,0)
+    
+
+    L1 = 50*S
+    L2 = 75*S
+    Leg = 1
+    
+    function number loc(A, B, C) {
+        return acos((A^2 + B^2 - C^2) / (2*A*B))
+    }
+    
+    function leg(I1, I2, I3, L1, L2, Hip:entity, Vec:vector, Base:entity, Y, P) {
+
+        local Axis = Base:toLocalAxis(Vec-Hip:pos())
+        local Ang = Axis:toAngle():setRoll(-bearing(Hip:pos(), Base:angles()+ang(P,Y,0), Vec)) + ang(0,-0,180)
+        local Dist = min(Axis:length(), L1+L2)    
+        
+        local Quat = quat(Ang) * qRotation(vec(0, loc(Dist, L1, L2)+90,0))
+
+
+        holoAng(I1, Base:toWorld(Quat:toAngle()))
+        holoAng(I2, holoEntity(I1):toWorld(ang(loc(L2,L1,Dist)+180,0,0)))
+
+        #holoPos(I3, Vec)
+        
+
+    }
+    
+    function void resetCurPos(Vec:vector) {
+        P1 = RL:pos() + Vec
+        P2 = RR:pos() + Vec
+    }
+    
+    function void resetStartPos() {
+        S1 = RL:pos()
+        S2 = RR:pos()
+    }
+    
+
+    Height = 150
+    
+    
+    Speed = 200   
+    
+    TurnSpeed = 100
+    
+    JumpForce = 300
+    
+
+    
+
+    holoCreate(1, Pod:toWorld(vec(38*S,0,0)), vec(0), ang(0,-0,0), vec(255,255,255), "")
+    holoParent(1, Pod)
+    
+    holoCreate(2, h(1):toWorld(vec(0,0,L1)), vec(0), ang(0,-0,0), vec(255,255,255), "")
+    holoParent(2, 1)
+    
+    holoCreate(3, h(2):toWorld(vec(0,0,L2)), vec(0.5), ang(0,-0,0), vec(255,255,255), "")
+    holoParent(3, 2)
+    
+    
+    #holoCreate(4, h(1):toWorld(vec(8*S,0*S,25*S)), vec(1.8*S,1.2*S,0.5*S), Pod:toWorld(ang(-75,90,-90)), vec(255,255,255), "models/props_combine/combine_barricade_bracket01b.mdl")
+    holoParent(4, 1)
+    
+    #holoCreate(5, h(2):toWorld(vec(-5*S,2*S,32*S)), vec(2.1*S,1.5*S,1*S), Pod:toWorld(ang(-110,90,90)), vec(255,255,255), "models/props_combine/combine_barricade_bracket01b.mdl")
+    holoParent(5, 2)
+    
+    holoCreate(6, h(1):toWorld(vec(0*S,0*S,0*S)), vec(1.6*S,1.6*S,0.8*S), Pod:toWorld(ang(-65,90,-90)), vec(255,255,255), "hq_cylinder")
+    holoParent(6, 1)
+    
+    holoCreate(7, h(1):toWorld(vec(0*S,0*S,0*S)), vec(1.0*S,1.0*S,1.8*S), Pod:toWorld(ang(-65,90,-90)), vec(255,255,255), "hq_cylinder")
+    holoParent(7, 1)
+    
+    holoCreate(8, h(1):toWorld(vec(0*S,0*S,0*S)), vec(1.9*S,1.9*S,7*S), Pod:toWorld(ang(-65,90,-90)), vec(255,255,255), "hq_torus")
+    holoParent(8, 1)
+    
+    holoCreate(9, h(1):toWorld(vec(0*S,7*S,28*S)), vec(0.3*S,0.7*S,4.3*S), Pod:toWorld(ang(0,0,0)), vec(255,255,255), "hq_rcube")
+    holoParent(9, 1)
+    
+    holoCreate(10, h(1):toWorld(vec(0*S,-7*S,28*S)), vec(0.3*S,0.7*S,4.3*S), Pod:toWorld(ang(0,0,0)), vec(255,255,255), "hq_rcube")
+    holoParent(10, 1)
+    
+    
+    holoCreate(11, h(2):toWorld(vec(0*S,0*S,0*S)), vec(0.5*S,0.5*S,1.7*S), Pod:toWorld(ang(-65,90,-90)), vec(255,255,255), "hq_cylinder")
+    holoParent(11, 2)
+    
+    holoCreate(12, h(2):toWorld(vec(0*S,8*S,0*S)), vec(0.8*S,0.8*S,0.2*S), Pod:toWorld(ang(-65,90,-90)), vec(255,255,255), "hq_cylinder")
+    holoParent(12, 2)  
+    
+    holoCreate(13, h(2):toWorld(vec(0*S,-8*S,0*S)), vec(0.8*S,0.8*S,0.2*S), Pod:toWorld(ang(-65,90,-90)), vec(255,255,255), "hq_cylinder")
+    holoParent(13, 2) 
+    
+    holoCreate(14, h(2):toWorld(vec(0*S,-0*S,0*S)), vec(1.0*S,1.0*S,0.5*S), Pod:toWorld(ang(-65,90,-90)), vec(255,255,255), "hq_cylinder")
+    holoParent(14, 2) 
+    
+    
+    holoCreate(15, h(1):toWorld(vec(5*S,-0*S,28*S)), vec(0.5*S,0.9*S,3.9*S), Pod:toWorld(ang(0,0,0)), vec(255,255,255), "hq_cylinder")
+    holoParent(15, 1)
+    
+    holoCreate(16, h(1):toWorld(vec(-3*S,-0*S,14*S)), vec(4.8*S,2.2*S,2.5*S), Pod:toWorld(ang(90,90,90)), vec(255,255,255), "hq_torus")
+    holoParent(16, 1)
+    
+
+    holoCreate(17, h(2):toWorld(vec(-0*S,-4*S,12*S)), vec(0.8*S,2.8*S,2.5*S), Pod:toWorld(ang(0,90,90)), vec(255,255,255), "hq_torus")
+    holoParent(17, 2)
+    
+    holoCreate(18, h(2):toWorld(vec(-0*S,4*S,12*S)), vec(0.8*S,2.8*S,2.5*S), Pod:toWorld(ang(0,90,90)), vec(255,255,255), "hq_torus")
+    holoParent(18, 2)
+    
+    holoCreate(19, h(2):toWorld(vec(2*S,0*S,22*S)), vec(0.4*S,0.8*S,4.5*S), Pod:toWorld(ang(0,0,0)), vec(255,255,255), "hq_rcube")
+    holoParent(19, 2)
+    
+    holoCreate(20, h(2):toWorld(vec(5*S,0*S,17*S)), vec(1.2*S,4.1*S,3.1*S), Pod:toWorld(ang(0,90,90)), vec(255,255,255), "hq_torus")
+    holoParent(20, 2)
+    
+    holoCreate(21, h(2):toWorld(vec(-0*S,0*S,23*S)), vec(0.5*S,0.5*S,1.4*S), Pod:toWorld(ang(0,90,90)), vec(255,255,255), "hq_cylinder")
+    holoParent(21, 2)
+    
+    holoCreate(22, h(2):toWorld(vec(-0*S,6*S,23*S)), vec(0.8*S,0.8*S,0.1*S), Pod:toWorld(ang(0,90,90)), vec(255,255,255), "hq_cylinder")
+    holoParent(22, 2)
+    
+    holoCreate(23, h(2):toWorld(vec(-0*S,-6*S,23*S)), vec(0.8*S,0.8*S,0.1*S), Pod:toWorld(ang(0,90,90)), vec(255,255,255), "hq_cylinder")
+    holoParent(23, 2)
+    
+    holoCreate(24, h(2):toWorld(vec(0*S,3*S,46*S)), vec(0.3*S,0.4*S,3.4*S), Pod:toWorld(ang(0,0,0)), vec(255,255,255), "hq_rcube")
+    holoParent(24, 2)
+    
+    holoCreate(25, h(2):toWorld(vec(0*S,-3*S,46*S)), vec(0.3*S,0.4*S,3.4*S), Pod:toWorld(ang(0,0,0)), vec(255,255,255), "hq_rcube")
+    holoParent(25, 2)
+    
+    holoCreate(26, h(2):toWorld(vec(0*S,3*S,43*S)), vec(0.3*S,0.6*S,3.2*S), Pod:toWorld(ang(0,90,0)), vec(255,255,255), "hq_cylinder")
+    holoParent(26, 2)
+    
+    holoCreate(27, h(2):toWorld(vec(0*S,-3*S,43*S)), vec(0.3*S,0.6*S,3.2*S), Pod:toWorld(ang(0,90,0)), vec(255,255,255), "hq_cylinder")
+    holoParent(27, 2)
+    
+    
+    
+    
+    holoCreate(28, h(3):toWorld(vec(0*S,0*S,-6*S)), vec(1.2*S,1.2*S,1*S), Pod:toWorld(ang(90,90,90)), vec(255,255,255), "hq_torus_thick")
+    holoParent(28, 3)
+    
+    holoCreate(29, h(3):toWorld(vec(0*S,0*S,-6*S)), vec(0.8*S,0.8*S,0.8*S), Pod:toWorld(ang(90,90,90)), vec(255,255,255), "hq_cylinder")
+    holoParent(29, 3)
+    
+    holoCreate(30, h(3):toWorld(vec(1*S,0*S,-4*S)), vec(1.0*S,0.6*S,1.2*S), Pod:toWorld(ang(0,0,45)), vec(255,255,255), "hq_rcube")
+    holoParent(30, 3)
+    
+    holoCreate(31, h(30):toWorld(vec(8*S,0*S,-1*S)), vec(1.4*S,0.4*S,0.5*S), h(30):toWorld(ang(-0,40,0)), vec(255,255,255), "hq_rcube")
+    holoParent(31, 3)
+    
+    holoCreate(32, h(30):toWorld(vec(0*S,2*S,-10*S)), vec(0.7*S,0.6*S,1.5*S), h(30):toWorld(ang(0,0,30)), vec(255,255,255), "hq_rcube")
+    holoParent(32, 3)
+
+    holoCreate(33, h(30):toWorld(vec(0*S,2*S,10*S)), vec(0.4*S,0.6*S,1.1*S), h(30):toWorld(ang(0,0,-30)), vec(255,255,255), "hq_rcube")
+    holoParent(33, 3)
+    
+#############################################################
+
+
+
+
+
+
+
+    holoCreate(40, Pod:toWorld(vec(-38*S,-0*S,-0*S)), vec(0), ang(0,-0,0), vec(255,255,255), "")
+    holoParent(40, Pod)
+    
+    holoCreate(41, h(40):toWorld(vec(0,0,L1)), vec(0), ang(0,-0,0), vec(255,255,255), "")
+    holoParent(41, 40)
+    
+    holoCreate(42, h(41):toWorld(vec(0,0,L2)), vec(0.5), ang(0,-0,0), vec(255,255,255), "")
+    holoParent(42, 41)
+    
+
+    
+    holoCreate(45, h(40):toWorld(vec(0*S,0*S,0*S)), vec(1.6*S,1.6*S,0.8*S), Pod:toWorld(ang(-65,90,-90)), vec(255,255,255), "hq_cylinder")
+    holoParent(45, 40)
+    
+    holoCreate(46, h(40):toWorld(vec(0*S,0*S,0*S)), vec(1.0*S,1.0*S,1.8*S), Pod:toWorld(ang(-65,90,-90)), vec(255,255,255), "hq_cylinder")
+    holoParent(46, 40)
+    
+    holoCreate(47, h(40):toWorld(vec(0*S,0*S,0*S)), vec(1.9*S,1.9*S,7*S), Pod:toWorld(ang(-65,90,-90)), vec(255,255,255), "hq_torus")
+    holoParent(47, 40)
+    
+    holoCreate(48, h(40):toWorld(vec(0*S,7*S,28*S)), vec(0.3*S,0.7*S,4.3*S), Pod:toWorld(ang(0,0,0)), vec(255,255,255), "hq_rcube")
+    holoParent(48, 40)
+    
+    holoCreate(49, h(40):toWorld(vec(0*S,-7*S,28*S)), vec(0.3*S,0.7*S,4.3*S), Pod:toWorld(ang(0,0,0)), vec(255,255,255), "hq_rcube")
+    holoParent(49, 40)
+    
+    
+    holoCreate(50, h(41):toWorld(vec(0*S,0*S,0*S)), vec(0.5*S,0.5*S,1.7*S), Pod:toWorld(ang(-65,90,-90)), vec(255,255,255), "hq_cylinder")
+    holoParent(50, 41)
+    
+    holoCreate(51, h(41):toWorld(vec(0*S,8*S,0*S)), vec(0.8*S,0.8*S,0.2*S), Pod:toWorld(ang(-65,90,-90)), vec(255,255,255), "hq_cylinder")
+    holoParent(51, 41)  
+    
+    holoCreate(52, h(41):toWorld(vec(0*S,-8*S,0*S)), vec(0.8*S,0.8*S,0.2*S), Pod:toWorld(ang(-65,90,-90)), vec(255,255,255), "hq_cylinder")
+    holoParent(52, 41) 
+    
+    holoCreate(53, h(41):toWorld(vec(0*S,-0*S,0*S)), vec(1.0*S,1.0*S,0.5*S), Pod:toWorld(ang(-65,90,-90)), vec(255,255,255), "hq_cylinder")
+    holoParent(53, 41) 
+    
+    
+    holoCreate(54, h(40):toWorld(vec(5*S,-0*S,28*S)), vec(0.5*S,0.9*S,3.9*S), Pod:toWorld(ang(0,0,0)), vec(255,255,255), "hq_cylinder")
+    holoParent(54, 40)
+    
+    holoCreate(55, h(40):toWorld(vec(-3*S,-0*S,14*S)), vec(4.8*S,2.2*S,2.5*S), Pod:toWorld(ang(90,90,90)), vec(255,255,255), "hq_torus")
+    holoParent(55, 40)
+    
+
+    holoCreate(56, h(41):toWorld(vec(-0*S,-4*S,12*S)), vec(0.8*S,2.8*S,2.5*S), Pod:toWorld(ang(0,90,90)), vec(255,255,255), "hq_torus")
+    holoParent(56, 41)
+    
+    holoCreate(57, h(41):toWorld(vec(-0*S,4*S,12*S)), vec(0.8*S,2.8*S,2.5*S), Pod:toWorld(ang(0,90,90)), vec(255,255,255), "hq_torus")
+    holoParent(57, 41)
+    
+    holoCreate(58, h(41):toWorld(vec(2*S,0*S,22*S)), vec(0.4*S,0.8*S,4.5*S), Pod:toWorld(ang(0,0,0)), vec(255,255,255), "hq_rcube")
+    holoParent(58, 41)
+    
+    holoCreate(59, h(41):toWorld(vec(5*S,0*S,17*S)), vec(1.2*S,4.1*S,3.1*S), Pod:toWorld(ang(0,90,90)), vec(255,255,255), "hq_torus")
+    holoParent(59, 41)
+    
+    holoCreate(60, h(41):toWorld(vec(-0*S,0*S,23*S)), vec(0.5*S,0.5*S,1.4*S), Pod:toWorld(ang(0,90,90)), vec(255,255,255), "hq_cylinder")
+    holoParent(60, 41)
+    
+    holoCreate(61, h(41):toWorld(vec(-0*S,6*S,23*S)), vec(0.8*S,0.8*S,0.1*S), Pod:toWorld(ang(0,90,90)), vec(255,255,255), "hq_cylinder")
+    holoParent(61, 41)
+    
+    holoCreate(62, h(41):toWorld(vec(-0*S,-6*S,23*S)), vec(0.8*S,0.8*S,0.1*S), Pod:toWorld(ang(0,90,90)), vec(255,255,255), "hq_cylinder")
+    holoParent(62, 41)
+    
+    holoCreate(63, h(41):toWorld(vec(0*S,3*S,46*S)), vec(0.3*S,0.4*S,3.4*S), Pod:toWorld(ang(0,0,0)), vec(255,255,255), "hq_rcube")
+    holoParent(63, 41)
+    
+    holoCreate(64, h(41):toWorld(vec(0*S,-3*S,46*S)), vec(0.3*S,0.4*S,3.4*S), Pod:toWorld(ang(0,0,0)), vec(255,255,255), "hq_rcube")
+    holoParent(64, 41)
+    
+    holoCreate(65, h(41):toWorld(vec(0*S,3*S,43*S)), vec(0.3*S,0.6*S,3.2*S), Pod:toWorld(ang(0,90,0)), vec(255,255,255), "hq_cylinder")
+    holoParent(65, 41)
+    
+    holoCreate(66, h(41):toWorld(vec(0*S,-3*S,43*S)), vec(0.3*S,0.6*S,3.2*S), Pod:toWorld(ang(0,90,0)), vec(255,255,255), "hq_cylinder")
+    holoParent(66, 41)
+    
+    
+    
+    
+    holoCreate(67, h(42):toWorld(vec(0*S,0*S,-6*S)), vec(1.2*S,1.2*S,1*S), Pod:toWorld(ang(90,90,90)), vec(255,255,255), "hq_torus_thick")
+    holoParent(67, 42)
+    
+    holoCreate(68, h(42):toWorld(vec(0*S,0*S,-6*S)), vec(0.8*S,0.8*S,0.8*S), Pod:toWorld(ang(90,90,90)), vec(255,255,255), "hq_cylinder")
+    holoParent(68, 42)
+    
+    holoCreate(69, h(42):toWorld(vec(1*S,0*S,-4*S)), vec(1.0*S,0.6*S,1.2*S), Pod:toWorld(ang(0,0,45)), vec(255,255,255), "hq_rcube")
+    holoParent(69, 42)
+    
+    holoCreate(70, h(69):toWorld(vec(-8*S,0*S,-1*S)), vec(1.4*S,0.4*S,0.5*S), h(69):toWorld(ang(-0,-40,0)), vec(255,255,255), "hq_rcube")
+    holoParent(70, 42)
+    
+    holoCreate(71, h(69):toWorld(vec(0*S,2*S,-10*S)), vec(0.7*S,0.6*S,1.5*S), h(69):toWorld(ang(0,0,30)), vec(255,255,255), "hq_rcube")
+    holoParent(71, 42)
+
+    holoCreate(72, h(69):toWorld(vec(0*S,2*S,10*S)), vec(0.4*S,0.6*S,1.1*S), h(69):toWorld(ang(0,0,-30)), vec(255,255,255), "hq_rcube")
+    holoParent(72, 42)
+    
+    
+    
+    
+    
+    holoCreate(73, Pod:toWorld(vec(-30*S,0*S,0*S)), vec(1.6*S,1.6*S,2.0*S), Pod:toWorld(ang(90,0,0)), vec(255,255,255), "hq_torus_thick")
+    holoParent(73, Pod)
+    
+    holoCreate(74, Pod:toWorld(vec(30*S,0*S,0*S)), vec(1.6*S,1.6*S,2.0*S), Pod:toWorld(ang(90,0,0)), vec(255,255,255), "hq_torus_thick")
+    holoParent(74, Pod)
+    
+    holoCreate(75, Pod:toWorld(vec(-30*S,0*S,0*S)), vec(1.6*S,1.6*S,0.7*S), Pod:toWorld(ang(90,0,0)), vec(255,255,255), "hq_dome")
+    holoParent(75, Pod)
+    
+    holoCreate(76, Pod:toWorld(vec(30*S,0*S,0*S)), vec(1.6*S,1.6*S,0.7*S), Pod:toWorld(ang(-90,0,0)), vec(255,255,255), "hq_dome")
+    holoParent(76, Pod)
+    
+    holoCreate(77, Pod:toWorld(vec(0*S,0*S,0*S)), vec(0.8*S,0.8*S,4.6*S), Pod:toWorld(ang(-90,0,0)), vec(255,255,255), "hq_cylinder")
+    holoParent(77, Pod)
+    
+    holoCreate(78, Pod:toWorld(vec(0*S,0*S,0*S)), vec(1.3*S,1.3*S,2.8*S), Pod:toWorld(ang(-90,0,0)), vec(255,255,255), "hq_cylinder")
+    holoParent(78, Pod)
+    
+    holoCreate(79, Pod:toWorld(vec(0*S,-0*S,0*S)), vec(1.3*S,3.2*S,4.0*S), Pod:toWorld(ang(-90,0,0)), vec(255,255,255), "hq_rcube")
+    holoParent(79, 78)
+    
+    holoCreate(80, Pod:toWorld(vec(0*S,-30*S,2.4*S)), vec(2.8*S,2.6*S,1.3*S), Pod:toWorld(ang(-0,0,-12)), vec(255,255,255), "hq_rcube")
+    holoParent(80, 78)
+    
+    holoCreate(81, Pod:toWorld(vec(0*S,-10*S,5*S)), vec(1.3*S,6.2*S,2.8*S), Pod:toWorld(ang(-90,0,0)), vec(255,255,255), "hq_rcube")
+    holoParent(81, 78)
+    
+    
+    holoCreate(82, Pod:toWorld(vec(23*S,-0*S,7.3*S)), vec(1.8*S,3.2*S,2.0*S), Pod:toWorld(ang(-130,0,0)), vec(255,255,255), "hq_rcube")
+    holoParent(82, 78)
+    
+    holoCreate(83, Pod:toWorld(vec(-23*S,-0*S,7.3*S)), vec(1.8*S,3.2*S,2.0*S), Pod:toWorld(ang(-50,0,0)), vec(255,255,255), "hq_rcube")
+    holoParent(83, 78)
+    
+    
+    holoCreate(84, Pod:toWorld(vec(-20*S,-28*S,7.3*S)), vec(1.3*S,3.2*S,2.0*S), Pod:toWorld(ang(-50,16,-18)), vec(255,255,255), "hq_rcube")
+    holoParent(84, 78)
+    
+    holoCreate(85, Pod:toWorld(vec(20*S,-28*S,7.3*S)), vec(1.3*S,3.2*S,2.0*S), Pod:toWorld(ang(-130,-16,18)), vec(255,255,255), "hq_rcube")
+    holoParent(85, 78)
+    
+    holoCreate(86, Pod:toWorld(vec(0*S,-43.2*S,9.7*S)), vec(0.8*S,2.9*S,2.9*S), Pod:toWorld(ang(18,90,0)), vec(255,255,255), "hq_rcube")
+    holoPos(86, h(86):pos() + h(86):up()*5 * (Time == 1))
+    holoParent(86, 78)
+
+    holoCreate(87, Pod:toWorld(vec(0*S,-10.2*S,15.7*S)), vec(4.0*S,6.0*S,4.0*S), Pod:toWorld(ang(0,0,0)), vec(50,150,200), "hq_sphere")
+    holoAlpha(87, 100)
+    holoParent(87, 78)
+    
+    holoCreate(88, Pod:toWorld(vec(0*S,-10.2*S,15.7*S)), vec(-4.0*S,-6.0*S,-4.0*S), Pod:toWorld(ang(0,0,0)), vec(50,150,200), "hq_sphere")
+    holoAlpha(88, 100)
+    holoParent(88, 78)
+    
+    holoCreate(89, Pod:toWorld(vec(0*S,-10.2*S,15.7*S)), vec(4.3*S,6.3*S,4.0*S), Pod:toWorld(ang(90,0,0)), vec(255,255,255), "hq_torus_thin")
+    holoParent(89, 78)
+    
+
+
+
+
+
+    
+    
+    Position = vec(0,0,50)
+
+
+
+
+
+
+}
+
+if(Time < 10 & holoCanCreate()) {
+
+
+
+    
+    #[holoCreate(90, Pod:toWorld(vec(31*S,0*S,15*S)), vec(0.5*S,0.5*S,0.5*S), ang(0,0,0), vec(255,255,255), "")
+    holoParent(90, Pod)
+
+
+    holoCreate(91, h(90):toWorld(vec(0*S,-8*S,0*S)), vec(4*S,0.2*S,0.7*S), h(90):toWorld(ang(0,0,0)), vec(255,255,255), "hq_rcube")
+    holoParent(91, 90)
+    
+    holoCreate(92, h(90):toWorld(vec(20*S,-8*S,0*S)), vec(5*S,0.2*S,0.4*S), h(90):toWorld(ang(0,0,0)), vec(255,255,255), "hq_rcube")
+    holoParent(92, 90)
+    
+    ]#
+    
+}
+
+if(!owner() | owner():steamID() != "STEAM_0:1:25234947") {
+    selfDestructAll()
+}
+
+Direction = Pod:forward()
+Angle = Pod:forward():toAngle()
+
+
+Dri = Pod:driver()
+W = Dri:keyForward()
+A = Dri:keyLeft()
+Ss = Dri:keyBack()
+D = Dri:keyRight()
+Shift = Dri:keySprint()
+Space = Dri:keyJump()
+V = Dri:keyPressed("v")
+
+
+
+rangerFilter(array(Pod))
+rangerFilter(players())
+MainR = rangerOffset(Height, Pod:pos(), vec(0,0,-1))
+
+rangerFilter(players())
+RL = rangerOffset(Height+10, Pod:toWorld(vec(42,20,0)), vec(0,0,-1))
+
+rangerFilter(players())
+RR = rangerOffset(Height+10, Pod:toWorld(vec(-42,20,0)), vec(0,0,-1))
+
+
+
+if(MainR:hit() & !Jump) {
+    
+    Pod:applyForce(-Pod:vel()*Pod:mass() + vec(0,0, (Height/1.5) - MainR:distance())*Pod:mass()*4)
+    
+    Pod:applyTorque(-Pod:angVelVector()*Pod:mass() + vec((0-Pod:angles():roll()), (0-Pod:angles():pitch()), 0)*Pod:mass()*1)
+    
+
+} elseif(!MainR:hit()) {
+
+    Pod:applyForce(vec(0,0, -25)*Pod:mass())
+
+    Pod:applyTorque(-Pod:angVelVector()*Pod:mass() + vec((0-Pod:angles():roll()), (0-Pod:angles():pitch()), 0)*Pod:mass()*1)
+
+    Jump = 0
+    
+    if(Dri) {
+        resetCurPos(vec(0,0,50))
+    }
+    
+}
+
+    if(changed(MainR:hit()) & !Jump & MainR:hit()) {
+        Pod:setTrails(0, 0, 0, "", vec(150,150,150), 0)
+    }
+    
+    
+    
+if(changed(Dri)) {
+    holoAlpha(87, 100*Dri:isValid())
+    holoAlpha(88, 100*Dri:isValid())
+    
+    Height = 150 - (!Dri:isValid()*75)
+    
+    resetStartPos()
+    resetCurPos(vec(0,0,0))
+    
+    if(Dri) {
+        Pod:soundPlay(3, 1, "npc/dog/dog_playfull5.wav")
+    } else {
+        Pod:soundPlay(3, 1, "npc/dog/dogphrase14.wav")
+    }
+}
+if(Dri) {
+    
+    Ops = ops()
+    
+    #print(Ops)
+        local Ang = Pod:angles()
+        
+holoAng(90, CamAng)
+    
+    if(changed(MainR:hit())) {
+        resetCurPos(vec(0,0,0))
+        resetStartPos()
+    }
+    
+    
+    if(changed(Space) & Space & !V) {
+        
+        if(MainR:hit() & !Jump & !Jump2) {
+            Jump = 1
+            
+            local Vel = E:vel() / E:vel():length()
+            Pod:applyForce((Vel*Pod:mass()*900):setZ(JumpForce*Pod:mass()))
+            
+            Pod:soundPlay(1, 1, "weapons/rpg/rocketfire1.wav")
+            soundPitch(1, 150)
+            
+            Pod:setTrails(10, 60, 1, "trails/smoke", vec(150,150,150), 255)
+        }
+        
+    }
+    
+    if(MainR:hit()) {
+        
+        
+        if((W | Ss) & Jump < 0.1) {
+                
+            Pod:applyForce(Pod:forward() * Speed * Pod:mass() * (W-(Ss-0.3)) * (Shift+1))
+                
+        }
+                
+            
+        if((A | D) & Jump < 0.1) {
+                
+            Pod:applyForce(Pod:right() * Speed * Pod:mass() * (D-A) * 1 * (Shift+1))
+                
+        }
+        
+            local Yaw = round(CamDir:dot(Pod:right()), 3)
+            local Turn = angnorm(angnorm((Pod:angles():yaw()+90)) - angnorm(CamAng:yaw())) > 40 ? 1 : 0
+           
+        if(Turn & (!Jump | Jump2)) {
+            Pod:applyAngForce(-Pod:angVel()*Pod:mass()*2 + ang(0, -Yaw / abs(Yaw), 0)*Pod:mass()*TurnSpeed)
+            
+        } elseif(abs((Pod:angles():yaw()+90) - CamAng:yaw()) > 2 & !Jump) {
+            Pod:applyAngForce(-Pod:angVel()*Pod:mass()*3+ ang(0, -Yaw, 0)*Pod:mass()*TurnSpeed)
+            
+        }
+    
+            
+    #####################################################################
+            if(((W | A | D | Ss | abs(Yaw) > 0.1 | W1)) | Jump > 0.1) {
+                if(Leg == 1) {
+                    W1 = 1 
+                    
+                    T1 = T1 + 0.1 + (Shift * 0.05)
+                    
+                    P1 = bezier(S1, mix(S1, RL:pos(), 0.33)+vec(0,0,50*S), RL:pos(), T1)
+                    
+                    if(T1 >= 1) {
+                        S1 = RL:pos()
+                        
+                        T2 = 0
+                        Leg = 2
+                        
+                        W1 = 0
+                        
+                        Pod:soundPlay(1, 1, "npc/dog/dog_footstep" + randint(1,4):toString() + ".wav")
+                        soundPitch(1, randint(100,120))
+                    }
+                }
+    
+                if(Leg == 2) {
+                    W1 = 1
+                    
+                    T2 = T2 + 0.1 + (Shift * 0.05)
+    
+                    P2 = bezier(S2, mix(S2, RR:pos(), 0.33)+vec(0,0,50*S), RR:pos(), T2)
+                    
+                    if(T2 >= 1) {
+                        S2 = RR:pos()
+                        
+                        T1 = 0
+                        Leg = 1
+                        
+                        W1 = 0
+                        
+                        Pod:soundPlay(2, 1, "npc/dog/dog_footstep" + randint(1,4):toString() + ".wav")
+                        soundPitch(2, randint(100,120))
+                    }
+                }
+            }
+            
+            
+            
+        }
+}
+
+#resetCurPos(vec(0,0,0))
+
+leg(1,2,3, L1, L2, h(1), P1, Pod, -90,0)
+leg(40,41,42, L1, L2, h(40), P2, Pod, -90,0)
+
+

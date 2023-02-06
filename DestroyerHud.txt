@@ -1,0 +1,73 @@
+@name DestroyerHud
+@inputs Seat:entity EGP:wirelink AimPos:vector T Energy
+@persist AimPos:vector Barrier Health Energy
+
+interval(50)
+
+Dri = Seat:driver()
+
+if(first() | changed(Dri)) {
+    holoCreate(100, vec(0,0,0), vec(0))
+    
+    Barrier = 500
+    
+    Health = 1000
+    
+    
+    EGP:egpClear()
+    
+    W = egpScrW(Dri)
+    H = egpScrH(Dri)
+    Sx = W/1920
+    Sy = H/1080
+    
+    EGP:egpBox(1000, vec2(W/2, H/2), vec2(10000000,10000000))
+    EGP:egpColor(1000, vec4(255,150,200,3))
+    
+    EGP:egpRoundedBox(100, vec2(W/2, H/1.17), vec2(Sx*900*(Health/1000), Sy*15))
+    EGP:egpColor(100, vec4(255,50,50,255))
+    
+    EGP:egpRoundedBox(101, vec2(W/2, H/1.2), vec2(Sx*900*(Barrier/1000), Sy*35))
+    EGP:egpColor(101, vec4(150,0,255,255))
+    
+    EGP:egpBox(102, vec2(W/1.1, H/2), vec2(Sx*20, Sy*750*Energy))
+    
+    
+    
+    
+    
+    
+    EGP:egp3DTracker(50, vec(0,0,0))
+    EGP:egpParent(50, holoEntity(100))
+    
+    EGP:egpCircleOutline(51, vec2(0,0), vec2(Sx*20,Sy*20))
+    EGP:egpParent(51, 50)
+    EGP:egpColor(51, vec4(255,50,50,200))
+    
+}
+###########################
+if(changed(Barrier)) {
+    EGP:egpRoundedBox(101, vec2(W/2, H/1.2), vec2(Sx*900*(Barrier/1000), Sy*35))
+
+    
+}
+#if(changed(Energy)) {
+    EGP:egpBox(102, vec2(W/1.1, H/2), vec2(Sx*20, Sy*750*(Energy)))
+
+    
+#}
+
+
+#########################
+if(changed(T) & T >= 1) {
+     EGP:egpColor(51, vec4(255,50,50,200))
+}
+
+if(changed(T) & T <= 0.99) {
+     EGP:egpColor(51, vec4(200,200,200,200))
+}
+
+
+holoPos(100, AimPos)
+
+

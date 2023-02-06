@@ -1,0 +1,132 @@
+@name e2funcs
+@persist [E O]:entity
+
+if(first()) {
+########## Lets just get this out of the way
+    E = entity()
+    O = owner()
+    
+########## Who really wants to type out holoEntity() all the time? 
+    function entity h(N) {
+        return holoEntity(N)
+    }
+
+########## Gets the average height between (Ra and Rb) and (Rc and Rd)
+    function vector rangeHeight(Ra:ranger, Rb:ranger, Rc:ranger, Rd:ranger) {
+        
+        if(Ra:hit() & Rb:hit()) {
+            VA = mix(Ra:pos(), Rb:pos(), 0.5)
+        }
+        
+        if(Rc:hit() & Rd:hit()) {
+            VB = mix(Rc:pos(), Rd:pos(), 0.5)
+        }
+        
+        return VA - VB
+        
+    }
+    
+########## Returns a directional vector whose length is 1
+    function vector vecNorm(Vec:vector) {
+        
+        return Vec/Vec:length()
+        
+    }
+
+########## Returns a vector with all positive values
+    function vector absVec(Vec:vector) {
+        
+        return vec(abs(Vec:x()), abs(Vec:y()), abs(Vec:z()))
+        
+    }
+    
+    function vector scaleVec(ScaleVec:vector, XX, YY, ZZ) {
+        
+        return vec(ScaleVec:x()*XX, ScaleVec:y()*YY, ScaleVec:z()*ZZ)
+        
+    }
+    
+    function void holoFix(N) {
+        
+        for(I = 1, N) {
+            if(h(I):model() == "models/error.mdl") {
+                holoModel(I, "models/holograms/cube.mdl")
+            }
+        }
+        
+    }
+
+    function entity ply(Ply:string) {
+        
+        return findPlayerByName(Ply)
+        
+    }
+    
+    function entity stID(ID:string) {
+        
+        for(I = 1, players():count()) {
+            
+            if(players()[I, entity]:steamID() == ID) {
+                
+                Ret = players()[I, entity]
+                
+            }
+            
+        }
+        
+        return Ret
+    }
+    
+    function number includesStr(Arr:array, Str:string) {
+        
+        Ret1 = 0
+        
+        for(I = 1, Arr:count()) {
+            
+            if(Arr[I, string] == Str) {
+                
+                Ret1 = 1
+                
+            }
+        }
+        
+        return Ret1
+    }
+            
+
+ #[      
+    function number matches(Arr:array, Arr1:array) {
+        
+        Ret3 = 0
+        
+        for(I = 1, Arr:count()) {
+            
+            for(J = 1, Arr1:count()) {
+                
+            if(Arr[I, entity] == Arr1[J, entity]) {
+                
+                Ret3 = 1
+                
+            }
+            
+            }
+            
+        }
+        
+        return Ret3
+    }        
+        
+        ]#
+}
+
+
+    function void holoCreateAdv(Index, Model:string, Parent:entity, Pos:vector, Scale:vector, Angle:angle, Color:vector, Alpha, Shading, Mat:string) {
+        
+        holoCreate(Index, Pos, Scale, Angle, Color, Model)
+        holoParent(Index, Parent)
+        holoAlpha(Index, Alpha)
+        holoDisableShading(Index, !Shading)
+        holoMaterial(Index, Mat)
+        
+        
+    }

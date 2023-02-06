@@ -1,0 +1,66 @@
+@name B17holos
+@inputs 
+@outputs 
+@persist 
+@trigger 
+@model models/props_lab/blastdoor001c.mdl
+Plane = entity()
+
+holoCreate(4)
+holoPos(4, Plane:pos()+vec(0,250,0))
+holoScale(4, vec(10,40,0.5))
+holoParent(4, Plane)
+
+holoCreate(5)
+holoPos(5, Plane:pos()+vec(0,-250,0))
+holoScale(5, vec(10,40,0.5))
+holoParent(5, Plane)
+
+holoCreate(6)
+holoPos(6, Plane:pos()+vec(0,120,-30))
+holoAng(6, ang(0,0,30))
+holoScale(6, vec(1,10,0.5))
+holoParent(6, Plane)
+
+holoCreate(7)
+holoPos(7, Plane:pos()+vec(0,-120,-30))
+holoAng(7, ang(0,0,-30))
+holoScale(7, vec(1,10,0.5))
+holoParent(7, Plane)
+
+holoCreate(8)
+holoModel(8, "models/props_combine/headcrabcannister01a.mdl")
+holoPos(8, Plane:pos()+vec(200,0,-40))
+holoAng(8, ang(0,0,0))
+holoScale(8, vec(1.2,1.5,1.5))
+holoParent(8, Plane)
+holoMaterial(8, "models/dog/eyeglass")
+
+holoCreate(9)
+holoModel(9, "models/props_combine/headcrabcannister01a.mdl")
+holoPos(9, Plane:pos()+vec(-200,0,-40))
+holoAng(9, ang(-5,180,0))
+holoScale(9, vec(3,2,2))
+holoParent(9, Plane)
+
+holoCreate(10)
+holoModel(10, "models/props_combine/headcrabcannister01a.mdl")
+holoPos(10, Plane:pos()+vec(-100,20,-40))
+holoAng(10, ang(0,184,0))
+holoScale(10, vec(3,2,2))
+holoParent(10, Plane)
+
+holoCreate(11)
+holoModel(11, "models/props_combine/headcrabcannister01a.mdl")
+holoPos(11, Plane:pos()+vec(-100,-20,-40))
+holoAng(11, ang(0,176,0))
+holoScale(11, vec(3,2,2))
+holoParent(11, Plane)
+
+
+holoCreate(12)
+holoModel(12, "models/props_combine/headcrabcannister01a.mdl")
+holoPos(12, Plane:pos()+vec(150,0,-40))
+holoAng(12, ang(0,0,0))
+holoScale(12, vec(2,2.6,1.5))
+holoParent(12, Plane)

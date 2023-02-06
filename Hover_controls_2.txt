@@ -1,0 +1,105 @@
+@name Hover controls 2
+@inputs Pod:entity Base:entity Turret:entity Gun:entity
+@outputs Shoot Var
+@persist Rot Time
+@trigger 
+interval(100)
+O = owner()
+E = entity()
+Driver = Pod:driver()
+if(duped()) {
+    selfDestructAll()
+}
+Var = Driver:eyeAngles():yaw()-Base:angles():yaw()-90
+Strafespeed = 8000
+Accelerationspeed = 4000
+
+if(Driver) {
+        
+        
+        
+        
+        if(Driver:keyRight()) {
+            Str = 1
+        }
+        if(Driver:keyLeft()) {
+            Str = -1
+        }
+        if(Driver:keyForward()) {
+            Acc = 1
+        }
+        if(Driver:keyBack()) {
+            Acc = -1
+        }
+        
+            Gun:setAng(Driver:eyeAngles())
+        Base:applyForce(-Base:right()*Acc*Accelerationspeed*5)
+        Base:applyForce(Base:forward()*Str*Strafespeed*5)
+        
+        if(abs(Driver:eyeAngles():yaw()-(Base:angles():yaw()+270)) < 40) {
+            Base:applyAngForce(ang(0,-Base:angVel():yaw(),0))
+        }
+
+        if(abs(Driver:eyeAngles():yaw()-(Base:angles():yaw()+270)) > 40) {
+            Base:applyAngForce(ang(0,Driver:eyeAngles():yaw()-(Base:angles():yaw()+270)*1000,0))
+        }
+        
+}
+Pod:setPos(Base:pos()+vec(0,0,10))
+        if(!Driver:keyForward() & !Driver:keyBack() & !Driver:keyRight() & !Driver:keyLeft()) {
+            Base:applyForce(vec(-Base:vel():x()*1000,-Base:vel():y()*1000,0))
+        }
+if(!Driver) {
+    Base:applyAngForce(ang(0,-Base:angVel():yaw()*10000,0))
+}
+    Turret:setPos(Base:pos()+vec(0,-50,40))     
+
+    if(O:lastSaid() == "Turparent") {
+        Turret:parentTo(Base)
+        concmd("say Done!")
+    }  
+        if(O:lastSaid() == "Turdelete") {
+        Turret:propDelete()
+        concmd("say Done!")
+    } 
+    Gun:setPos(Turret:pos()+vec(0,0,10))
+    Base:setMass(2000)
+    Pod:setMass(0)
+    Pod:propGravity(0)
+
+
+#Time = Time + 1
+#if(Time/200 == round(Time/200-0.4) & Driver:keyAttack1()) {
+#    Projectile = propSpawn("models/props_phx/torpedo.mdl", Turret:pos()+vec(0,0,40), 1)
+#    Projectile:propFreeze(0)
+#    Projectile:setMass(10000000)
+#    Projectile:propGravity(0)
+#}
+#Projectile:applyForce(Gun:forward()*100000000000000000000000)
+
+if(Driver:keyAttack1()) {
+    Shoot = 1
+} else {
+Shoot = 0
+}
+
+if(Driver) {
+Driver:setAlpha(0)
+} else {
+Driver:setAlpha(255)
+}
+
+
+
+Range=rangerOffset(1000,Base:pos()+vec(0,0,-10),-Base:up())
+Height=Range:distance()
+
+if(Height < 50) {
+    Base:propGravity(0)
+    Base:applyForce(vec(0,0,-Base:vel():z()*3000+500))
+} else {
+Base:propGravity(1)
+}
+if(Height < 40) {
+    Base:applyForce(vec(0,0,600*abs(Height-20)+1000))
+}

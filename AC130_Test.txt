@@ -1,0 +1,283 @@
+@name Gunship Drone
+@inputs Turret:entity Turret2:entity
+@outputs Shoot
+@persist E:entity O:entity Rocket:entity  Vec1:vector TrigVec1:vector AimVec:vector AimVec2:vector 
+@persist Flightmode Radius Height Firemode Spin Timer
+@model models/hunter/blocks/cube025x025x025.mdl
+interval(100)
+runOnChat(1)
+
+if(duped()) {
+#    selfDestruct()
+}
+    
+
+
+
+
+
+if(first()) {
+###Feel free to change these variables
+    Radius = 2000
+    Height = 2000
+
+
+
+###There shouldn't be any need to change these 
+    E:setAng(ang(0,0,0))
+    Vec1 = E:pos()
+    E:setTrails(20,20,10, "trails/smoke", vec(255,255,255),255)
+}
+
+E = entity()
+O = owner()
+
+
+Spin = Spin + 100
+
+Sin = sin(Spin/1000-10)*Radius
+Cos = cos(Spin/1000-10)*Radius
+
+TrigVec1 = vec(Sin,Cos, Height)
+
+
+if(O:lastSaid():lower() == "!fly" & chatClk(O)) {
+    Flightmode = 1
+}
+if(O:lastSaid():lower() == "!land" & chatClk(O)) {
+    Flightmode = 0
+    
+    E:setPos(Vec1)
+    #E:setAng(ang(0,0,0))
+}
+
+if(Flightmode == 1) {
+    E:setPos(Vec1+TrigVec1)
+    E:setAng(ang(0,-Spin/500,0))
+}
+
+
+Turret:setPos(E:pos()+vec(0,0,-20))
+#Turret2:setPos(E:pos()+vec(0,-10,-20))
+
+AimVec1 = O:aimPos()-Turret:pos()
+
+if(O:weapon():type() == "laserpointer") {
+    Turret:setAng(AimVec1:toAngle())
+    Turret2:setAng(AimVec1:toAngle())
+    Firemode = O:isFlashlightOn()
+    Attack = O:keyAttack2()
+    
+            if(changed(Firemode) & Firemode == 0) {
+                    print("Turret")
+                }
+            if(changed(Firemode) & Firemode == 1) {
+                    print("Missile")
+                }    
+    
+    
+        if(Firemode == 0 & Attack) {
+            Shoot = 1
+        } else {
+                Shoot = 0
+            }
+        
+        if(Firemode == 1 & Attack & Timer > 17) {
+            Timer = 0
+            
+            AimVec2 = O:aimPos()-E:pos()
+            
+            Rocket = propSpawn("models/props_phx/mk-82.mdl", E:pos()+vec(0,0,-100), AimVec2:toAngle() , 1)
+
+            Rocket:propFreeze(0)
+            Rocket:propGravity(0)
+            Rocket:setMass(500000)
+            Rocket:setTrails(20,20,10, "trails/smoke", vec(255,255,255),255)
+            Rocket:applyForce(Rocket:forward()*6500000000)
+        } else {
+                Timer = Timer + 1
+            }      
+        
+        
+}
+
+
+if(O:lastSaid():lower() == "!center" & chatClk(O)) {
+    Vec1 = O:aimPos()
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    Holos = 1
+if(first() & Holos == 1) {
+            
+            E:setAng(ang(0,0,0))
+            
+##Torso
+
+
+##Blades
+holoCreate(7)
+holoModel(7, "")
+holoPos(7, E:pos()+vec(0,-65,15))
+#holoAng(7, ang(195,0,0))
+holoScale(7, vec(5,0.6,0.08))           
+holoParent(7, E)
+holoColor(7, vec(20,20,20))        
+
+holoCreate(8)
+holoModel(8, "")
+holoPos(8, E:pos()+vec(0,-65,15))
+#holoAng(8, ang(195,0,0))
+holoScale(8, vec(5,0.6,0.08))           
+holoParent(8, E)            
+holoColor(8, vec(20,20,20)) 
+
+holoCreate(9)
+holoModel(9, "")
+holoPos(9, E:pos()+vec(0,65,15))
+#holoAng(9, ang(195,0,0))
+holoScale(9, vec(5,0.6,0.08))           
+holoParent(9, E)
+holoColor(9, vec(20,20,20)) 
+
+holoCreate(10)
+holoModel(10, "")
+holoPos(10, E:pos()+vec(0,65,15))
+#holoAng(10, ang(195,0,0))
+holoScale(10, vec(5,0.6,0.08))           
+holoParent(10, E)
+holoColor(10, vec(20,20,20)) 
+
+holoCreate(11)
+holoModel(11, "hq_torus")
+holoPos(11, E:pos()+vec(0,65,15))
+#holoAng(11, ang(195,0,0))
+holoScale(11, vec(5.3,5.3,2))           
+holoParent(11, E) 
+holoColor(11, vec(100,100,100)) 
+
+
+holoCreate(12)
+holoModel(12, "hq_torus")
+holoPos(12, E:pos()+vec(0,-65,15))
+#holoAng(12, ang(195,0,0))
+holoScale(12, vec(5.3,5.3,2))         
+holoParent(12, E) 
+holoColor(12, vec(100,100,100))
+
+
+
+
+
+
+
+holoCreate(13)
+holoModel(13, "")
+holoPos(13, E:pos()+vec(-65,0,15))
+#holoAng(13, ang(195,0,0))
+holoScale(13, vec(5,0.6,0.08))           
+holoParent(13, E)
+holoColor(13, vec(20,20,20))        
+
+holoCreate(14)
+holoModel(14, "")
+holoPos(14, E:pos()+vec(-65,0,15))
+#holoAng(14, ang(195,0,0))
+holoScale(14, vec(5,0.6,0.08))           
+holoParent(14, E)            
+holoColor(14, vec(20,20,20)) 
+
+holoCreate(15)
+holoModel(15, "")
+holoPos(15, E:pos()+vec(65,0,15))
+#holoAng(15, ang(195,0,0))
+holoScale(15, vec(5,0.6,0.08))           
+holoParent(15, E)
+holoColor(15, vec(20,20,20)) 
+
+holoCreate(16)
+holoModel(16, "")
+holoPos(16, E:pos()+vec(65,0,15))
+#holoAng(16, ang(195,0,0))
+holoScale(16, vec(5,0.6,0.08))           
+holoParent(16, E)
+holoColor(16, vec(20,20,20)) 
+
+holoCreate(17)
+holoModel(17, "hq_torus")
+holoPos(17, E:pos()+vec(65,0,15))
+#holoAng(17, ang(195,0,0))
+holoScale(17, vec(5.3,5.3,2))           
+holoParent(17, E) 
+holoColor(17, vec(100,100,100)) 
+
+
+holoCreate(18)
+holoModel(18, "hq_torus")
+holoPos(18, E:pos()+vec(-65,0,15))
+#holoAng(18, ang(195,0,0))
+holoScale(18, vec(5.3,5.3,2))           
+holoParent(18, E) 
+holoColor(18, vec(100,100,100))    
+            
+            
+##Tails
+holoCreate(19)
+holoModel(19, "")
+holoPos(19, E:pos()+vec(-31,0,5))
+holoAng(19, ang(8,0,0))
+holoScale(19, vec(6,0.2,0.5))           
+holoParent(19, E)
+
+holoCreate(20)
+holoModel(20, "")
+holoPos(20, E:pos()+vec(31,0,5))
+holoAng(20, ang(-8,0,0))
+holoScale(20, vec(6,0.2,0.5))           
+holoParent(20, E) 
+
+holoCreate(21)
+holoModel(21, "")
+holoPos(21, E:pos()+vec(0,-31,5))
+holoAng(21, ang(0,0,-8))
+holoScale(21, vec(0.2,6,0.5))           
+holoParent(21, E) 
+
+holoCreate(22)
+holoModel(22, "")
+holoPos(22, E:pos()+vec(0,31,5))
+holoAng(22, ang(0,0,8))
+holoScale(22, vec(0.2,6,0.5))           
+holoParent(22, E)  
+            
+}
+holoAng(2, ang(E:angles():pitch()*3,E:angles():yaw(),E:angles():roll()))
+holoAng(3, ang(E:angles():pitch()*3,E:angles():yaw(),E:angles():roll()))
+holoAng(7, ang(0, Spin, 10))
+holoAng(8, ang(0, Spin+90, 10))
+holoAng(9, ang(0, Spin, -10))
+holoAng(10, ang(0, Spin+90, -10))
+
+holoAng(13, ang(0, Spin, 10))
+holoAng(14, ang(0, Spin+90, 10))
+holoAng(15, ang(0, Spin, -10))
+holoAng(16, ang(0, Spin+90, -10))

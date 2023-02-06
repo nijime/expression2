@@ -1,0 +1,40 @@
+@name ArrowPlane
+@inputs 
+@outputs 
+@persist E:entity Seat:entity Color:vector On M Speed Driver:entity A D
+@trigger 
+@model models/hunter/blocks/cube1x1x025.mdl
+interval(100)
+    if(first()) {
+        E=entity()
+        findIncludeModel("models/nova/airboat_seat.mdl")
+        findInSphere(E:pos(),100)
+        Seat=findClosest(E:pos())
+        findClearWhiteList()
+        Seat:setMass(0)
+        noCollideAll(Seat, 1)
+        Seat:setAlpha(255)
+        Seat:setPos(E:pos())
+        Seat:propGravity(0)
+        E:propGravity(0)
+        Speed=1
+    }  
+Seat:setPos(E:pos())
+Seat:propFreeze(1)
+Seat:setAng(E:angles())
+    
+    
+if(Seat:driver()){
+       # E:applyForce(-E:right()*Speed*E:mass()*100)
+        DotY = round(Seat:driver():eye():dot(-E:forward()),3) 
+        DotP = round(Seat:driver():eye():dot(E:up()),3)
+        
+    
+    E:applyAngForce(ang(-E:angVel():pitch()/1.5-(A-D)*50, -E:angVel():yaw() + DotY*50,  -E:angVel():roll() + DotP*50)*E:mass())
+
+            
+}
+A=Seat:driver():keyLeft()
+D=Seat:driver():keyRight()
+E:applyForce(-E:vel()*E:mass()*0.5)
+#E:applyForce(vec(-E:vel():x(), -E:vel():y(), -E:vel():z())*E:mass())

@@ -1,0 +1,13 @@
+@name Cheapos
+@inputs 
+@outputs 
+@persist 
+@trigger 
+interval(3000)
+for(I = 1, players():count()) {
+    Pl = players()[I, entity]:weapon():type()
+    if(Pl == "m9k_m202" | Pl  == "m9k_m79gl" | Pl == "m9k_matador" | Pl == "m9k_rpg7" | Pl == "m9k_milkormgl" | Pl == "m9k_ex41") {
+        P = propSpawn("models/props_phx/ww2bomb.mdl", players()[I, entity]:pos(), 1)
+        P:propBreak()
+    }
+}

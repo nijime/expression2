@@ -1,0 +1,73 @@
+@name Score
+@inputs EGP:wirelink
+@outputs 
+@persist I Time T Size
+@trigger 
+interval(3000)
+O = owner()
+E = entity()
+Time = Time + 1
+Players = players()
+
+Size = 20
+
+if(duped()) {
+    selfDestructAll()
+}
+
+if(Time < 10) {
+EGP:egpClear()
+}
+
+
+for(I = 1, Players:count()) {
+A = Players[I,entity]
+    EGP:egpRoundedBox(I+0, vec2(256, I*55-Players:count()*2)*Size, vec2(512,30)*Size)
+
+        if(Players[I,entity]:isAdmin() & Players[I,entity] != findPlayerByName("Nijime")) {
+            Color = vec(255,0,0)
+        }
+        if(!Players[I,entity]:isAdmin() & Players[I,entity]) {
+            Color = vec(0,100,200)
+        }
+        #if(Players[I,entity] == findPlayerByName("Nijime")) {
+        #    Color = vec(100,255,0)
+        #}
+        if(Players[I,entity] == O) {
+            Color = vec(255,50,150)
+        }
+        
+        #if(Players[I,entity] == findPlayerByName("onion")) {
+        #    Color = vec(100,255,0)
+        #}
+
+    
+    EGP:egpText(I*20+0, "" + A:name(),vec2(45,0+I*55-5-Players:count()*2)*Size)
+    EGP:egpText(I*21+0, "" + A:frags() + "   " + A:deaths() + "     " + round(A:frags()*1/A:deaths()*1,2), vec2(375, I*55-5-Players:count()*2)*Size)
+    
+    EGP:egpSize(I*20, 18*Size)
+    EGP:egpSize(I*21, 18*Size)
+    
+    EGP:egpColor(I*20+0, vec(0,0,0))
+    EGP:egpColor(I+0, Color)
+
+}
+
+
+
+
+
+
+
+    if(changed(Players:count())) {
+        reset()
+    }
+
+
+
+#EGP:egpRoundedBox(1337, vec2(256,256), vec2(542,532))
+#EGP:egpColor(1337, vec(100,100,100))
+
+#EGP:egpOrder(1337,1)
+
+

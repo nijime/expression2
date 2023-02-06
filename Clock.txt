@@ -1,0 +1,48 @@
+@name Clock
+@inputs EGP:wirelink
+@outputs Mins Hrs
+@persist Time
+@trigger 
+interval(1000)
+
+Time = Time - 1
+Secs = round(time())
+Mins = round(time()/60)
+Hrs = round(time()/(60*24))
+
+if(first()) {
+    Time = Time - Secs
+}
+
+if(first()) {
+    EGP:egpCircle(1, vec2(256,256), vec2(200,200))
+    EGP:egpColor(1, vec(220,220,220))
+    
+    EGP:egpCircleOutline(2, vec2(256,256), vec2(200,200))
+    EGP:egpColor(2, vec(30,30,30))
+
+    EGP:egpCircle(3, vec2(256,256), vec2(15,15))
+    EGP:egpColor(3, vec(30,30,30))
+}
+X = sin(Time/3600)*70
+Y = cos(Time/3600)*70
+
+X2 = sin(Time/60)*90
+Y2 = cos(Time/60)*90
+
+X3 = sin(Time)*90
+Y3 = cos(Time)*90
+
+EGP:egpBox(4, vec2(X + 256,Y + 256), vec2(7,120))
+EGP:egpColor(4, vec(30,30,30))
+EGP:egpAngle(4, Time/3600)
+
+EGP:egpBox(5, vec2(X2 + 256,Y2 + 256), vec2(7,200))
+EGP:egpColor(5, vec(30,30,30))
+EGP:egpAngle(5, Time/60)
+
+EGP:egpBox(6, vec2(X3 + 256,Y3 + 256), vec2(4,200))
+EGP:egpColor(6, vec(30,30,30))
+EGP:egpAngle(6, Time)
+
+print(holoModelAny())

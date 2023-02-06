@@ -1,0 +1,13 @@
+@name Generator
+@inputs 
+@outputs 
+@persist E:entity
+@model models/props_wasteland/laundry_washer001a.mdl
+interval(1000)
+if(first()) {
+    E = entity()
+    E:setAlpha(0)
+
+
+}
+

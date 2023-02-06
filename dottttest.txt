@@ -1,0 +1,28 @@
+@name dottttest
+@inputs Target:entity
+@outputs 
+@persist 
+
+interval(10)
+
+if(first()) {
+    holoCreate(1, entity():toWorld(vec(0,0,0)), vec(50,50,0.05), entity():toWorld(ang(0,0,0)), vec(255,0,0))
+    holoParent(1, entity())
+    holoAlpha(1, 100)
+    holoDisableShading(1, 1)
+    
+    
+}
+
+
+Diff = (Target:pos() - entity():pos()) / (Target:pos() - entity():pos()):length()
+
+Dot = entity():up():dot(Diff)
+
+if(Dot > 0) {
+    Target:setColor(vec(0, 255, 0))
+}
+
+if(Dot < 0) {
+    Target:setColor(vec(0, 0, 255))
+}

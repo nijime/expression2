@@ -1,0 +1,108 @@
+@name Hover Controls
+@inputs Pod:entity 
+@outputs 
+@persist [E Base]:entity Speed Hoverheight Turnspeed Mass Drift T Bobspeed Bobdistance
+@persist [Move Ambient Turn On Off]:string
+interval(130)
+
+if(first()) {
+##You might need to change these
+    ##Movement
+    Speed = 130       #How fast the vehicle moves
+    Turnspeed = 75   #How fast the vehicle turns
+    Hoverheight = 50 #How high the vehicle hovers
+    Drift = 1        #Higher = more drift        note: be careful with this
+    Bobspeed = 1     #How fast the vehicle "bounces" while idle
+    Bobdistance = 5  #How much the vehicle "bounces" while idle
+    
+    ##Sounds - not all sounds will fit with a vehicle
+    Move = "thrusters/hover02.wav"
+    soundPlay("move", 0, Move)
+    
+    Ambient = "npc/combine_gunship/dropship_engine_distant_loop1.wav"
+    soundPlay("ambient", 0, Ambient)
+    
+    Turn = "thrusters/rocket00.wav"
+    soundPlay("turn", 0, Turn)
+    
+    On = "hl1/fvox/activated.wav"
+    soundPitch("on", 75)
+    
+    Off = "ambient/energy/powerdown2.wav"
+    soundPitch("off", 100)
+    
+    
+##You shouldn't need to change these
+    
+    E = entity()
+    
+    Base = E:isWeldedTo()
+    Base:setMass(30000)
+    
+    Props = E:getConstraints()
+    
+    for(I = 1, Props:count()) {
+        Mass = Mass + Props[I, entity]:mass()
+        Props[I, entity]:propGravity(0)
+    }
+
+            if(Base) {
+                print("----------------------------------------------------------------------")
+                print("> Remember that you can change settings in the editor")
+                print("> The vehicle will rotate around the base prop")
+                print("> To avoid problems, build everything facing foward (in relation to the world)")
+                print("     > You need to rotate " + round(Base:forward():dot(vec(1,0,0))*90+90) + " degrees")
+                print("> Be sure to keep under the base prop clear")
+                hint("Mass = " + Mass, 5)
+                
+            } else {
+                print("> No base found - spawn the E2 on a prop")   
+                selfDestruct()
+            }
+
+}
+
+T = T + Bobspeed
+
+Dri = Pod:driver()
+W = Dri:keyForward()
+A = Dri:keyLeft()
+S = Dri:keyBack()
+D = Dri:keyRight()
+Shift = Dri:keySprint()
+
+rangerFilter(array(Base))
+rangerHitWater(1)
+R = rangerOffset(Hoverheight*3, Base:toWorld(vec(0,0,-5)), vec(0,0,-1))
+rangerFilter(array(Base))
+rangerHitWater(1)
+R2 = rangerOffset(Hoverheight*3, E:toWorld(vec(50,0,-5)), vec(0,0,-1))
+
+Z = R:hit() ? (Hoverheight-R:distance())/(0.33*Drift) + sin(T*10)*Bobdistance : -250
+Base:applyForce((-Base:vel()/(2*Drift) + E:forward()*(W-S)*Speed*(Shift+1) + vec(0,0,Z))*Mass)
+
+Pitch = R:hit() ? ((R2:pos()/2):z() - (R:pos()/2):z()) : 0
+
+Base:applyAngForce((-Base:angVel()/(0.33*Drift) + ang(Pitch-Base:angles():pitch(),(A-D)*Turnspeed,0-Base:angles():roll())*2)*Mass)
+
+    soundPitch("ambient", Dri ? 75 : 0)
+
+soundPitch("move", 0+abs(Base:vel():length()/13))
+soundPitch("turn", 0+abs(Base:angVel():yaw()/3))
+
+
+if(changed(Dri)) {
+    if(Dri) {
+        soundPlay("on", 1, On)
+        soundPitch("on", 85)
+        
+        soundPlay("ambient", 0, Ambient)
+    }
+    
+    if(!Dri) {
+        soundPlay("off", 1, Off)
+        soundPitch("off", 100)
+        
+        soundPitch("ambient", 0)
+    }
+}

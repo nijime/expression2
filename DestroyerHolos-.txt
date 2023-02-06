@@ -1,0 +1,750 @@
+@name DestroyerHolos-?
+@inputs Pod:entity HoloEmitter:entity LaserChip:entity
+@outputs Active AimPos:vector T Energy
+@persist [E]:entity
+@persist [MainR LegFL LegFR LegBL LegBR AimR]:ranger
+@persist [P1 P2 P3 P4 S1 S2 S3 S4 Off RangeAimPos]:vector
+@persist S T Height Mass L1 L2 Leg T1 T2 W1 Tick Cd Energy #Active
+@model models/hunter/plates/plate6x7.mdl
+interval(100)
+
+if(first() | duped()) {
+    HoloEmitter:propNotSolid(1)
+    print(HoloEmitter)
+    
+    Tick = 0
+    
+    
+    function entity h(N) {
+        return holoEntity(N)
+    }
+    
+    E = entity()
+    
+    S = 10
+    
+    Off = vec(35*S,0,0)
+    
+    holoCreate(10000000, vec(0,0,0), vec(0))
+    
+    holoCreate(1, E:toWorld(vec(-6*S,0*S,0*S)+Off), vec(0.2*S,0.25*S,0.3*S), E:toWorld(ang(60,180,0)), vec(160,160,160), "models/XQM/CoasterTrack/slope_45_1.mdl")
+    holoParent(1, E)
+    
+    #holoCreate(2, E:toWorld(vec(-48*S,0*S,43.5*S)), vec(0.4*S,0.2*S,0.3*S), E:toWorld(ang(-35,180,180)), vec(255,255,255), "models/XQM/CoasterTrack/straight_1.mdl")
+    holoParent(2, 1)
+    
+    #holoCreate(3, E:toWorld(vec(-85*S,0*S,80*S)), vec(0.33*S,0.2*S,0.3*S), E:toWorld(ang(-45,180,180)), vec(255,255,255), "models/XQM/CoasterTrack/slope_45_down_1.mdl")
+    holoParent(3, 1)
+    
+    holoCreate(4, E:toWorld(vec(-73*S,0*S,40*S)+Off), vec(0.3*S,0.3*S,0.3*S), E:toWorld(ang(45,0,0)), vec(100,100,100), "models/XQM/CoasterTrack/slope_45_1.mdl")
+    holoParent(4, E)
+    
+    holoCreate(5, E:toWorld(vec(-42.8*S,0*S,6.5*S)+Off), vec(0.3*S,0.3*S,0.3*S), E:toWorld(ang(-45,180,0)), vec(100,100,100), "models/XQM/CoasterTrack/slope_225_1.mdl")
+    holoParent(5, 1)
+    
+    holoCreate(6, E:toWorld(vec(-40*S,0*S,-5*S)+Off), vec(0.4*S,0.2*S,0.3*S), E:toWorld(ang(-5,180,0)), vec(100,100,100), "models/XQM/CoasterTrack/slope_225_1.mdl")
+    holoParent(6, 1)
+
+
+    holoCreate(7, E:toWorld(vec(-52*S,0*S,38*S)+Off), vec(0.13*S,0.15*S,0.25*S), E:toWorld(ang(55,180,180)), vec(135/1.5,120/1.5,150/1.5), "models/hunter/tubes/tube4x4x5c.mdl")
+    holoParent(7, 1)
+    holoMaterial(7, "models/debug/debugwhite")
+    
+    
+    holoCreate(8, E:toWorld(vec(-36*S,22*S,28*S)+Off), vec(0.25*S,0.05*S,0.5*S), E:toWorld(ang(165,130,-125)), vec(135*1.5,120*1.5,150*1.5), "models/XQM/CoasterTrack/slope_225_down_2.mdl")
+    holoParent(8, 1)
+    
+    holoCreate(9, E:toWorld(vec(-36*S,-22*S,28*S)+Off), vec(0.25*S,0.05*S,0.5*S), E:toWorld(ang(165,-130,125)), vec(135*1.5,120*1.5,150*1.5), "models/XQM/CoasterTrack/slope_225_down_2.mdl")
+    holoParent(9, 1)
+    
+    holoCreate(10, E:toWorld(vec(-70*S,26.5*S,51*S)+Off), vec(0.07*S,0.05*S,0.2*S), E:toWorld(ang(40,30,-250)), vec(135*1.5,120*1.5,150*1.5), "models/XQM/CoasterTrack/slope_225_down_2.mdl")
+    holoParent(10, 1)
+    
+    holoCreate(11, E:toWorld(vec(-70*S,-26.5*S,51*S)+Off), vec(0.07*S,0.05*S,0.2*S), E:toWorld(ang(40,-30,250)), vec(135*1.5,120*1.5,150*1.5), "models/XQM/CoasterTrack/slope_225_down_2.mdl")
+    holoParent(11, 1)
+    
+    holoCreate(12, E:toWorld(vec(-85*S,8*S,80*S)+Off), vec(0.2*S,0.05*S,0.3*S), E:toWorld(ang(70,0,-270)), vec(135*1.5,120*1.5,150*1.5), "models/XQM/CoasterTrack/slope_225_down_2.mdl")
+    holoParent(12, 1)
+    
+    holoCreate(13, E:toWorld(vec(-85*S,-8*S,80*S)+Off), vec(0.2*S,0.05*S,0.3*S), E:toWorld(ang(70,0,270)), vec(135*1.5,120*1.5,150*1.5), "models/XQM/CoasterTrack/slope_225_down_2.mdl")
+    holoParent(13, 1)
+    
+    holoCreate(14, E:toWorld(vec(-60*S,5*S,51*S)+Off), vec(0.4*S,1.0*S,0.1*S), E:toWorld(ang(22,-40,150)), vec(255,255,255), "models/hunter/plates/tri2x1.mdl")
+    holoParent(14, 1)
+    holoMaterial(14, "phoenix_storms/grey_chrome")
+    
+    holoCreate(15, E:toWorld(vec(-60*S,-5*S,51*S)+Off), vec(0.4*S,1.0*S,0.1*S), E:toWorld(ang(22,40,30)), vec(255,255,255), "models/hunter/plates/tri2x1.mdl")
+    holoParent(15, 1)
+    holoMaterial(15, "phoenix_storms/grey_chrome")
+    
+    holoCreate(16, E:toWorld(vec(-21*S,0*S,14.5*S)+Off), vec(0.13*S,0.15*S,0.1*S), E:toWorld(ang(47,180,180)), vec(255,255,255), "models/hunter/tubes/tube4x4x5c.mdl")
+    holoParent(16, 1)
+    holoMaterial(16, "phoenix_storms/grey_chrome")
+    
+    holoCreate(17, E:toWorld(vec(-14*S,0*S,5.5*S)+Off), vec(0.3*S,0.3*S,0.32*S), E:toWorld(ang(-135,0,90)), vec(255,255,255), "models/hunter/misc/shell2x2x45.mdl")
+    holoParent(17, 1)
+    holoMaterial(17, "phoenix_storms/grey_chrome")
+    
+    holoCreate(18, E:toWorld(vec(-12.2*S,0*S,0.0*S)+Off), vec(0.3*S,0.28*S,0.7*S), E:toWorld(ang(150,0,0)), vec(255,255,255), "models/hunter/tubes/tube2x2x025c.mdl")
+    holoParent(18, 1)
+    holoMaterial(18, "phoenix_storms/grey_chrome")
+    
+    holoCreate(19, E:toWorld(vec(-9.5*S,0*S,-4.5*S)+Off), vec(0.3*S,0.3*S,0.7*S), E:toWorld(ang(20,180,0)), vec(255,255,255), "models/hunter/tubes/tube2x2x025d.mdl")
+    holoParent(19, 1)
+    holoMaterial(19, "phoenix_storms/grey_chrome")
+    
+    holoCreate(20, E:toWorld(vec(-9.5*S,0*S,-4.5*S)+Off), vec(0.3*S,0.3*S,0.7*S), E:toWorld(ang(-0,90,-20)), vec(255,255,255), "models/hunter/tubes/tube2x2x025d.mdl")
+    holoParent(20, 1)
+    holoMaterial(20, "phoenix_storms/grey_chrome")
+    
+    holoCreate(21, h(19):toWorld(vec(0*S,-7*S,-4.0*S)), vec(0.15*S,0.15*S,0.15*S), E:toWorld(ang(-70,180,-0)), vec(255,255,255), "models/hunter/tubes/tubebend1x2x90a.mdl")
+    holoParent(21, 19)
+    holoMaterial(21, "phoenix_storms/grey_chrome")
+    
+    holoCreate(22, h(20):toWorld(vec(0*S,-7*S,-4.0*S)), vec(0.15*S,0.15*S,0.15*S), E:toWorld(ang(-70,180,-90)), vec(255,255,255), "models/hunter/tubes/tubebend1x2x90a.mdl")
+    holoParent(22, 20)
+    holoMaterial(22, "phoenix_storms/grey_chrome")
+    
+    holoCreate(23, E:toWorld(vec(-43.8*S,0*S,18.5*S)+Off), vec(0.4*S,0.4*S,0.55*S), E:toWorld(ang(-59,180,0)), vec(100,100,100), "models/XQM/CoasterTrack/slope_225_1.mdl")
+    holoParent(23, 1)
+    
+    holoCreate(24, E:toWorld(vec(-5.2*S,0*S,-14.9*S)+Off), vec(0.0*S,0.0*S,0.0*S), E:toWorld(ang(0,0,0)), vec(255,255,255), "")
+    holoParent(24, 1)
+    
+    holoCreate(25, E:toWorld(vec(-2.2*S,0*S,-14.9*S)+Off), vec(0.3*S,0.5*S,0.3*S), E:toWorld(ang(150,180,0)), vec(255,255,255), "models/props_combine/combinecamera001.mdl")
+    holoParent(25, 24)
+    
+    holoCreate(26, h(24):toWorld(vec(11.2*S,0*S,0*S)), vec(0.07*S,0.18*S,0.07*S), E:toWorld(ang(260,180,0)), vec(255,255,255), "models/props_combine/headcrabcannister01a.mdl")
+    holoParent(26, 24)
+    
+####Mandibles
+
+    holoCreate(27, h(24):toWorld(vec(11.2*S,2*S,-0.9*S)), vec(0.3*S,0.3*S,0.3*S), E:toWorld(ang(110,210,-0)), vec(255,255,255), "models/props_combine/combinecamera001.mdl")
+    holoParent(27, 24)
+    
+    holoCreate(28, h(27):toWorld(vec(6.2*S,-1*S,-5*S)), vec(0.04*S,0.11*S,0.04*S), h(27):toWorld(ang(130,-30,0)), vec(255,255,255), "models/props_combine/headcrabcannister01a.mdl")
+    holoParent(28, 27)
+    
+    
+    holoCreate(29, h(24):toWorld(vec(11.2*S,-2*S,-0.9*S)), vec(0.3*S,0.3*S,0.3*S), E:toWorld(ang(110,150,0)), vec(255,255,255), "models/props_combine/combinecamera001.mdl")
+    holoParent(29, 24)
+    
+    holoCreate(30, h(29):toWorld(vec(6.1*S,1*S,-5*S)), vec(0.04*S,0.11*S,0.04*S), h(29):toWorld(ang(130,30,0)), vec(255,255,255), "models/props_combine/headcrabcannister01a.mdl")
+    holoParent(30, 29)
+    
+    
+    holoCreate(31, h(24):toWorld(vec(11.2*S,0*S,-0.9*S)), vec(0.3*S,0.3*S,0.3*S), E:toWorld(ang(90,180,0)), vec(255,255,255), "models/props_combine/combinecamera001.mdl")
+    holoParent(31, 24)
+    
+    holoCreate(32, h(31):toWorld(vec(6.1*S,0*S,-5*S)), vec(0.04*S,0.11*S,0.04*S), h(31):toWorld(ang(130,0,0)), vec(255,255,255), "models/props_combine/headcrabcannister01a.mdl")
+    holoParent(32, 31)
+    
+    
+    holoCreate(33, h(24):toWorld(vec(8.2*S,-3*S,-0.9*S)), vec(0.3*S,0.3*S,0.3*S), E:toWorld(ang(120,120,0)), vec(255,255,255), "models/props_combine/combinecamera001.mdl")
+    holoParent(33, 24)
+    
+    holoCreate(34, h(33):toWorld(vec(6.1*S,0*S,-5*S)), vec(0.07*S,0.11*S,0.04*S), h(33):toWorld(ang(130,0,0)), vec(255,255,255), "models/props_combine/headcrabcannister01a.mdl")
+    holoParent(34, 33)
+    
+    
+    holoCreate(35, h(24):toWorld(vec(8.2*S,3*S,-0.9*S)), vec(0.3*S,0.3*S,0.3*S), E:toWorld(ang(120,240,0)), vec(255,255,255), "models/props_combine/combinecamera001.mdl")
+    holoParent(35, 24)
+    
+    holoCreate(36, h(35):toWorld(vec(6.1*S,0*S,-5*S)), vec(0.07*S,0.11*S,0.04*S), h(35):toWorld(ang(130,0,0)), vec(255,255,255), "models/props_combine/headcrabcannister01a.mdl")
+    holoParent(36, 35)
+    
+    ######
+    
+    holoCreate(37, E:toWorld(vec(-30*S,15*S,-2*S)+Off), vec(0.3*S,0.15*S,0.25*S), E:toWorld(ang(-150,70,0)), vec(100,100,100), "models/XQM/CoasterTrack/slope_225_1.mdl")
+    holoParent(37, 1)
+    
+    holoCreate(38, E:toWorld(vec(-30*S,-15*S,-2*S)+Off), vec(0.3*S,0.15*S,0.25*S), E:toWorld(ang(-150,-70,0)), vec(100,100,100), "models/XQM/CoasterTrack/slope_225_1.mdl")
+    holoParent(38, 1)
+    
+    holoCreate(39, E:toWorld(vec(-60*S,15*S,-7*S)+Off), vec(0.2*S,0.15*S,0.25*S), E:toWorld(ang(-170,130,0)), vec(100,100,100), "models/XQM/CoasterTrack/slope_225_1.mdl")
+    holoParent(39, 1)
+    
+    holoCreate(40, E:toWorld(vec(-60*S,-15*S,-7*S)+Off), vec(0.2*S,0.15*S,0.25*S), E:toWorld(ang(-170,-130,0)), vec(100,100,100), "models/XQM/CoasterTrack/slope_225_1.mdl")
+    holoParent(40, 1)
+    
+    
+    
+    
+    
+    
+    for(I = 1, 40) {
+        if(h(I):model():explode("/")[2, string] == "hunter") {
+            holoColor(I, vec(135/2.5,120/2.5,150/2.5))
+            holoMaterial(I, "models/debug/debugwhite")
+        }
+        
+
+    }
+            
+            
+            
+
+    L1 = 30*S
+    L2 = 60*S
+    Leg = 1
+    function number loc(A, B, C) {
+        return acos((A^2 + B^2 - C^2) / (2*A*B))
+    }
+    
+    function leg(I1, I2, I3, L1, L2, Hip:entity, Vec:vector, Base:entity, Y, P) {
+
+        local Axis = Base:toLocalAxis(Vec-Hip:pos())
+        local Ang = Axis:toAngle():setRoll(-bearing(Hip:pos(), Base:angles()+ang(P,Y,0), Vec))+ang(0,0,180)
+        local Dist = min(Axis:length(), L1+L2)    
+        
+        local Quat = quat(Ang) * qRotation(vec(0, loc(Dist, L1, L2)+90,0))
+
+
+        holoAng(I1, Base:toWorld(Quat:toAngle()))
+        holoAng(I2, holoEntity(I1):toWorld(ang(loc(L2,L1,Dist)+180,0,0)))
+
+        holoPos(I3, Vec)
+        
+
+    }
+    
+    function void resetCurPos(Vec:vector) {
+        P1 = LegFL:pos() + Vec
+        P2 = LegFR:pos() + Vec
+        P3 = LegBL:pos() + Vec
+        P4 = LegBR:pos() + Vec
+    }
+    
+    function void resetStartPos() {
+        S1 = LegFL:pos()
+        S2 = LegFR:pos()
+        S3 = LegBL:pos()
+        S4 = LegBR:pos()
+        
+    }
+    
+    
+    
+    
+    Height = 55*S
+    
+    Mass = 50000
+    
+    E:setMass(Mass)
+    E:propGravity(0)
+    
+    
+    
+    
+    holoCreate(100, E:toWorld(vec(10*S,29*S,-15*S)), vec(0), ang(0,0,0), vec(255,255,255), "")
+    holoParent(100, E)
+    
+    holoCreate(101, h(100):toWorld(vec(0,0,L1)), vec(0))
+    holoParent(101, 100)
+    
+    holoCreate(102, h(101):toWorld(vec(0,0,L2)), vec(0))
+    holoParent(102, 101)
+    
+    
+    
+    holoCreate(41, h(100):toWorld(vec(0*S,0*S,0*S)), vec(0.12*S,0.12*S,0.12*S), h(100):toWorld(ang(0,0,90)), vec(50,50,50), "models/mechanics/wheels/wheel_rounded_72.mdl")
+    holoParent(41, 100)
+    holoMaterial(41, "models/debug/debugwhite")
+    
+    holoCreate(42, h(100):toWorld(vec(-1*S,0*S,4*S)), vec(0.21*S,0.14*S,0.5*S), h(100):toWorld(ang(10,0,0)), vec(25,25,25), "models/hunter/tubes/tube1x1x1.mdl")
+    holoParent(42, 100)
+    holoMaterial(42, "models/debug/debugwhite")
+    
+    holoCreate(43, h(101):toWorld(vec(-5*S,0*S,-3*S)), vec(0.13*S,0.16*S,0.2*S), h(101):toWorld(ang(0,80,90)), vec(25,25,25), "models/hunter/tubes/tubebend1x1x90.mdl")
+    holoParent(43, 101)
+    holoMaterial(43, "models/debug/debugwhite")
+    
+    
+    holoCreate(44, h(101):toWorld(vec(7*S,0*S,26*S)), vec(0.08*S,0.1*S,0.2*S), h(101):toWorld(ang(-60,180,180)), vec(135*1.5,120*1.5,150*1.5), "models/XQM/CoasterTrack/slope_225_4.mdl")
+    holoParent(44, 101)
+    
+    holoCreate(45, h(101):toWorld(vec(3*S,-9*S,17*S)), vec(0.04*S,0.02*S,0.3*S), h(101):toWorld(ang(35,90,0)), vec(135*1.5,120*1.5,150*1.5), "models/XQM/CoasterTrack/slope_225_4.mdl")
+    holoParent(45, 101)
+    
+    holoCreate(46, h(101):toWorld(vec(3*S,9*S,17*S)), vec(0.04*S,0.02*S,0.3*S), h(101):toWorld(ang(35,-90,0)), vec(135*1.5,120*1.5,150*1.5), "models/XQM/CoasterTrack/slope_225_4.mdl")
+    holoParent(46, 101)
+    
+    holoCreate(47, h(101):toWorld(vec(-4*S,5*S,54*S)), vec(0.17*S,0.07*S,0.2*S), h(101):toWorld(ang(5,75,-40)), vec(135/2.5,120/2.5,150/2.5), "models/props_combine/tprotato1.mdl")
+    holoParent(47, 101)
+    holoMaterial(47, "models/debug/debugwhite")
+    
+    holoCreate(48, h(101):toWorld(vec(-4*S,-5*S,54*S)), vec(0.17*S,0.07*S,0.2*S), h(101):toWorld(ang(5,-75,40)), vec(135/2.5,120/2.5,150/2.5), "models/props_combine/tprotato1.mdl")
+    holoParent(48, 101)
+    holoMaterial(48, "models/debug/debugwhite")
+    
+##########
+    holoCreate(103, E:toWorld(vec(10*S,-29*S,-15*S)), vec(0))
+    holoParent(103, E)
+    
+    holoCreate(104, h(103):toWorld(vec(0,0,L1)), vec(0))
+    holoParent(104, 103)
+    
+    holoCreate(105, h(104):toWorld(vec(0,0,L2)), vec(0))
+    holoParent(105, 104)
+    
+
+
+    holoCreate(49, h(103):toWorld(vec(0*S,0*S,0*S)), vec(0.12*S,0.12*S,0.12*S), h(103):toWorld(ang(0,0,90)), vec(50), "models/mechanics/wheels/wheel_rounded_72.mdl")
+    holoParent(49, 103)
+    holoMaterial(49, "models/debug/debugwhite")
+    
+    holoCreate(50, h(103):toWorld(vec(-1*S,0*S,4*S)), vec(0.21*S,0.14*S,0.5*S), h(103):toWorld(ang(10,0,0)), vec(25), "models/hunter/tubes/tube1x1x1.mdl")
+    holoParent(50, 103)
+    holoMaterial(50, "models/debug/debugwhite")
+    
+    holoCreate(51, h(104):toWorld(vec(-5*S,0*S,-3*S)), vec(0.13*S,0.16*S,0.2*S), h(104):toWorld(ang(0,80,90)), vec(25), "models/hunter/tubes/tubebend1x1x90.mdl")
+    holoParent(51, 104)
+    holoMaterial(51, "models/debug/debugwhite")
+    
+    
+    holoCreate(52, h(104):toWorld(vec(7*S,0*S,26*S)), vec(0.07*S,0.1*S,0.2*S), h(104):toWorld(ang(-60,180,180)), vec(135*1.5,120*1.5,150*1.5), "models/XQM/CoasterTrack/slope_225_4.mdl")
+    holoParent(52, 104)
+    
+    holoCreate(53, h(104):toWorld(vec(3*S,-9*S,17*S)), vec(0.04*S,0.02*S,0.3*S), h(104):toWorld(ang(35,90,0)), vec(135*1.5,120*1.5,150*1.5), "models/XQM/CoasterTrack/slope_225_4.mdl")
+    holoParent(53, 104)
+    
+    holoCreate(54, h(104):toWorld(vec(3*S,9*S,17*S)), vec(0.04*S,0.02*S,0.3*S), h(104):toWorld(ang(35,-90,0)), vec(135*1.5,120*1.5,150*1.5), "models/XQM/CoasterTrack/slope_225_4.mdl")
+    holoParent(54, 104)
+    
+    holoCreate(55, h(104):toWorld(vec(-4*S,5*S,54*S)), vec(0.17*S,0.07*S,0.2*S), h(104):toWorld(ang(5,75,-40)), vec(135/2.5,120/2.5,150/2.5), "models/props_combine/tprotato1.mdl")
+    holoParent(55, 104)
+    holoMaterial(55, "models/debug/debugwhite")
+    
+    holoCreate(56, h(104):toWorld(vec(-4*S,-5*S,54*S)), vec(0.17*S,0.07*S,0.2*S), h(104):toWorld(ang(5,-75,40)), vec(135/2.5,120/2.5,150/2.5), "models/props_combine/tprotato1.mdl")
+    holoParent(56, 104)
+    holoMaterial(56, "models/debug/debugwhite")
+    
+    
+    
+    
+    
+    
+############
+    holoCreate(106, E:toWorld(vec(-33*S,25*S,-15*S)), vec(0))
+    holoParent(106, E)
+    
+    holoCreate(107, h(106):toWorld(vec(0,0,L1)), vec(0))
+    holoParent(107, 106)
+    
+    holoCreate(108, h(108):toWorld(vec(0,0,L2)), vec(0))
+    holoParent(108, 108)
+    
+    
+    
+    
+    holoCreate(57, h(106):toWorld(vec(0*S,0*S,0*S)), vec(0.12*S,0.12*S,0.12*S), h(106):toWorld(ang(0,0,90)), vec(50), "models/mechanics/wheels/wheel_rounded_72.mdl")
+    holoParent(57, 106)
+    holoMaterial(57, "models/debug/debugwhite")
+    
+    holoCreate(58, h(106):toWorld(vec(-1*S,0*S,4*S)), vec(0.21*S,0.14*S,0.5*S), h(106):toWorld(ang(10,0,0)), vec(25),"models/hunter/tubes/tube1x1x1.mdl")
+    holoParent(58, 106)
+    holoMaterial(58, "models/debug/debugwhite")
+    
+    holoCreate(59, h(107):toWorld(vec(-5*S,0*S,-3*S)), vec(0.13*S,0.16*S,0.2*S), h(107):toWorld(ang(0,80,90)), vec(25), "models/hunter/tubes/tubebend1x1x90.mdl")
+    holoParent(59, 107)
+    holoMaterial(59, "models/debug/debugwhite")
+    
+    
+    holoCreate(60, h(107):toWorld(vec(7*S,0*S,26*S)), vec(0.07*S,0.1*S,0.2*S), h(107):toWorld(ang(-60,180,180)), vec(135*1.5,120*1.5,150*1.5), "models/XQM/CoasterTrack/slope_225_4.mdl")
+    holoParent(60, 107)
+    
+    holoCreate(61, h(107):toWorld(vec(3*S,-9*S,17*S)), vec(0.04*S,0.02*S,0.3*S), h(107):toWorld(ang(35,90,0)), vec(135*1.5,120*1.5,150*1.5), "models/XQM/CoasterTrack/slope_225_4.mdl")
+    holoParent(61, 107)
+    
+    holoCreate(62, h(107):toWorld(vec(3*S,9*S,17*S)), vec(0.04*S,0.02*S,0.3*S), h(107):toWorld(ang(35,-90,0)), vec(135*1.5,120*1.5,150*1.5), "models/XQM/CoasterTrack/slope_225_4.mdl")
+    holoParent(62, 107)
+    
+    holoCreate(63, h(107):toWorld(vec(-0*S,5*S,54*S)), vec(0.17*S,0.07*S,0.2*S), h(107):toWorld(ang(5,75,-20)), vec(135/2.5,120/2.5,150/2.5), "models/props_combine/tprotato1.mdl")
+    holoParent(63, 107)
+    holoMaterial(63, "models/debug/debugwhite")
+
+    holoCreate(64, h(107):toWorld(vec(-0*S,-5*S,54*S)), vec(0.17*S,0.07*S,0.2*S), h(107):toWorld(ang(5,-75,20)), vec(135/2.5,120/2.5,150/2.5), "models/props_combine/tprotato1.mdl")
+    holoParent(64, 107)
+    holoMaterial(64, "models/debug/debugwhite")
+    
+    
+    
+    
+    
+###########
+    holoCreate(109, E:toWorld(vec(-33*S,-25*S,-15*S)), vec(0))
+    holoParent(109, E)
+    
+    holoCreate(110, h(109):toWorld(vec(0,0,L1)), vec(0))
+    holoParent(110, 109)
+    
+    holoCreate(111, h(110):toWorld(vec(0,0,L2)), vec(0))
+    holoParent(111, 110)
+    
+    
+    
+    
+    
+    
+    
+P1 = LegFL:pos()
+P2 = LegFR:pos()
+P3 = LegBL:pos()
+P4 = LegBR:pos()
+
+T = 0
+
+}
+
+#########
+if(changed(holoCanCreate()) & holoCanCreate()) {
+    
+    holoCreate(65, h(109):toWorld(vec(0*S,0*S,0*S)), vec(0.12*S,0.12*S,0.12*S), h(109):toWorld(ang(0,0,90)), vec(50), "models/mechanics/wheels/wheel_rounded_72.mdl")
+    holoParent(65, 109)
+    holoMaterial(65, "models/debug/debugwhite")
+    
+    holoCreate(66, h(109):toWorld(vec(-1*S,0*S,4*S)), vec(0.21*S,0.14*S,0.5*S), h(109):toWorld(ang(10,0,0)), vec(25), "models/hunter/tubes/tube1x1x1.mdl")
+    holoParent(66, 109)
+    holoMaterial(66, "models/debug/debugwhite")
+    
+    holoCreate(67, h(110):toWorld(vec(-5*S,0*S,-3*S)), vec(0.13*S,0.16*S,0.2*S), h(110):toWorld(ang(0,80,90)), vec(25), "models/hunter/tubes/tubebend1x1x90.mdl")
+    holoParent(67, 110)
+    holoMaterial(67, "models/debug/debugwhite")
+    
+    
+    holoCreate(68, h(110):toWorld(vec(7*S,0*S,26*S)), vec(0.07*S,0.1*S,0.2*S), h(110):toWorld(ang(-60,180,180)), vec(135*1.5,120*1.5,150*1.5), "models/XQM/CoasterTrack/slope_225_4.mdl")
+    holoParent(68, 110)
+    
+    holoCreate(69, h(110):toWorld(vec(3*S,-9*S,17*S)), vec(0.04*S,0.02*S,0.3*S), h(110):toWorld(ang(35,90,0)), vec(135*1.5,120*1.5,150*1.5), "models/XQM/CoasterTrack/slope_225_4.mdl")
+    holoParent(69, 110)
+    
+    holoCreate(70, h(110):toWorld(vec(3*S,9*S,17*S)), vec(0.04*S,0.02*S,0.3*S), h(110):toWorld(ang(35,-90,0)), vec(135*1.5,120*1.5,150*1.5), "models/XQM/CoasterTrack/slope_225_4.mdl")
+    holoParent(70, 110)
+    
+    holoCreate(71, h(110):toWorld(vec(-0*S,5*S,54*S)), vec(0.17*S,0.07*S,0.2*S), h(110):toWorld(ang(5,75,-20)), vec(135/2.5,120/2.5,150/2.5), "models/props_combine/tprotato1.mdl")
+    holoParent(71, 110)
+    holoMaterial(71, "models/debug/debugwhite")
+    
+    holoCreate(72, h(110):toWorld(vec(-0*S,-5*S,54*S)), vec(0.17*S,0.07*S,0.2*S), h(110):toWorld(ang(5,-75,20)), vec(135/2.5,120/2.5,150/2.5), "models/props_combine/tprotato1.mdl")
+    holoParent(72, 110)
+    holoMaterial(72, "models/debug/debugwhite")
+    
+    
+    
+    
+    holoCreate(73, E:toWorld(vec(-81*S,0*S,68*S)+Off), vec(0.3*S,0.25*S,0.1*S), E:toWorld(ang(52,0,0)), vec(100,100,100), "models/XQM/CoasterTrack/slope_45_1.mdl")
+    holoParent(73, E)
+    
+    holoCreate(74, E:toWorld(vec(-95*S,5.6*S,116*S)+Off), vec(0.06*S,0.05*S,0.14*S), E:toWorld(ang(90,-90,0)), vec(100,100,100), "models/XQM/CoasterTrack/straight_2.mdl")
+    holoParent(74, E)
+    
+    holoCreate(75, E:toWorld(vec(-95*S,-5.6*S,116*S)+Off), vec(0.06*S,0.05*S,0.14*S), E:toWorld(ang(90,90,0)), vec(100,100,100), "models/XQM/CoasterTrack/straight_2.mdl")
+    holoParent(75, E)
+    
+    
+    holoCreate(76, E:toWorld(vec(-0.2*S,0*S,-0*S)+Off), vec(0.035*S,0.035*S,0.05*S), E:toWorld(ang(-100,180,0)), vec(135/2.5,120/2.5,150/2.5), "models/hunter/tubes/tube4x4x1to2x2.mdl")
+    holoParent(76, E)
+    holoMaterial(76, "models/debug/debugwhite")
+    
+    holoCreate(77, h(76):toWorld(vec(0*S,0*S,-2.3*S)), vec(0.018*S,0.018*S,0.01*S), E:toWorld(ang(-100,180,0)), vec(255,0,0), "models/hunter/misc/shell2x2a.mdl")
+    holoParent(77, 76)
+    holoMaterial(77, "models/debug/debugwhite")
+    
+    holoCreate(78, h(76):toWorld(vec(0*S,0*S,-2.3*S)), vec(0.06*S,0.06*S,0.01*S), E:toWorld(ang(-90,180,0)), vec(20,20,20), "models/hunter/tubes/circle2x2.mdl")
+    holoParent(78, 76)
+    holoMaterial(78, "models/debug/debugwhite")
+    
+    
+    #holoCreate(79, E:toWorld(vec(-2.8*S,4*S,-0*S)+Off), vec(0.1*S,0.1*S,0.1*S), E:toWorld(ang(-100,180,0)), vec(160,160,160), "hq_sphere")
+    holoParent(79, E)
+    holoMaterial(79, "models/debug/debugwhite")
+    
+    #Tick = 1
+    
+}
+
+if(changed(holoCanCreate()) & holoCanCreate()) {
+    
+    #holoCreate(80, E:toWorld(vec(-2.8*S,-4*S,-0*S)+Off), vec(0.1*S,0.1*S,0.1*S), E:toWorld(ang(-100,180,0)), vec(160,160,160), "hq_sphere")
+    holoParent(80, E)
+    holoMaterial(80, "models/debug/debugwhite")
+    
+    
+}
+
+#S = 8
+
+Dri = Pod:driver()
+W = Dri:keyForward()
+A = Dri:keyLeft()
+Ss = Dri:keyBack()
+D = Dri:keyRight()
+Shift = Dri:keySprint()
+Space = Dri:keyJump()
+
+NVel = -E:vel()*Mass
+NAVel = -E:angVel()*Mass
+
+Pitch = -((h(102):pos()-h(105):pos():z()):z() - (h(108):pos()-h(111):pos():z()):z())/20
+Roll = ((h(102):pos()-h(108):pos():z()):z() - (h(105):pos()-h(111):pos():z()):z())/20
+
+E:applyAngForce(NAVel*50 + ang(Pitch-E:angles():pitch(),0,Roll-E:angles():roll())*Mass*160/S)
+
+
+
+if(Dri) {
+    if(changed(MainR:hit())) {
+        resetCurPos(vec(0,0,0))
+        resetStartPos()
+    }
+    if(MainR:hit()) {
+        
+            
+            
+            if((W | A | D | Ss) & !Space) {
+                if(Leg == 1) {
+                    T1 = T1 + 0.08
+                    
+                    P1 = bezier(S1, mix(S1, LegFL:pos(), 0.33)+vec(0,0,20*S), LegFL:pos(), T1)
+                    P4 = bezier(S4, mix(S4, LegBR:pos(), 0.33)+vec(0,0,20*S), LegBR:pos(), clamp(T1*1.0,0,1))
+                    
+                    if(T1 >= 1) {
+                        S1 = LegFL:pos()
+                        S4 = LegBR:pos()
+                        
+                        T2 = 0
+                        Leg = 2
+                        
+                        W1 = 0
+                    }
+                }
+    
+                if(Leg == 2) {
+                    T2 = T2 + 0.08
+    
+                    P3 = bezier(S3, mix(S3, LegBL:pos(), 0.33)+vec(0,0,20*S), LegBL:pos(), T2)
+                    P2 = bezier(S2, mix(S2, LegFR:pos(), 0.33)+vec(0,0,20*S), LegFR:pos(), clamp(T2*1.0,0,1))
+                    
+                    if(T2 >= 1) {
+                        S3 = LegBL:pos()
+                        S2 = LegFR:pos()
+                        
+                        T1 = 0
+                        Leg = 1
+                        
+                        W1 = 0
+                    }
+                }
+                
+
+        
+        
+        if(W | Ss) {
+            W1 = 1
+            E:applyForce(E:forward()*Mass*200*(W-Ss))  
+        }
+        
+        if(A | D) {
+            E:applyAngForce(ang(0,(A-D)*1200,0)*Mass)
+        }
+        
+    } elseif(!Space) {
+        if(T1 > 0) {
+            T1 = T1 + 0.1
+            
+                    P1 = bezier(S1, mix(S1, LegFL:pos(), 0.33)+vec(0,0,20*S), LegFL:pos(), T1)
+                    P4 = bezier(S4, mix(S4, LegBR:pos(), 0.33)+vec(0,0,20*S), LegBR:pos(), clamp(T1*1.0,0,1))
+                    
+                    E:applyForce(E:forward()*Mass*200*(W-Ss))  
+            if(T1 >= 1) {
+                S1 = LegFL:pos()
+                S4 = LegBR:pos()
+            
+                        
+                T1 = 0
+                Leg = 2
+                
+                W1 = 0
+            }
+        }
+        
+        
+        
+        
+        if(T2 > 0) {
+            T2 = T2 + 0.1
+            
+                    P3 = bezier(S3, mix(S3, LegBL:pos(), 0.33)+vec(0,0,20*S), LegBL:pos(), T2)
+                    P2 = bezier(S2, mix(S2, LegFR:pos(), 0.33)+vec(0,0,20*S), LegFR:pos(), clamp(T2*1.0,0,1))
+                    
+                    E:applyForce(E:forward()*Mass*200*(W-Ss))  
+            if(T2 >= 1) {
+                S3 = LegBL:pos()
+                S2 = LegFR:pos()
+            
+                        
+                T2 = 0
+                Leg = 1
+                
+                W1 = 0
+            }
+        }
+        
+        
+    }
+                    
+    } else {
+    
+        resetCurPos(vec(0,0,30))
+    }
+
+
+
+    if(Space) {
+        E:applyForce(-E:vel()*1 + vec(0,0,1)*Mass*70 + E:forward()*30*Mass*(W-Ss))
+        E:applyAngForce(ang(0,(A-D)*1200*Mass,0))
+        #resetCurPos(vec(0,0,-100))
+        #resetStartPos()
+    }
+
+} else {
+    Active = 0
+
+    if(MainR:hit()) {
+        
+        resetCurPos(vec(0,0,0))
+        
+    } else {
+        resetCurPos(vec(0,0,-100))
+    }
+    
+}
+    
+    #T = 1
+    
+    if(Dri:keyAttack1()) {
+        Active = 1
+        
+        E:soundPlay(1, 0, "phx.afterburner1")
+        soundPitch(1, 100)
+    } else {
+        Active = 0
+        soundStop(1)
+    }
+    
+    if(changed(Dri:keyAttack2()) & Dri:keyAttack2()) {
+        #rangerFilter(array(LaserChip))
+        #AimR = rangerOffset(100000, LaserChip:pos(), (LaserChip:pos()-Dri:aimPos()))
+        #StartAim = (Dri:aimPos()-LaserChip:pos())
+        
+        RangeAimPos = Dri:aimPos()
+            
+    }
+    
+        
+        
+
+    if(Dri:keyAttack1() & T < 1.01) {
+        T = clamp(T + 0.08, 0, 1)
+        
+    holoPos(19, E:toWorld(vec(-9.5*S, 0*S + 48*T*(S/8),-4.5*S - 28*T*(S/8))+Off))
+    holoAng(19, E:toWorld(ang(20 - 32*T,180 + 16*T, 0)))
+    
+    holoPos(20, E:toWorld(vec(-9.5*S, 0*S - 48*T*(S/8), -4.5*S - 28*T*(S/8))+Off))
+    holoAng(20, E:toWorld(ang(0, 90 - 16*T, -20 + 32*T)))
+    
+    holoAng(24, E:toWorld(ang(48*T,0,0)))
+    
+    Active = 1
+    
+    if(T >= 1 & Dri:keyAttack2() & Active & Energy > 0.15) {
+        Energy = Energy - 0.02
+        
+        RangeAimPos = RangeAimPos + ((Dri:aimPos()-h(10000000):pos()) / (Dri:aimPos()-h(10000000):pos()):length())*100
+        
+        rangerFilter(array(LaserChip, E, Pod))
+        AimR = rangerOffset(1000000, LaserChip:pos(), RangeAimPos-LaserChip:pos())
+        
+        holoPos(10000000, RangeAimPos)
+        
+        AimPos = AimR:pos()
+        
+        #Active = 1
+        HoloEmitter:setPos(AimR:pos())
+        
+        Cd = Cd + 1
+        
+        if(Cd > 2) {
+            Cd = 0
+            P = propSpawn("models/props_phx/ww2bomb.mdl", AimR:pos(), 1)
+            P:propBreak()
+        }
+        
+    } else {
+    
+        AimPos = Dri:aimPos()
+        
+        
+        
+        #Active = 1
+        HoloEmitter:setPos(LaserChip:pos()+vec(0,0,randint(-1,1)))
+        
+        Cd = 100
+    }
+    
+    } elseif(T > 0) {
+        T = clamp(T - 0.08, 0, 1)
+        
+    holoPos(19, E:toWorld(vec(-9.5*S, 0*S + 48*T*(S/8),-4.5*S - 28*T*(S/8))+Off))
+    holoAng(19, E:toWorld(ang(20 - 32*T,180 + 16*T, 0)))
+    
+    holoPos(20, E:toWorld(vec(-9.5*S, 0*S - 48*T*(S/8), -4.5*S - 28*T*(S/8))+Off))
+    holoAng(20, E:toWorld(ang(0, 90 - 16*T, -20 + 32*T)))
+    
+    holoAng(24, E:toWorld(ang(48*T,0,0)))
+    
+    Active = 0
+    } else {
+        Active = 0
+    }
+
+
+
+Energy = clamp(Energy+0.05*(!Dri:keyAttack2()), 0, 1)
+
+
+
+
+rangerFilter(array(E))
+MainR = rangerOffset(Height*2, E:pos(), vec(0,0,-1))
+
+LegFL = rangerOffset((Height*2), E:toWorld(vec(35*S,68*S,0*S)), vec(0,0,-1))
+LegFR = rangerOffset((Height*2), E:toWorld(vec(35*S,-68*S,0*S)), vec(0,0,-1))
+
+LegBL = rangerOffset((Height*2), E:toWorld(vec(-63*S,65*S,0*S)), vec(0,0,-1))
+LegBR = rangerOffset((Height*2), E:toWorld(vec(-63*S,-65*S,0*S)), vec(0,0,-1))
+
+
+#holoPos(100, LegFL:pos())
+if(MainR:hit() & !Space) {
+
+    local ZForce = ((Height-(abs(Pitch)+abs(Roll))*2)-MainR:distance())*(2/3)*Mass
+    
+    E:applyForce(NVel*0.95 + vec(0,0,ZForce))
+} else {
+    local ZForce = -60*Mass
+    
+    E:applyForce(-E:vel()*0.2 + vec(0,0,ZForce))
+}
+
+
+leg(100,101,102, L1/1.5, L2, h(100), P1, E, 60,0)
+leg(103,104,105, L1/1.5, L2, h(103), P2, E, -60,0)
+leg(106,107,108, L1, L2, h(106), P3, E, 125,0)
+leg(109,110,111, L1, L2, h(109), P4, E, -125,0)
+
+
+
+
+
+

@@ -1,0 +1,32 @@
+@name EGP Panel
+@inputs EGP:wirelink
+@outputs Var1 Var2 Var3
+@persist E:entity O:entity Var1 Var2 Var3
+@trigger 
+interval(150)
+if(first()) {
+    E = entity()
+    O = owner()
+    Var1 = 0
+    Var2 = 0
+    Var3 = 0
+    EGP:egpBox(1, vec2(256,256), vec2(550,550))
+    EGP:egpColor(1, vec(50,50,50))
+    
+    EGP:egpRoundedBox(2, vec2(256, 70), vec2(400,40))
+    EGP:egpColor(2, vec(150,150,150))
+    
+    EGP:egpRoundedBox(3, vec2(256, 200), vec2(400,40))
+    EGP:egpColor(3, vec(150,150,150))
+    
+    EGP:egpRoundedBox(4, vec2(256, 330), vec2(400,40))
+    EGP:egpColor(4, vec(150,150,150))
+    
+    EGP:egpColor(5, vec(255,0,0))
+    EGP:egpColor(6, vec(0,255,0))
+    EGP:egpColor(7, vec(0,0,255))
+}
+
+EGP:egpRoundedBox(5, vec2(256-Var1,70), vec2(400-Var1*2, 30))
+EGP:egpRoundedBox(6, vec2(256-Var2,200), vec2(400-Var2*2, 30))
+EGP:egpRoundedBox(7, vec2(256-Var3,330), vec2(400-Var3*2, 30))

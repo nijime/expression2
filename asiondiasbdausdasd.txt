@@ -1,0 +1,19 @@
+@name sadasdasdasdas
+@inputs 
+@outputs 
+@persist 
+@trigger 
+runOnChat(1)
+
+if(first()) {
+    holoCreate(1)
+}
+
+
+A = owner():lastSaid():explode(" ")
+
+if(A[1, string] == "/scale"  & chatClk(owner())) {
+    Scale = A[2, string]:toNumber()
+    
+    holoScale(1, vec(Scale,Scale,Scale))
+}

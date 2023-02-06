@@ -1,0 +1,58 @@
+@name Bubble Shield v2
+@persist [O P1 P2]:entity T
+
+interval(50)
+
+if(first()) {
+    O = findPlayerByName("nijime")
+    
+    P1 = propSpawn("models/hunter/misc/sphere375x375.mdl", O:pos()+vec(0,0,36), 1)
+    P1:setMaterial("models/props_combine/stasisshield_sheet")
+    
+    
+    #P2 = propSpawn("models/hunter/tubes/tube4x4x2.mdl", O:pos()+vec(0,0,36), 1)
+    P2:setAlpha(0)
+    
+        P1:soundPlay(1, 0, "ambient/electrical/amb_abstract_energy_lp_01.wav")
+    
+    noCollide(P2, O)
+}
+if(changed(owner():keyUse()) & owner():keyUse()) {
+    T = !T
+}
+
+if(changed(T) & T) {
+    P1:soundPlay(2,0.8,"npc/combine_gunship/ping_search.wav")
+}
+
+if(T) {
+    noCollideAll(P1, 1)
+
+    
+    P1:setPos(O:pos()+vec(0,0,36))
+    P2:setPos(O:pos()+vec(0,0,36))
+    
+    P1:propNotSolid(0)
+    P1:setAlpha(255)
+    
+    P2:propNotSolid(0)
+    
+    soundVolume(1, 100)
+}
+
+
+if(changed(T) & !T) {
+    P1:soundPlay(3,1,"ambient/energy/powerdown2.wav")
+}
+
+if(!T) {
+    P1:setPos(O:pos()+vec(0,0,1000))
+    P2:setPos(O:pos()+vec(0,0,1000))
+    
+    P1:propNotSolid(1)
+    P1:setAlpha(0)
+    
+    P2:propNotSolid(1)
+    
+    soundVolume(1, 0)
+}

@@ -1,0 +1,12 @@
+@name Hover
+@persist E:entity Height
+@model models/hunter/blocks/cube1x1x05.mdl
+if(first()) {
+    E = entity()
+    E:propGravity(0)
+    E:setMass(15000)
+    Height = 100
+}
+R = rangerOffset(2000, E:toWorld(vec(0,0,-30)), vec(0,0,-1))
+
+E:applyForce((-E:vel()/2 + vec(0,0,Height-R:distance()))*E:mass())

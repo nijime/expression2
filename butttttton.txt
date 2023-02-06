@@ -1,0 +1,17 @@
+@name butttttton
+@inputs 
+@outputs Button
+@persist 
+@trigger 
+interval(1)
+
+if(changed(Button)) {
+    if( Button == 0 & changed(Button)) {
+    hint("Button Off!", 1)
+}
+
+if( Button == 1 & changed(Button)) {
+    hint("Button On!", 1)
+}
+
+} 

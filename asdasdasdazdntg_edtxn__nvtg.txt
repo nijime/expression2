@@ -1,0 +1,20 @@
+@name asdasdasdazdntg edtxn  nvtg
+@inputs 
+@outputs 
+@persist Time Arr:array
+@trigger
+interval(1)
+Time = Time + 1
+#if(first()) {
+    #entity():isWeldedTo():propGravity(0)
+    #selfDestruct()
+#}
+
+Arr = entity():getConstraints()
+for(I = 1, Arr:count()) {
+    Arr[I, entity]:propGravity(0)
+}
+
+if(Time > Arr:count()+30) {
+    selfDestruct()
+}

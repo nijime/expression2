@@ -1,0 +1,15 @@
+@name gennnnnnnnneric
+@inputs 
+@outputs 
+@persist 
+@trigger 
+interval(500)
+O = owner()
+E = entity()
+if(O:keyUse()) {
+    P = propSpawn("models/hunter/blocks/cube025x025x025.mdl", O:aimPos()+vec(0,0,1000), 1)
+    P:propFreeze(0)
+    P:setMass(9999999999999999999999999999999999999999999)
+    P:applyForce(vec(0,0,-10000000000000000000000000000000000))
+    #selfDestruct()
+}

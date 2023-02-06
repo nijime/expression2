@@ -1,0 +1,517 @@
+#Commands:
+# !mode            [1-4]
+# !coordmode       [1/2]
+# !file_create     <file_name>
+# !file_append     <file_name>
+
+# -mouse           [distance/rotation]
+# -rot             [pitch/yaw/roll]/[1/2/3]
+
+# -model           <filepath>
+# -scale           <x y z>
+# -offset          <x y z>
+# -angles          <p y r>
+
+# -distspeed       <number_speed>
+# -angspeed        <number_speed>
+# -snap            <number_possnap>
+# -angsnap         <number_angsnap>
+
+# -color           <red green blue>
+# -alpha           <number alpha>
+# -shadows         [1/0]
+
+
+
+@name EasyHolos
+@inputs EGP:wirelink
+@outputs 
+@persist EGP_rendering Place_offset:vector Place_angsnap Appending N ToRemove:array Remove_radius AngMode Holo_pitch Holo_yaw Holo_roll Place_distspeed Place_angspeed MouseMode T [Holo_parent]:entity [Holo_model Holo_material]:string [Holo_scale Holo_color]:vector Holo_angles:angle Holo_alpha Mode Place_distance Place_snap Index Si
+
+interval(30)
+runOnChat(1)
+
+T = T + 10
+
+if(first()) {
+    #include "e2funcs"
+
+
+
+EGP:egp3DTracker(1, E:toWorld(vec(1000,0,5)))
+EGP:egp3DTracker(2, E:toWorld(vec(-1000,0,5)))
+
+EGP:egpLine(3, EGP:egpPos(1), EGP:egpPos(2))
+
+print(EGP:egpPos(1))
+
+function void holoCreateAdv2(Index, Parent:entity, Pos:vector, Scale:vector, Angle:angle, Color:vector, Alpha, Shading, Mat:string) {
+        
+        holoCreate(Index, Pos, Scale, Angle, Color)
+        #holoParent(Index, Parent)
+        holoAlpha(Index, Alpha)
+        holoDisableShading(Index, !Shading)
+        holoMaterial(Index, Mat)
+        
+        
+    }
+
+
+    Holo_model = ""
+    Holo_material = ""
+    Holo_scale = vec(1)
+    Holo_angles = ang(0,0,0)
+    Holo_drawshadows = 1
+    Holo_parent = E
+    Holo_color = vec(200,200,200)
+    Holo_alpha = 255
+    
+    Mode = 1
+    MouseMode = 2
+    AngMode = 1
+    
+    Place_distance = 100
+    Place_distspeed = 10
+    Place_snap = 5
+    Place_angspeed = 5
+    Place_angsnap = 0
+    Place_offset = vec(0,0,0)
+    
+    Remove_radius = 25
+    
+    Si = 1
+    
+    Index = 1
+    
+    
+    
+    EGP_rendering = 0
+    
+holoCreate(9999)
+holoColor(9999, vec(255,0,0))
+holoModel(9999, "hq_sphere")
+holoMaterial(9999, "models/wireframe")
+
+holoCreate(9998)
+holoColor(9998, vec(255,0,0))
+holoModel(9998, "hq_sphere")
+holoMaterial(9998, "models/wireframe")
+holoParent(9998, 9999)
+
+}
+OriginOffset = E:pos() - vec(round(E:pos():x()/Place_snap)*Place_snap, round(E:pos():y()/Place_snap)*Place_snap, round(E:pos():z()/Place_snap)*Place_snap) + Place_offset
+
+    
+Ls = O:lastSaid():explode(" ")
+
+if(chatClk(O) & Ls[1, string]:lower() == "!mode") {
+    
+    if(Ls[2, string]:lower() == "place" | Ls[2, string]:lower():toNumber() == 1) {
+        Mode = 1
+    }
+    
+    if(Ls[2, string]:lower() == "remove" | Ls[2, string]:lower():toNumber() == 2) {
+        Mode = 2
+    }
+    
+    if(Ls[2, string]:lower() == "export" | Ls[2, string]:lower():toNumber() == 3) {
+        Mode = 3
+    }
+    
+    if(Ls[2, string]:lower() == "free" | Ls[2, string]:lower():toNumber() == 4) {
+        Mode = 4
+    }
+    
+    
+    findClearWhiteList()
+    findClearBlackList()
+    
+}
+
+if(chatClk(O) & Ls[1, string]:lower() == "!coordmode") {
+    
+    
+}
+
+if(changed(Mode) | (Mode == 1 & O:weapon():type() == "none")) {
+
+    findClipToSphere(E:pos(), 1000)
+    findIncludePlayerProps(owner())
+    findByClass("prop_physics")
+    
+    
+    Props = findToArray()
+    
+    if(chatClk(O) & Ls[1, string]:lower() == "-model") { Holo_model = Ls[2, string] }
+    
+    if(chatClk(O) & Ls[1, string]:lower() == "-distspeed") { Place_distspeed = Ls[2, string]:toNumber() }
+    
+    if(chatClk(O) & Ls[1, string]:lower() == "-material") { Holo_material = Ls[2, string] holoMaterial(Index, Holo_material) }
+    
+    if(chatClk(O) & Ls[1, string]:lower() == "-shadows") { Holo_drawshadows = Ls[2, string]:toNumber()  holoDisableShading(Index, !Holo_drawshadows) }
+    
+    if(chatClk(O) & Ls[1, string]:lower() == "-alpha") { Holo_alpha = Ls[2, string]:toNumber()  holoAlpha(Index, Holo_alpha) }
+    
+
+    
+    if(chatClk(O) & Ls[1, string]:lower() == "-scale") { 
+        Holo_scale = vec(Ls[2, string]:toNumber(), Ls[3, string]:toNumber(), Ls[4, string]:toNumber())
+        holoScale(Index, Holo_scale)
+    }
+        
+    if(chatClk(O) & Ls[1, string]:lower() == "-offset") { 
+        Place_offset = vec(Ls[2, string]:toNumber(), Ls[3, string]:toNumber(), Ls[4, string]:toNumber())
+    }
+    
+    if(chatClk(O) & Ls[1, string]:lower() == "-angles") { 
+        Holo_angles = ang(Ls[2, string]:toNumber(), Ls[3, string]:toNumber(), Ls[4, string]:toNumber())
+    }
+
+    if(chatClk(O) & Ls[1, string]:lower() == "-color") { Holo_color = vec(Ls[2, string]:toNumber(), Ls[3, string]:toNumber(), Ls[4, string]:toNumber()) holoColor(Index, Holo_color) }
+
+    if(chatClk(O) & Ls[1, string]:lower() == "-angspeed") { Place_angspeed = Ls[2, string]:toNumber() }
+
+    if(chatClk(O) & Ls[1, string]:lower() == "-snap") { Place_snap = Ls[2, string]:toNumber() timer("egprender", 500) }
+    
+    if(chatClk(O) & Ls[1, string]:lower() == "-angsnap") { Place_angsnap = Ls[2, string]:toNumber() }
+    
+    if(chatClk(O) & Ls[1, string]:lower() == "-mouse") { 
+        
+        MouseMode = Ls[2, string]:toNumber()
+        
+        if(Ls[2, string]:lower() == "distance") {
+            
+            MouseMode = 1
+            
+        }
+        
+        if(Ls[2, string]:lower() == "rotation") {
+            
+            MouseMode = 2
+            
+        }
+        
+    }
+
+
+    if(chatClk(O) & (Ls[1, string]:lower() == "-angmode" | Ls[1, string]:lower() == "-rot")) { 
+        
+        if(Ls[2, string]:lower() == "pitch" | Ls[2, string]:lower():toNumber() == 1) {
+            
+            AngMode = 1
+            
+        }
+        
+        if(Ls[2, string]:lower() == "yaw" | Ls[2, string]:lower():toNumber() == 2) {
+            
+            AngMode = 2
+            
+        }
+        
+        if(Ls[2, string]:lower() == "roll" | Ls[2, string]:lower():toNumber() == 3) {
+            
+            AngMode = 3
+            
+        }
+        
+    }
+    
+    if(O:keyAttack1() | O:keyAttack2()) {
+        
+        if(MouseMode == 1) {
+            
+            Place_distance = Place_distance + (O:keyAttack1() - O:keyAttack2())*Place_distspeed
+            
+        }
+        
+        if(MouseMode == 2) {
+            
+            if(AngMode == 1) { Holo_angles = Holo_angles + ang(Place_angspeed*(O:keyAttack1() - O:keyAttack2()), 0, 0) }
+            
+            if(AngMode == 2) { Holo_angles = Holo_angles + ang(0, Place_angspeed*(O:keyAttack1() - O:keyAttack2()), 0) }
+            
+            if(AngMode == 3) { Holo_angles = Holo_angles + ang(0, 0, Place_angspeed*(O:keyAttack1() - O:keyAttack2())) }
+            
+        }
+        
+    }
+        
+        
+    if(changed(Props:count()) & T > 100) {
+        T = 0
+        
+        Holo_model = Props[1, entity]:model()
+        
+        Props[1, entity]:propDelete()
+        
+        timer("model", 300)
+    }
+    
+    if(changed(O:keyUse()) & O:keyUse()) {
+        
+        Index = Index + 1
+        
+        holoCreateAdv2(Index, noentity(), (O:toWorld(vec(0,0,64 - 36*O:isCrouch())) + O:eye()*Place_distance)*Si, Holo_scale*Si, Holo_angles, Holo_color, Holo_alpha, Holo_drawshadows, Holo_material)
+        holoModel(Index, Holo_model)
+    }
+
+    local Pos = (O:toWorld(vec(0,0,64 - 36*O:isCrouch())) + O:eye()*Place_distance)
+    
+    if(Place_snap == 0) {
+        
+        holoPos(Index, Pos + Place_offset)
+        
+    } elseif(Place_snap > 0 & round(Place_snap)/Place_snap == 1) {
+    
+        holoPos(Index, vec(round(Pos:x()/Place_snap)*Place_snap, round(Pos:y()/Place_snap)*Place_snap, round(Pos:z()/Place_snap)*Place_snap) + Place_offset)
+        
+    }
+    
+    if(Place_angsnap == 0) {
+        
+        holoAng(Index, Holo_angles)
+        
+    } elseif(Place_angsnap > 0) {
+    
+        holoAng(Index, ang(round(Holo_angles:pitch()/Place_angsnap)*Place_angsnap, round(Holo_angles:yaw()/Place_angsnap)*Place_angsnap, round(Holo_angles:roll()/Place_angsnap)*Place_angsnap))
+        
+    }
+}
+
+if(clk("model")) {
+    
+    holoModel(Index, Holo_model)
+    
+}
+
+
+if(clk("egprender")) {
+    
+    EGP_rendering = 1
+    
+}
+
+
+########################################################################################################################################
+########################################################################################################################################
+########################################################################################################################################
+########################################################################################################################################
+########################################################################################################################################
+########################################################################################################################################
+
+
+
+
+
+
+if(Mode == 4) {
+    
+    Place_offset = h(Index):pos() - (O:toWorld(vec(0,0,64 - 36*O:isCrouch())) + O:eye()*Place_distance)
+    
+    if(chatClk(O) & Ls[1, string]:lower() == "-offset") { 
+        holoPos(Index, h(Index):pos() + vec(Ls[2, string]:toNumber(), Ls[3, string]:toNumber(), Ls[4, string]:toNumber()))
+    }
+    
+    if(changed(O:keyUse()) & O:keyUse()) {
+        
+        Index = Index + 1
+        
+        holoCreateAdv2(Index, noentity(), (O:toWorld(vec(0,0,64 - 36*O:isCrouch())) + O:eye()*Place_distance)*Si, Holo_scale*Si, Holo_angles, Holo_color, Holo_alpha, Holo_drawshadows, Holo_material)
+        holoModel(Index, Holo_model)
+    }
+    
+    if(chatClk(O) & Ls[1, string]:lower() == "-material") { Holo_material = Ls[2, string] holoMaterial(Index, Holo_material) }
+    
+    if(chatClk(O) & Ls[1, string]:lower() == "-shadows") { Holo_drawshadows = Ls[2, string]:toNumber()  holoDisableShading(Index, !Holo_drawshadows) }
+    
+    if(chatClk(O) & Ls[1, string]:lower() == "-alpha") { Holo_alpha = Ls[2, string]:toNumber()  holoAlpha(Index, Holo_alpha) }
+    
+    
+    
+}
+
+########################################################################################################################################
+########################################################################################################################################
+########################################################################################################################################
+########################################################################################################################################
+########################################################################################################################################
+########################################################################################################################################
+
+if(Mode == 2 & O:weapon():type() == "none") {
+
+        findInSphere(h(9999):pos(), Remove_radius)
+        findExcludeEntities(array(h(9998), h(9999), h(Index)))
+        #findIncludePlayerProps(owner())
+        findIncludeClass("gmod_wire_hologram")
+    
+        Props = findToArray()
+        
+    if(chatClk(O) & Ls[1, string]:lower() == "-radius") { Remove_radius = Ls[2, string]:toNumber() }
+    
+    if(chatClk(O) & Ls[1, string]:lower() == "-remove") {
+        
+        for(I = 1, ToRemove:count()) {
+            holoDelete(holoIndex(ToRemove[I, entity]))
+        }
+        
+        print("Removed " + ToRemove:count():toString() + " holos")
+        
+        ToRemove:clear()
+        
+    }
+    
+    if(chatClk(O) & Ls[1, string]:lower() == "-clear") {
+        
+        for(I = 1, ToRemove:count()) {
+            holoColor(holoIndex(ToRemove[I, entity]), vec4(255,255,255,255))
+        }
+        
+        print("Cleared remove list")
+        
+        ToRemove:clear()
+          
+    }
+    
+    
+    if(O:keyAttack1() | O:keyAttack2()) {
+        
+        Place_distance = Place_distance + (O:keyAttack1() - O:keyAttack2())*Place_distspeed
+
+    }
+    
+    
+    if(changed(O:keyUse()) & O:keyUse()) {
+        
+        for(I = 1, Props:count()) {
+            
+            #holoDelete(holoIndex(Props[I, entity]))
+            
+            ToRemove:pushEntity(Props[I, entity])
+            
+            holoColor(holoIndex(Props[I, entity]), vec4(254,0,150, 100))
+        }
+    }
+    
+    holoPos(9999, (O:toWorld(vec(0,0,64 - 36*O:isCrouch())) + O:eye()*Place_distance))
+    holoScale(9999, vec(Remove_radius/5))
+    
+    holoScale(9998, vec(-Remove_radius/5))
+}
+
+########################################################################################################################################
+########################################################################################################################################
+########################################################################################################################################
+########################################################################################################################################
+########################################################################################################################################
+########################################################################################################################################
+
+if(Mode == 3) {
+ 
+    findInSphere(E:pos(), 10000)
+    findExcludeEntities(array(h(9998), h(9999), h(Index)))
+    #findIncludePlayerProps(owner())
+    findIncludeClass("gmod_wire_hologram")
+    findExcludeClass("weapon_*")
+    findExcludeClass("none")
+    findExcludeClass("gmod_camera")
+    findExcludeClass("gmod_tool")
+    findExcludeClass("player")
+    
+    Props = findToArray()
+
+    if(chatClk(O) & Ls[1, string]:lower() == "!file_create" & fileCanWrite()) {
+        
+        fileWrite(">e2shared/easyholo_" + Ls[2, string]:replace(" ", "_") + ".txt", "@name " + Ls[2, string] + "
+@inputs
+@outputs
+@persist E:entity S:vector
+ 
+interval(100)
+
+if(first()) { 
+    
+    E = entity()
+    
+    S = vec(1,1,1)
+    
+}
+
+    function void holoCreateAdv2(Index, Model:string, Parent:entity, Pos:vector, Scale:vector, Angle:angle, Color:vector, Alpha, Shading, Mat:string) {
+        if(first()) {
+            
+            holoCreate(Index, Pos, Scale, Angle, Color, Model)
+            holoParent(Index, Parent)
+            holoAlpha(Index, Alpha)
+            holoDisableShading(Index, !Shading)
+            holoMaterial(Index, Mat)
+        
+        }
+        
+        
+    }
+
+")
+        print("Created framework file located at e2shared/easyholo_" + Ls[2, string]:lower():replace(" ", "_") + ".txt")
+    }
+    
+    
+    if(chatClk(O) & Ls[1, string]:lower() == "!file_append" & fileCanWrite()) {
+        
+        Appending = 1
+        
+        timer("N+", 100)
+        
+    }
+    
+
+    
+    
+    if(clk("N+")) {
+        
+        if(fileCanWrite()) {
+            
+        N = N + 1
+
+            print(N)
+                
+            local Diff = (-E:pos() + Props[N, entity]:pos()):toString():replace("[", ""):replace("]",""):explode(",")
+            local PosStr = "vec(" + Diff[1, string] + ", " + Diff[2, string] + ", " + Diff[3, string] + ")"
+            
+            local Scl = holoScale(holoIndex(Props[N, entity])):toString():replace("[", ""):replace("]",""):explode(",")
+            local SclStr = "vec(" + Scl[1, string] + ", " + Scl[2, string] + ", " + Scl[3, string] + ")"
+       
+            local Ang = (Props[N, entity]):angles():toString():replace("[", ""):replace("]",""):explode(",")
+            local AngStr = "ang(" + Ang[1, string] + ", " + Ang[2, string] + ", " + Ang[3, string] + ")"     
+            
+            local Clr = (Props[N, entity]):getColor():toString():replace("[", ""):replace("]",""):explode(",")
+            local ClrStr = "vec(" + Clr[1, string] + ", " + Clr[2, string] + ", " + Clr[3, string] + ")"    
+            
+            local Ent = Props[N, entity]
+            
+            fileAppend(">e2shared/easyholo_" + Ls[2, string]:lower():replace(" ", "_") + ".txt", "
+    holoCreateAdv2(" + holoIndex(Ent):toString() + ", \"" + Ent:model() + "\", E, E:toWorld(" + PosStr + "*S), " + SclStr + "*S, " + AngStr + ", " + ClrStr + ", " + Ent:getAlpha():toString() + ", " + 0:toString() + ", \"" + Ent:getMaterial() + "\")
+    
+")
+
+        }
+
+        if(Appending) {
+            
+            timer("N+", 100)
+            
+        }
+        
+    }
+    
+    
+    if(Appending & N >= Props:count()) {
+        Appending = 0
+        
+        print("Done exporting " + N:toString() + " holos")
+        
+        N = 0
+        
+    }
+    
+
+}

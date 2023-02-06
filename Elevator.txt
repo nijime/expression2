@@ -1,0 +1,50 @@
+@name Elevator
+@inputs Floor:entity Floorupper:entity Button1 Button2
+@outputs 
+@persist Time Active Move 
+@trigger 
+interval(1)
+if(first()) {
+    Active = Active + 1
+}
+if(duped()) {
+    selfDestruct()
+}
+E = entity()
+O = owner()
+
+Maxheight = 350
+
+Floorupper:propGravity(0)
+Floorupper:setMass(99999)
+
+Sum = Button1 + Button2
+
+Range=rangerOffset(1000,Floor:pos()+vec(0,0,-10),-Floor:up())
+Height=Range:distance()
+
+
+#if(Height < Maxheight) {
+#Floor:setPos(Floor:pos()+vec(0,0,Sum))
+#}
+
+if(Sum > 0) {
+    Active = -(Active*10)
+}
+
+
+
+if(Active > 0) {
+    Move = 1
+}
+if(Active < 0) {
+    Move = -1
+}
+
+if(Height > 10 & Move == 1) {
+Floor:setPos(Floor:pos()+vec(0,0,Move))
+}
+
+if(Height < Maxheight & Move == -1) {
+Floor:setPos(Floor:pos()+vec(0,0,Move))
+}

@@ -1,0 +1,55 @@
+@name Force Throw
+@inputs Hilt:entity
+@outputs 
+@persist Target:entity
+if(first()) { #include "e2funcs"}
+
+interval(10)
+
+
+Throw = O:keyPressed("f")
+
+if(Hilt & O:weapon():type() == "weapon_lightsaber") {
+    if(!Throw) {
+        
+        X = sin(curtime()*20)*100
+        Y = cos(curtime()*20)*100
+        
+        Hilt:setPos(O:pos() + vec(X, Y, 50))
+        Hilt:setAng(ang(90,0,0))
+        Hilt:propFreeze(1)
+    }
+    
+    if(changed(Throw) & Throw) {
+        #Hilt:setPos(O:toWorld(vec(0,0,72)) + O:eye()*20)
+        Hilt:setPos(O:pos() + vec(0, 0, 110))
+        Hilt:setAng(ang(0,0,0))
+        
+        findInCone(O:toWorld(vec(0,0,60)), O:eye(), 20000, 8)
+        findIncludeClass("player")
+        findExcludeClass("ent_*")
+        findExcludeClass("mediaplayer_*")
+        
+        Target = findClosest(O:pos())
+    }
+    
+    if(Throw) {
+
+        Hilt:propFreeze(0)
+        
+        if(Target & Target:isValid()) {
+            Hilt:applyForce(-Hilt:vel()*2 + (Target:pos() - Hilt:pos())*10)
+        } else {
+            Hilt:applyForce(-Hilt:vel()*2 + (O:aimPos() - Hilt:pos())*10)
+        }
+        
+        Hilt:applyAngForce(ang(0,1000000,0))
+    }
+    
+}
+
+if(changed(Hilt)) {
+    Hilt:propGravity(0)
+    noCollideAll(Hilt, 1)
+}
+

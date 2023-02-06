@@ -1,0 +1,390 @@
+@name Camminatore v1
+@inputs Pod:entity
+@outputs T1 T2 T3 Leg Pitch Roll
+##Entites
+@persist E:entity
+##Rangers
+@persist R:ranger R1:ranger R2:ranger R3:ranger LRanger:ranger
+##Animations
+@persist P1:vector P2:vector P3:vector S1:vector S2:vector S3:vector T1 T2 T3
+##Constants
+@persist L1 L2 Height Mass Leg Pitch Roll Time 
+
+@model models/hunter/blocks/cube2x2x05.mdl
+
+
+if(first()) {
+    E = entity()
+    E:setMass(20000)
+    E:propGravity(0)
+    E:setAlpha(0)
+
+    Leg = 1
+    Pitch = 0
+    Roll = 0
+
+L1 = 170
+L2 = 225
+
+
+    function number loc(A, B, C) {
+        return acos((A^2 + B^2 - C^2) / (2*A*B))
+    }
+
+    
+    function leg(I1, I2, L1, L2, Hip:entity, Vec:vector, Base:entity, Y) {
+
+        local Axis = Base:toLocalAxis(Vec-Hip:pos())
+        local Ang = Axis:toAngle():setRoll(-bearing(Hip:pos(), Base:angles()+ang(0,Y,0), Vec))+ang(0,0,180)
+        local Dist = min(Axis:length(), L1+L2)    
+        
+        local Quat = quat(Ang) * qRotation(vec(0, loc(Dist, L1, L2)+90,0))
+
+
+        holoAng(I1, Base:toWorld(Quat:toAngle()))
+        holoAng(I2, holoEntity(I1):toWorld(ang(loc(L2,L1,Dist)+180,0,0)))
+
+        
+        
+
+    }
+    
+        ##Hip
+        holoCreate(1, E:toWorld(vec(-70,-113,0)),vec(0,0,0))
+        holoParent(1, E)
+        
+        ##Knee
+        holoCreate(2, holoEntity(1):toWorld(vec(0,0,L1)),vec(0,0,0))
+        holoParent(2, 1)
+        
+        ##Foot
+        holoCreate(3, holoEntity(2):toWorld(vec(0,0,L2)),vec(0,0,0))
+        holoParent(3, 2)
+        
+        
+        ##40, - 113
+        ##Hip
+        holoCreate(4, E:toWorld(vec(-70,113,0)),vec(0,0,0))
+        holoParent(4, E)
+        
+        ##Knee
+        holoCreate(5, holoEntity(4):toWorld(vec(0,0,L1)),vec(0,0,0))
+        holoParent(5, 4)
+        
+        ##Foot
+        holoCreate(6, holoEntity(5):toWorld(vec(0,0,L2)),vec(0,0,0))
+        holoParent(6, 5)
+
+
+
+        ##Hip
+        holoCreate(7, E:toWorld(vec(90,0,0)),vec(0,0,0))
+        holoParent(7, E)
+        
+        ##Knee
+        holoCreate(8, holoEntity(7):toWorld(vec(0,0,L1)),vec(0,0,0))
+        holoParent(8, 7)
+        
+        ##Foot
+        holoCreate(9, holoEntity(8):toWorld(vec(0,0,L2)),vec(0,0,0))
+        holoParent(9, 8)
+        
+        
+        
+        holoCreate(10, holoEntity(1):toWorld(vec(-50,0,L1/3)), vec(0,0,0), ang(25,0,0))
+        holoParent(10, 1)
+        
+        holoCreate(11, holoEntity(4):toWorld(vec(-50,0,L1/3)), vec(0,0,0), ang(25,0,0))
+        holoParent(11, 4)
+        
+        holoCreate(12, holoEntity(7):toWorld(vec(-50,0,L1/3)), vec(0,0,0), ang(25,0,0))
+        holoParent(12, 7)
+
+Height = 200
+Mass = 20000
+
+}
+interval(100)
+if(Time < 2) {
+    Time = Time + 1
+S1 = R1:pos()
+S2 = R2:pos()
+S3 = R3:pos()
+
+P1 = R1:pos()
+P2 = R2:pos()
+P3 = R3:pos()
+}
+
+##Rangers
+R = rangerOffset(50000000, E:toWorld(vec(0, 0, -20)), -E:up())
+
+R1 = rangerOffset(450, E:toWorld(vec(-155, -283, 40)), vec(0,0,-1))
+R2 = rangerOffset(450, E:toWorld(vec(-155, 283, 40)), vec(0,0,-1))
+R3 = rangerOffset(450, E:toWorld(vec(270, 0, 40)), vec(0,0,-1))
+
+LRanger = rangerOffset(10000, holoEntity(77):toWorld(vec(60, 0, 0)), holoEntity(77):up())
+##Variables
+Dri = Pod:driver()
+W = Dri:keyForward()
+A = Dri:keyLeft()
+S = Dri:keyBack()
+D = Dri:keyRight()
+Shift = Dri:keySprint()
+Space = Dri:keyJump()
+
+Angles = E:angles()
+Pitch = -(((holoEntity(9):pos())/2):z() - ((R:pos())/2):z())/10
+Roll = (((holoEntity(6):pos()+R2:pos())/2):z() - ((holoEntity(3):pos()+R1:pos())/2):z())/13
+
+Z = ((Height-(Pitch*6+Roll*4)-100*Space)-R:distance())*Mass/1.3*R:hit()
+
+Vel = -E:vel()*Mass*3  +vec(0,0,Z*2)
+AVel = -E:angVel()*Mass +ang(Pitch - Angles:pitch(), 0, Roll - Angles:roll())*Mass*5
+
+##Stablization
+E:applyForce(Vel)
+E:applyAngForce(AVel)
+
+
+
+##Movement
+if(Dri) {
+    holoAng(77, Dri:eyeAngles())
+    
+    if(W | A | S | D) {
+        E:applyForce(E:forward()*Mass*(W-S)*(275 + 100*Shift))
+        E:applyAngForce(ang(0,(A-D)*Mass*120,0))
+
+        if(Leg == 1) {
+            T1 = T1 + 0.25 + 0.09*1
+        }
+        if(Leg == 2) {
+            T2 = T2 + 0.25 + 0.09*1
+        }
+        if(Leg == 3) {
+            T3 = T3 + 0.25 + 0.09*Shift
+        }
+        
+        
+        if(Leg == 1) {
+            if(T1 >= 1) {
+                S1 = R1:pos()
+                
+                T1 = 0
+                Leg = 2
+                
+                holoEntity(6):soundPlay(1, 0.4, "ambient/industrial/machinery_combo_lp_01.wav")
+                soundPitch(1, 80)
+                
+                holoEntity(3):soundPlay(2, 1, "npc/vort/vort_foot" + randint(1, 4):toString() + ".wav")
+                soundPitch(2, 70)
+            }
+            
+            P1 = bezier(S1, (S1+R1:pos())/2+vec(0,0,150), R1:pos(), T1)
+        }
+        if(Leg == 2) {
+            if(T2 >= 1) {
+                S2 = R2:pos()
+                
+                T2 = 0
+                Leg = 3
+                
+                holoEntity(9):soundPlay(1, 0.4, "ambient/industrial/machinery_combo_lp_01.wav")
+                soundPitch(1, 80)
+                
+                holoEntity(6):soundPlay(2, 1, "npc/vort/vort_foot" + randint(1, 4):toString() + ".wav")
+                soundPitch(2, 70)
+
+                
+            }
+            
+            P2 = bezier(S2, (S2+R2:pos())/2 +vec(0,0,150), R2:pos(), T2)
+        }
+        if(Leg == 3) {
+            if(T3 >= 1) {
+                S3 = R3:pos()
+                
+                T3 = 0
+                Leg = 1
+                
+                holoEntity(3):soundPlay(1, 0.4, "ambient/industrial/machinery_combo_lp_01.wav")
+                soundPitch(1, 80)
+
+                holoEntity(9):soundPlay(2, 1, "npc/vort/vort_foot" + randint(1, 4):toString() + ".wav")
+                soundPitch(2, 70)
+                
+            }
+            
+            P3 = bezier(S3, (S3+R3:pos())/2+vec(0,0,150), R3:pos(), T3)
+        }
+        
+        
+        
+        
+        
+        
+        
+    }
+    if(changed(Space)) {
+        if(!Space & R:distance() < 200) {
+    
+            E:applyForce(E:up()*Mass*40000)
+        }
+    }
+
+} 
+if(!Dri) {
+P1 = R1:pos()
+P2 = R2:pos()
+P3 = R3:pos()
+
+S1 = R1:pos()
+S2 = R2:pos()
+S3 = R3:pos()
+
+Pitch = 0
+Roll = 0
+}
+
+
+
+###Holos
+if(first()) {
+    ##Leg 1
+    holoCreate(13, holoEntity(1):toWorld(vec(-5,0,45)), vec(3,3,2), holoEntity(1):angles()+ang(-60,180,-90), vec(255,255,255), "models/props_combine/combine_barricade_bracket01a.mdl")
+    holoParent(13, holoEntity(1))
+    
+    holoCreate(14, holoEntity(10):toWorld(vec(25,0,55)), vec(3.4,3,2), holoEntity(1):angles()+ang(-60,0,90), vec(255,255,255), "models/props_combine/combine_barricade_bracket01a.mdl")
+    holoParent(14, holoEntity(10))
+    
+    holoCreate(15, holoEntity(2):toWorld(vec(15,0,100)), vec(6,3,2), holoEntity(1):angles()+ang(-75,0,90), vec(255,255,255), "models/props_combine/combine_barricade_bracket01a.mdl")
+    holoParent(15, holoEntity(2))
+    
+    holoCreate(16, holoEntity(2):toWorld(vec(10,-5,190)), vec(4,2,1), holoEntity(2):angles()+ang(270,180,0), vec(255,255,255), "models/props_combine/combine_emitter01.mdl")
+    holoParent(16, holoEntity(2))
+    
+    holoCreate(17, holoEntity(2):toWorld(vec(7,-5,190)), vec(4,2,1), holoEntity(2):angles()+ang(270,0,0), vec(255,255,255), "models/props_combine/combine_emitter01.mdl")
+    holoParent(17, holoEntity(2))
+    
+    holoCreate(18, holoEntity(2):toWorld(vec(-7,-5,25)), vec(4,2,1), holoEntity(2):angles()+ang(100,0,0), vec(255,255,255), "models/props_combine/combine_emitter01.mdl")
+    holoParent(18, holoEntity(2))
+    
+    
+    
+    
+    
+    ##Leg 2
+    holoCreate(33, holoEntity(4):toWorld(vec(-5,0,45)), vec(3,3,2), holoEntity(4):angles()+ang(-60,180,-90), vec(255,255,255), "models/props_combine/combine_barricade_bracket01a.mdl")
+    holoParent(33, holoEntity(4))
+    
+    holoCreate(34, holoEntity(11):toWorld(vec(25,0,55)), vec(3.4,3,2), holoEntity(11):angles()+ang(-60,0,90), vec(255,255,255), "models/props_combine/combine_barricade_bracket01a.mdl")
+    holoParent(34, holoEntity(11))
+    
+    holoCreate(35, holoEntity(5):toWorld(vec(15,0,100)), vec(6,3,2), holoEntity(4):angles()+ang(-75,0,90), vec(255,255,255), "models/props_combine/combine_barricade_bracket01a.mdl")
+    holoParent(35, holoEntity(5))
+    
+    holoCreate(36, holoEntity(5):toWorld(vec(10,-5,190)), vec(4,2,1), holoEntity(5):angles()+ang(270,180,0), vec(255,255,255), "models/props_combine/combine_emitter01.mdl")
+    holoParent(36, holoEntity(5))
+    
+    holoCreate(37, holoEntity(5):toWorld(vec(7,-5,190)), vec(4,2,1), holoEntity(5):angles()+ang(270,0,0), vec(255,255,255), "models/props_combine/combine_emitter01.mdl")
+    holoParent(37, holoEntity(5))
+    
+    holoCreate(38, holoEntity(5):toWorld(vec(-7,-5,25)), vec(4,2,1), holoEntity(5):angles()+ang(100,0,0), vec(255,255,255), "models/props_combine/combine_emitter01.mdl")
+    holoParent(38, holoEntity(5))
+    
+    
+    
+    
+    
+    ##Leg 3
+    holoCreate(53, holoEntity(7):toWorld(vec(-5,0,45)), vec(3,3,2), holoEntity(7):angles()+ang(-60,180,-90), vec(255,255,255), "models/props_combine/combine_barricade_bracket01a.mdl")
+    holoParent(53, holoEntity(7))
+    
+    holoCreate(54, holoEntity(12):toWorld(vec(25,0,55)), vec(3.4,3,2), holoEntity(12):angles()+ang(-60,0,90), vec(255,255,255), "models/props_combine/combine_barricade_bracket01a.mdl")
+    holoParent(54, holoEntity(12))
+    
+    holoCreate(55, holoEntity(8):toWorld(vec(15,0,100)), vec(6,3,2), holoEntity(7):angles()+ang(-75,0,90), vec(255,255,255), "models/props_combine/combine_barricade_bracket01a.mdl")
+    holoParent(55, holoEntity(8))
+    
+    holoCreate(56, holoEntity(8):toWorld(vec(10,-5,190)), vec(4,2,1), holoEntity(8):angles()+ang(270,180,0), vec(255,255,255), "models/props_combine/combine_emitter01.mdl")
+    holoParent(56, holoEntity(8))
+    
+    holoCreate(57, holoEntity(8):toWorld(vec(7,-5,190)), vec(4,2,1), holoEntity(8):angles()+ang(270,0,0), vec(255,255,255), "models/props_combine/combine_emitter01.mdl")
+    holoParent(57, holoEntity(8))
+    
+    holoCreate(58, holoEntity(8):toWorld(vec(-7,-5,25)), vec(4,2,1), holoEntity(8):angles()+ang(100,0,0), vec(255,255,255), "models/props_combine/combine_emitter01.mdl")
+    holoParent(58, holoEntity(8))
+    
+    
+    ##Body
+    holoCreate(70, E:toWorld(vec(10,0,-1)), vec(0.2,0.5,0.3), E:angles()+ang(0,90,180), vec(255,255,255), "models/props_combine/combine_bunker01.mdl")
+    holoParent(70, E)
+
+    holoCreate(71, E:toWorld(vec(-20,25,-1)), vec(0.2,0.5,0.3), E:angles()+ang(0,210,180), vec(255,255,255), "models/props_combine/combine_bunker01.mdl")
+    holoParent(71, E)
+    
+    holoCreate(72, E:toWorld(vec(-20,-25,-1)), vec(0.2,0.5,0.3), E:angles()+ang(0,-30,180), vec(255,255,255), "models/props_combine/combine_bunker01.mdl")
+    holoParent(72, E)
+    
+    
+    holoCreate(73, E:toWorld(vec(10,0,-65)), vec(0.2,0.5,0.6), E:angles()+ang(0,-90,0), vec(255,255,255), "models/props_combine/combine_bunker01.mdl")
+    holoParent(73, E)
+
+    holoCreate(74, E:toWorld(vec(-21,-33,-65)), vec(0.2,0.5,0.6), E:angles()+ang(0,-210,0), vec(255,255,255), "models/props_combine/combine_bunker01.mdl")
+    holoParent(74, E)
+    
+    holoCreate(75, E:toWorld(vec(-21,33,-65)), vec(0.2,0.5,0.6), E:angles()+ang(0,30,0), vec(255,255,255), "models/props_combine/combine_bunker01.mdl")
+    holoParent(75, E)
+    
+    holoCreate(76, E:toWorld(vec(0,0,0)), vec(0.7,0.7,1.5), E:angles()+ang(0,0,0), vec(255,255,255), "models/hunter/tubes/tube1x1x1.mdl")
+    holoParent(76, E)
+    
+    holoCreate(77, E:toWorld(vec(0,0,60)), vec(4,1.5,1.5), E:angles()+ang(0,0,0), vec(255,255,255), "models/XQM/Rails/trackball_1.mdl")
+    holoParent(77, E)
+    
+    holoCreate(78, holoEntity(77):toWorld(vec(0,0,8)), vec(0.3,0.3,4.3), E:angles()+ang(90,0,0), vec(255,255,255), "models/hunter/tubes/tube1x1x1.mdl")
+    holoParent(78, holoEntity(77))
+    
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+###Leg animations
+
+
+leg(1,2, L1,L2, holoEntity(1), P1, E, -120-T1*30)
+
+leg(4,5, L1,L2, holoEntity(4), P2, E, -240+T2*30)
+
+leg(7,8, L1,L2, holoEntity(7), P3, E, 0)

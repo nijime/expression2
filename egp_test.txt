@@ -1,0 +1,242 @@
+@name how to snake??
+@inputs EGP:wirelink Chair:entity
+@outputs 
+@persist Score T In Ind N Game Player:entity Dir:vector2 S Gamespeed Tails_per_food Curang Inde Curpos:vector2 Set:vector2 Tails:array Foods:array Foodstuffs:array Tailcount Positions:array
+
+interval(30)
+
+if(first()) {
+    EGP:egpClear()
+    
+    Foodstuffs = array()
+    Foods = array()
+    
+    S = 5
+    
+    Tailcount = 0
+    
+    Tails_per_food = 10
+    
+    Gamespeed = 3.5
+    
+
+    In = 1
+    
+    function void foodCreate(Pos:vector2) {
+
+        for(I = 1, Foods:count()) {
+            F = Foods[I, number]
+            
+            if(In == F) {
+                In = In + 1
+            }
+            
+        }
+                if(In >= S*2) {
+                    
+                    In = 1
+                }
+        
+        EGP:egpBox(4+In, Pos, vec2(9*(10/S),9*(10/S)))
+        EGP:egpColor(4+In, vec(0,150,0))
+        
+        Foodstuffs = Foodstuffs:add(array(Pos))
+        Foods = Foods:add(array(In))
+        
+        
+    }
+    
+
+    Startpos = vec2(0,0)
+    
+    EGP:egpBox(1, vec2(0,0), vec2(10*(10/S),10*(10/S)))
+    EGP:egpColor(1, vec(255,0,0))
+    
+ 
+    timer("newfood", 2000)
+    
+    Game = 1
+    
+    
+    
+    
+    EGP:egpText(2, "Score[ " + Tailcount + " ]", vec2(256, 480))
+    EGP:egpFont(2, "courier new")
+    EGP:egpAlign(2, 1)
+    EGP:egpSize(2, 25)
+    
+    
+    EGP:egpBox(3, vec2(256,210), vec2(512,500))
+    EGP:egpOrder(3, 1)
+    EGP:egpColor(3, vec(100,100,100))
+}
+
+if(Game) {
+    
+Ply = Chair:driver()
+
+if(Ply & !Player) {
+
+    Player = Ply
+
+
+}
+
+if(changed(Ply) & Ply) {
+    Dir = vec2(1,0)
+}
+
+
+if(changed(Ply) & !Ply) {
+    Dir = vec2(0,0)
+}
+
+
+
+
+if(Ply:keyForward()) {
+    Dir = vec2(0,-1*S)
+}
+
+if(Ply:keyBack()) {
+    Dir = vec2(0,1*S)
+}
+
+if(Ply:keyLeft()) {
+    Dir = vec2(-1*S,0)
+}
+
+if(Ply:keyRight()) {
+    Dir = vec2(1*S,0)
+}
+
+
+N = (10/S)*10
+
+Curpos = Curpos + Dir*2*Gamespeed
+Set = round(Curpos/200)*N
+EGP:egpPos(1, Set)
+
+
+if(changed(Set)) {
+    
+    Positions = Positions:add(array(Set))
+    
+    if(Positions:count() - Tailcount > 1) {
+        Positions:remove(1)
+    }
+    
+    #for(I = 1, Tailcount) {
+     #   EGP:egpPos(30+N+I, Positions[Positions:count()-I, vector2])
+        
+    #}
+    Inde = Inde + 1
+    
+    if(Inde >= Tailcount) {
+        Inde = 1
+    }
+    
+    EGP:egpPos(50+N+Inde, Set-Dir*(10/S)^2)
+    
+    for(I = 1, Foodstuffs:count()) {
+        if((Set - Foodstuffs[I, vector2]):length2() < 10) {
+                
+                Index = 4+Foods[I, number]
+                EGP:egpRemove(Index)
+                
+                if(Tailcount < 70) {
+                    
+                    Tailcount = Tailcount + Tails_per_food
+    
+                }
+                
+                Score = Score + 1
+                
+                Foodstuffs:remove(I)
+                Foods:remove(I)
+            
+                EGP:egpText(2, "Score: " + Score, vec2(256, 470))
+        }
+        
+    }
+    
+    
+    if(Tailcount != 0) {
+        
+        for(I = 1, Positions:count()-1) {
+            if((Set - Positions[I, vector2]):length2() < 10) {
+                
+                Game = 0
+                
+            }
+        }
+    }
+    
+    
+    if(Set:x() > 502 | Set:y() > 440 | Set:x() < 0 | Set:y() < 0) {
+        Game = 0
+    }
+
+
+
+}
+            
+if(changed(Tailcount) & !first()) {
+    for(I = 1, Tails_per_food) {
+        Ind = Ind + 1
+        EGP:egpBox(50+N+Ind, vec2(-Dir:y(), Dir:x()), vec2(8*(10/S),8*(10/S)))
+
+    }
+    
+}
+
+
+
+if(clk("newfood")) {
+    if(Foods:count() < S*2 ) {
+        foodCreate(vec2(round(randint(N, 512-N)/(N))*(N), round(randint(N, 430-N)/(N))*(N)))
+    }
+    
+    timer("newfood", 1500)
+    
+}
+
+
+} else {
+
+EGP:egpText(4, "git gud" + "" + "(-reset)", vec2(256,256))
+EGP:egpAlign(4, 1)
+EGP:egpFont(4, "courier new")
+EGP:egpSize(4, 50)
+EGP:egpOrder(4, 1000)
+
+EGP:egpColor(4, hsv2rgb(vec(20*curtime()%360,1,1)))
+
+
+
+
+
+    EGP:egpText(2, "Score[ " + Tailcount + " ]", vec2(256, 470))
+    EGP:egpFont(2, "courier new")
+    EGP:egpAlign(2, 1)
+
+    
+    runOnChat(1)
+    if(chatClk() & lastSaid():lower() == "-reset") {
+        
+        reset()
+        
+    }
+
+}
+
+if(changed(Game) & !Game) {
+    
+    Write = "
+    " + "" + Player:name():replace(" ", "_") + "_score = " + Tailcount + "    # " + Player:steamID()
+    
+    fileAppend(">e2shared/snakescores.txt", Write)
+
+    print("Score saved")
+    
+}

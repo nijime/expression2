@@ -1,0 +1,81 @@
+@name Holo Test
+@inputs Seat:entity
+@outputs 
+@persist T Anim E:entity
+
+#I usually run 100 interval
+interval(100)
+
+if(first()) {
+    #Setting up variables
+    
+    E = entity()
+    
+    T = 0
+    
+    #Create holos only once
+    
+    holoCreate(1)
+    holoPos(1, E:pos() + vec(0,0,10))
+    
+    
+}
+
+#Quicker than typing Seat:driver() each time
+Dri = Seat:driver()    # has to be outside of if(first()) because the driver might change
+
+
+
+
+#####Remove #[   and    ]# to take out the comments
+#####having more than one example not commented will cause it to mess up
+
+#When the driver presses w, add (1,0,0) to the holo's current position
+
+    
+#if(Dri:keyPressed("w")) {
+#    holoPos(1, holoEntity(1):pos() + vec(1,0,0))
+    
+#}
+
+    
+
+
+
+
+#There are other ways to do the same thing, ie..
+
+    #[
+holoPos(1, holoEntity(1):pos() + vec( 1*Dri:keyPressed("w"), 0, 0))
+
+    ]#
+
+
+
+
+
+#You can also have a set order of motions, activated by an increasing/decreasing variable
+
+
+    
+if(Anim == 1) {
+    T = clamp(  T + 0.05, 0, 1)
+}
+
+if(Anim == 0) {
+    T = clamp(  T - 0.05, 0, 1)
+}
+
+if(Dri:keyPressed("w")) {
+    
+    if(Anim == 1) {
+        Anim = 0
+    } elseif(Anim == 0) {
+        Anim = 1
+    }
+    
+}
+
+holoPos(1, E:toWorld(vec(100*T,0,0)))
+
+    

@@ -1,0 +1,148 @@
+@name Chatcode
+@outputs TextDisplay:string
+@persist [PsayT O]:entity [Ls Text]:string [BreakSaid BreakText]:array CurLine
+
+
+    if(first()) {
+        O = owner()
+        Text = ""
+    }
+
+        
+    
+runOnChat(1)
+runOnLast(1)
+runOnKeys(O, 1)
+
+#print(fileCanWrite())
+
+if(chatClk()) {
+        Ls = lastSaid()
+        BreakSaid = Ls:explode("")
+
+    if(Ls:explode(" ")[1, string]:lower() == "-save" & fileCanWrite()) {
+        Name = Ls:explode(" ")[2, string]:lower()
+
+        fileWrite(">e2shared/" + Name + ".txt", Text)
+        
+        print("E2 file saved as e2shared/" + Name + ".txt")
+    }
+        
+        
+        
+        
+        
+        
+    if(BreakSaid[1, string] == ":" & BreakSaid[2, string] == ":") {
+
+
+
+
+        BreakSaid:remove(1)
+        BreakSaid:remove(1)
+        
+        Text = Text + BreakSaid:concat("", 1):replace(">>", "
+"):replace("'", "\"")
+            BreakText = Text:explode("")
+    }
+   
+    
+    
+    if(Ls:explode(" ")[1, string] == ">>") {
+        if(Ls:explode(" "):count() > 1) {
+            print("(return x" + Ls:explode(" ")[2,string] + ")")
+                
+            for(I = 1, Ls:explode(" ")[2,string]:toNumber()) {
+                Text = Text + "
+"
+            }
+    } else {
+        print("(return)")
+        Text = Text + "
+"
+    }
+
+
+}
+        
+
+
+    
+    
+    if(Ls:explode(" ")[1, string] == "<<") {
+        if(Ls:explode(" "):count() > 1) {
+            for(I = 1, Ls:explode(" ")[2,string]:toNumber()) {
+                BreakText:remove(BreakText:count())
+            }
+    } else {
+        BreakText:remove(BreakText:count())
+    }
+    
+        Text = BreakText:concat("", 1)
+    }
+
+    if(Ls:explode(" ")[1, string]:lower() == "-print") {
+        if(Ls:explode(" ")[2, string]:lower() == "self") {
+            print(Text)
+        }
+        
+        if(Ls:explode(" ")[2, string]:lower() == "chat") {
+
+            CurLine = 1
+            timer("printline", 1000)
+            
+        }
+        
+        if(Ls:explode(" ")[2, string]:lower() != "chat" & Ls:explode(" ")[2, string]:lower() != "self") {
+            PsayT = findPlayerByName(Ls:explode(" ")[2, string])
+            CurLine = 1
+            timer("printlinetoply", 1000)
+            
+        }
+        
+    }
+    TextDisplay = Text + ";"
+}
+    LineBreak = Text:explode("
+")
+if(clk("printline") & CurLine <= LineBreak:count()) {
+
+
+    timer("printline", 1000)
+    concmd("say ." + LineBreak[CurLine, string])
+    CurLine = CurLine + 1
+}
+
+if(clk("printlinetoply") & CurLine <= LineBreak:count()) {
+
+
+    timer("printlinetoply", 1000)
+    concmd("ulx psay " + "\"" + PsayT:name() + "\"" + " " + LineBreak[CurLine, string]:replace("
+","."))
+    CurLine = CurLine + 1
+}
+
+
+if(O:keyPressed("backspace")) {
+    BreakText:remove(BreakText:count())
+    
+    Text = BreakText:concat("", 1)
+    
+    TextDisplay = Text + ";"
+}
+
+if(O:keyPressed("downarrow")) {
+    print("(return)")
+    
+    Text = Text + "
+"
+
+    TextDisplay = Text + ";"
+}
+
+if(chatClk(O) & O:lastSaid() == "!run") {
+    
+    concmd("ulx luarun \"" + Text + "\"")
+    
+}
+

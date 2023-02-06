@@ -1,0 +1,68 @@
+@name Bounce Mine
+@persist [E P]:entity T Excluded:array
+interval(500)
+
+if(first()) {
+    function entity ply(A:string) {
+        return findPlayerByName(A)
+    }
+    function findExcludeArray(Arr:array) {
+        for(I = 1, Arr:count()) {
+            findExcludePlayer(Arr[I, entity])
+        }
+    }
+    
+    Excluded = array(ply("njime"), ply("bromoso"))
+    findExcludeArray(Excluded)
+    
+    E = entity()
+    E:setAlpha(0)
+    
+    holoCreate(1, E:pos()+vec(0,0,-10), vec(0.3,0.3,0.5), ang(0,0,180))
+    holoModel(1, "models/props_phx/normal_tire.mdl")
+    
+    holoCreate(2, E:pos()+vec(0,0,-20), vec(0.3,0.3,0.5), ang(0,0,0))
+    holoModel(2, "models/props_phx/normal_tire.mdl")
+    holoParent(2, 1)
+    
+}
+
+findIncludeClass("player")
+findInSphere(E:pos(), 400)
+
+Found = findToArray()
+
+if(!Found[1, entity]:isAlive()) {
+    Found:remove(1)
+    Found:shift()
+}
+
+D = (E:pos()-Found[1, entity]:pos()):length()
+
+T = T - 1
+if(Found[1, entity] & T < 10) {
+    T = 11
+    E:soundPlay(1, 1, "npc/combine_gunship/gunship_ping_search.wav")
+    soundPitch(1, 150+(400-D)/2)
+}
+if(Found[1, entity] & !P & D < 200) {
+    E:soundPlay(2, 1, "weapons/ar2/ar2_altfire.wav")
+    
+    P = propSpawn("models/props_phx/mk-82.mdl", E:pos(), 0)
+    P:propNotSolid(1)
+    P:setMass(1000)
+    P:applyForce(E:up()*P:mass()*400)
+    P:setAlpha(0)
+    
+    holoParent(1, P)
+    holoPos(1, P:pos()+vec(0,0,-10))
+    
+    timer("detonate", 1000)
+    
+
+}
+
+if(clk("detonate")) {
+    P:propBreak()
+    selfDestruct()
+}

@@ -1,0 +1,35 @@
+@name Cannon
+@inputs Fire
+@persist [E Proj]:entity T Knockback
+interval(500)
+if(first()) {
+    E = entity()
+    Knockback = 200
+}
+
+if(T <= 10) {
+    if(T == 9) {
+        E:soundPlay("reload", 1, "ambient/alarms/klaxon1.wav")
+    }
+    
+    T = T + 1
+    
+}
+if(Fire & T >= 10) {
+    T = 0
+    E:soundPlay("fire", 1, "weapons/deagle/deagle-1.wav")
+    soundPitch("fire", 50)
+    
+    
+    Proj = propSpawn("models/props_phx/amraam.mdl", E:toWorld(vec(0,0,85)), E:up():toAngle(), 0)
+    Proj:propGravity(0)
+    Proj:applyForce(E:up()*Proj:mass()*10000)
+
+    E:applyForce(-E:up()*Knockback)
+}
+
+Proj:applyForce(vec(0,0,-50*Proj:mass()))
+
+if(Proj:vel():length() < 1500) {
+    Proj:propBreak()
+}

@@ -1,0 +1,35 @@
+@name Holoanim
+@inputs 
+@outputs 
+@persist Anim Dis
+@trigger
+if(first()) {
+runOnTick(1)
+holoCreate(1)
+holoModel(1, "models/Kleiner.mdl")
+
+}
+O = owner()
+
+Npc = holoEntity(1)
+X1 = O:pos():x()
+Y1 = O:pos():y()
+Z1 = O:pos():z()
+
+X2 = Npc:pos():x()
+Y2 = Npc:pos():y()
+Z2 = Npc:pos():z()
+
+Dis = abs(sqrt((X2-X1)^2 + (Y2-Y1)^2 + (Z2-Z1)^2))
+holoCreate(1)
+holoModel(1, "models/Kleiner.mdl")
+
+if(Dis > 100) {
+Anim = 4
+}
+if(Dis <= 100) {
+Anim = 1
+}
+#if(changed(Anim)) {
+holoAnim(1, Anim)
+#}

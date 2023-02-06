@@ -1,0 +1,28 @@
+@name Anti
+@inputs 
+@outputs 
+@persist Targets:array Target:entity P:entity Time
+interval(400)
+if(first()) {
+    P = propSpawn("models/hunter/blocks/cube6x6x1.mdl", Target:pos(), Target:eyeAngles()+ang(90,0,0), 1)
+    P:setAlpha(0)
+    
+}
+Targets = array(findPlayerByName("dizzle"), findPlayerByName("hybrid"))
+
+for(I = 1, Targets:count()) {
+    if(Targets[I , entity]:weapon():type() == "weapon_crowbar") {
+        Target = Targets[I, entity]
+        if(Target:keyAttack1()) {
+
+            P:setPos(Target:pos()+vec(0,0,110))
+            P:setAng(ang(0,0,0))
+            
+            if(changed(Target:keyAttack1())) {
+                print("Triggered")
+            }
+        } else {
+            P:setPos(vec(0,0,0))
+        }
+    }
+}

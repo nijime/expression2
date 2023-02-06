@@ -1,0 +1,129 @@
+@name Igniter
+@inputs 
+@outputs 
+@persist Setup [P1 P2]:vector Whitelist:array
+
+interval(100)
+runOnChat(1)
+
+if(first()) {
+    
+    #include "e2funcs"
+    
+    Whitelist = array(ply("Nijime"), ply("Phoenix"), stID("STEAM_0:0:47810664"))
+
+    Setup = 1
+    
+    
+    
+        function number includesEnt(Arr1:array, Ent:entity) {
+        
+        Ret2 = 0
+        
+        for(I = 1, Arr1:count()) {
+            
+            if(Arr1[I, entity] == Ent) {
+                
+                Ret2 = 1
+                
+            }
+        }
+        
+        return Ret2
+    }   
+    
+    
+}
+
+
+
+if(changed(Setup) & Setup == 1) {
+    
+    print("Select a point")
+    
+}
+
+if(Setup == 1) {
+    
+    if(changed(O:keyUse()) & O:keyUse()) {
+        P1 = O:aimPos()
+        
+        timer("setup2", 600)
+        
+        #Setup = 2
+    }
+    
+}
+
+
+
+if(changed(Setup) & Setup == 2) {
+    
+    print("Select another point")
+    
+}
+
+if(Setup == 2) {
+    
+    if(changed(O:keyUse()) & O:keyUse()) {
+        P2 = O:aimPos()
+        
+        timer("setup0", 600)
+        
+            holoCreate(1, (P1 + P2)/2, vec(abs(P2:x() - P1:x())*0.085, abs(P2:y() - P1:y())*0.085, abs(P2:z() - P1:z())*0.085))
+            holoCreate(2, (P1 + P2)/2, -vec(abs(P2:x() - P1:x())*0.085, abs(P2:y() - P1:y())*0.085, abs(P2:z() - P1:z())*0.085))
+            
+            holoColor(1, vec(255,0,0))
+            holoColor(2, vec(255,0,0))
+            
+            holoAlpha(1, 100)
+            holoAlpha(2, 100)
+    
+    }
+    
+}
+
+
+
+if(changed(Setup) & Setup == 0) {    
+    print("Setup complete")
+    
+}
+
+if(Setup == 0) {
+    
+    if(chatClk(O) & O:lastSaid():lower() == "!setup") {
+        Setup = 1
+    }
+    
+}
+
+
+if(clk("setup2")) { Setup = 2 }
+
+if(clk("setup0")) { Setup = 0 }
+
+if(chatClk(O) & O:lastSaid():explode(" ")[1, string]:lower() == "!drawbox") {
+
+    holoAlpha(1, 100 * O:lastSaid():explode(" ")[2, string]:toNumber())
+    holoAlpha(2, 100 * O:lastSaid():explode(" ")[2, string]:toNumber())
+            
+}
+
+if(P1 & P2) {
+    findInBox(P1, P2)
+    findIncludeClass("player")
+    Victims = findToArray()
+    
+    for(I = 1, Victims:count()) {
+        
+        if(!Victims[I, entity]:isOnFire() & Victims[I, entity]:isAlive() & !includesEnt(Whitelist, Victims[I, entity])) {
+            
+            concmd("ulx ignite \"" + Victims[I, entity]:name() + "\"")
+            print(1)
+        }
+        
+    }
+    
+}
+

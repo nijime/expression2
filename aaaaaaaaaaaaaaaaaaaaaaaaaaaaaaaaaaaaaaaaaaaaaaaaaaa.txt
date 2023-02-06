@@ -1,0 +1,135 @@
+@name generic
+@inputs Turret1:entity Turret2:entity Turret3:entity Turret4:entity Pod:entity
+@outputs Shoot
+@persist Time Z
+@trigger
+if(first()) {
+    holoCreate(1)
+    holoCreate(2)
+    holoCreate(3)
+    holoCreate(4)
+    
+    holoCreate(5)
+    holoCreate(6)
+    holoCreate(7)
+    holoCreate(8)
+    
+    holoCreate(12)
+    holoCreate(13)
+    holoCreate(14)
+    holoCreate(15)
+    
+    holoCreate(9)
+    holoCreate(10)
+    holoCreate(11)
+
+}
+interval(100)
+E = entity()
+O = owner()
+Speed = sqrt(E:vel():x()^2 + E:vel():y()^2)
+Height = 15
+Time = Time + 10 + Speed/2
+
+if(Speed > 4) {
+Z1 = sin(Time*1)*Height
+Z2 = -sin(Time*1)*Height
+Z3 = cos(Time*1)*Height
+Z4 = -cos(Time*1)*Height
+} else {
+Z1 = Z1
+Z2 = Z2
+Z3 = Z3
+Z4 = Z4
+}
+holoPos(1, E:pos()+vec(20,20,0))
+holoPos(2, E:pos()+vec(-20,20,0))
+holoPos(3, E:pos()+vec(-20,-20,0))
+holoPos(4, E:pos()+vec(20,-20,0))
+holoPos(5, holoEntity(1):pos()+vec(20,20,20+Z1))
+holoPos(6, holoEntity(2):pos()+vec(-20,20,20+Z2))
+holoPos(7, holoEntity(3):pos()+vec(-20,-20,20+Z3))
+holoPos(8, holoEntity(4):pos()+vec(20,-20,20+Z4))
+holoPos(12, holoEntity(5):pos()+vec(30+Z1,30+Z1,-30+Z1))
+holoPos(13, holoEntity(6):pos()+vec(-30-Z2,30+Z2,-30+Z2))
+holoPos(14, holoEntity(7):pos()+vec(-30-Z3,-30-Z3,-30+Z3))
+holoPos(15, holoEntity(8):pos()+vec(30+Z4,-30-Z4,-30+Z4))
+
+holoAng(5, (holoEntity(1):pos()-holoEntity(5):pos()):toAngle())
+holoAng(6, (holoEntity(2):pos()-holoEntity(6):pos()):toAngle())
+holoAng(7, (holoEntity(3):pos()-holoEntity(7):pos()):toAngle())
+holoAng(8, (holoEntity(4):pos()-holoEntity(8):pos()):toAngle())
+holoAng(12, (holoEntity(5):pos()-holoEntity(12):pos()):toAngle())
+holoAng(13, (holoEntity(6):pos()-holoEntity(13):pos()):toAngle())
+holoAng(14, (holoEntity(7):pos()-holoEntity(14):pos()):toAngle())
+holoAng(15, (holoEntity(8):pos()-holoEntity(15):pos()):toAngle())
+
+holoScale(5, vec(6,1,1))
+holoScale(6, vec(6,1,1))
+holoScale(7, vec(6,1,1))
+holoScale(8, vec(6,1,1))
+holoScale(12, vec(8,1,1))
+holoScale(13, vec(8,1,1))
+holoScale(14, vec(8,1,1))
+holoScale(15, vec(8,1,1))
+
+holoPos(9, E:pos()+vec(0,0,10))
+holoScale(9, vec(1.3,1.3,2.0))
+holoModel(9, "hq_cylinder")
+
+holoPos(10, E:pos()+vec(0,0,2))
+holoScale(10, vec(2,2,2.3))
+holoModel(10, "hq_torus")
+
+holoPos(11, E:pos()+vec(0,0,17))
+holoScale(11, vec(3,3,3))
+holoModel(11, "hq_torus")
+Driver  = Pod:driver()
+Target = Driver:aimPos()
+#holoPos(12, Driver:
+Turret1:setPos(holoEntity(1):pos()+vec(0,0,9))
+Turret2:setPos(holoEntity(2):pos()+vec(0,0,9))
+Turret3:setPos(holoEntity(3):pos()+vec(0,0,9))
+Turret4:setPos(holoEntity(4):pos()+vec(0,0,9))
+
+Turret1:setAng((-Turret1:pos()+Target+vec(0,0,0)):toAngle())
+Turret2:setAng((-Turret2:pos()+Target+vec(0,0,0)):toAngle())
+Turret3:setAng((-Turret3:pos()+Target+vec(0,0,0)):toAngle())
+Turret4:setAng((-Turret4:pos()+Target+vec(0,0,0)):toAngle())
+
+if(Driver:keyAttack1()) {
+    Shoot = 1
+} else {
+Shoot = 0
+}
+
+if(Driver:keyForward()) {
+    E:applyForce(E:forward()*10)
+}
+if(Driver:keyBack()) {
+    E:applyForce(-E:forward()*10)
+}
+if(Driver:keyLeft()) {
+    E:applyAngForce(ang(0,-1,0))
+}
+if(Driver:keyRight()) {
+    E:applyAngForce(ang(0,1,0))
+}
+
+if(!Driver:keyForward() & !Driver:keyBack()) {
+    E:applyForce(-E:vel())
+}
+if(!Driver:keyLeft() & !Driver:keyRight()) {
+    E:applyAngForce(ang(0,-E:angVel():yaw(),0))
+}
+Range=rangerOffset(1000,E:pos()+vec(0,0,-1),-E:up())
+Height=Range:distance()
+if(Height < 40) {
+    E:propGravity(0)
+    E:applyForce(vec(0,0,-E:vel():z()))
+} else {
+E:propGravity(1)
+}
+if(Height < 20) {
+    E:applyForce(vec(0,0,1*abs(Height-20)))
+}

@@ -1,0 +1,182 @@
+@name Assault Bot
+
+@inputs Pod:entity 
+@outputs Progress1 Progress2 Leg Start1:vector Start2:vector Start3:vector Start4:vector
+###Entities
+@persist E:entity
+###Rangers
+@persist MainRanger:ranger Ranger1:ranger Ranger2:ranger Ranger3:ranger Ranger4:ranger
+###Ranger Data
+@persist Start1:vector Start2:vector Start3:vector Start4:vector
+###Curves
+@persist Curve:vector
+##Timers/Misc
+@persist Progress1 Progress2 Leg Speedmult W S Shift F1:entity F2:entity F3:entity F4:entity
+
+@model models/hunter/blocks/cube1x1x025.mdl
+
+interval(100)
+if(owner():name() != "Nijime") {
+    #selfDestruct()
+}
+if(first()) 
+{
+    E = entity()
+    
+    E:setMass(5000)
+    E:propGravity(0)
+    
+    #holoCreate(10, E:pos()+vec(75,75,0), vec(1,1,1), E:angles()+ang(0,0,0), vec(255,255,255), "")
+    #holoParent(10, E)
+    
+    #holoCreate(20, E:pos()+vec(75,-75,0), vec(1,1,1), E:angles()+ang(0,0,0), vec(255,255,255), "")
+    #holoParent(20, E)
+    
+    #holoCreate(30, E:pos()+vec(-75,75,0), vec(1,1,1), E:angles()+ang(0,0,0), vec(255,255,255), "")
+    #holoParent(30, E)
+
+    #holoCreate(40, E:pos()+vec(-75,-75,0), vec(1,1,1), E:angles()+ang(0,0,0), vec(255,255,255), "")
+    #holoParent(40, E)
+    
+holoCreate(1, Ranger1:pos())
+holoCreate(2, Ranger2:pos())
+holoCreate(3, Ranger3:pos())
+holoCreate(4, Ranger4:pos())
+
+Speedmult = 1
+Leg = 1
+    
+Progress1 = 0.01
+Progress2 = 0.01
+
+Start1 = E:pos()
+Start2 = E:pos()
+Start3 = E:pos()
+Start4 = E:pos()
+}
+###Rangers
+MainRanger = rangerOffset(100000, E:pos()+vec(0,0,-10), -E:up())
+
+Ranger1 = rangerOffset(200, E:toWorld(vec(100 + 25*((W-S)==1) + 0*((Shift)==1) - 100*((W-S)==-1)  ,75,0)), -E:up())
+Ranger2 = rangerOffset(200, E:toWorld(vec(100 + 25*((W-S)==1) + 0*((Shift)==1) - 100*((W-S)==-1)  ,-75,0)), -E:up())
+Ranger3 = rangerOffset(200, E:toWorld(vec(-40 + 0*((W-S)==1) + 0*((Shift)==1) - 100*((W-S)==-1)  ,75,0)), -E:up())
+Ranger4 = rangerOffset(200, E:toWorld(vec(-40 + 0*((W-S)==1 + 0*((Shift)==1)) - 100*((W-S)==-1)  ,-75,0)), -E:up())
+
+###Base Movement
+Dri = Pod:driver()
+W = Dri:keyForward()
+A = Dri:keyLeft()
+S = Dri:keyBack()
+D = Dri:keyRight()
+Space = Dri:keyJump()
+Shift = Dri:keySprint()
+Alt = Dri:keyWalk()
+
+if(Space) {
+    if(MainRanger:distance() < 200) {
+        Z = 200000
+    }
+} else {
+    Z = (-700000 * (MainRanger:distance() > 80))  +  (60 - MainRanger:distance())*8000 * (MainRanger:distance() < 80)
+}
+
+E:applyForce(-E:vel()*2000+vec(0,0, Z))
+E:applyForce(E:forward()*(W-S)*(240000 - 120000*(Alt==1) + 240000*(Shift==1)))
+
+E:applyAngForce(-E:angVel()*6000+ang( (0-E:angles():pitch())*10000 , (A-D)*100000*2.5, (0-E:angles():roll())*10000))
+
+
+###Progress
+
+
+
+
+if(W | A | S | D) {
+    
+    if(Leg == 1 | Leg == 2) {
+        Progress1 = Progress1 + 0.33  -(0.1*(Alt==1)) 
+    }
+    if(Leg == 3 | Leg == 4) {
+        Progress2 = Progress2 + 0.33  -(0.1*(Alt==1)) 
+    }
+
+}
+if(Progress1 > 1.05) {
+Start1 = holoEntity(1):pos()
+Start3 = holoEntity(3):pos()
+    Progress1 = 0.01
+            if(Leg == 1) {
+                Leg = 4
+            }
+            if(Leg == 2) {
+                Leg = 3
+            }
+                E:soundPlay(1,1, "npc/antlion_guard/far_foot_light2.wav")
+}
+        
+if(Progress2 > 1.05) {
+Start2 = holoEntity(2):pos()
+Start4 = holoEntity(4):pos()
+    Progress2 = 0.01
+            if(Leg == 4) {
+                Leg = 2
+            }
+            if(Leg == 3) {
+                Leg = 1
+            }
+                E:soundPlay(1,1, "npc/antlion_guard/far_foot_light2.wav")
+}
+
+
+###Legs
+
+if(!first()) {
+if(Leg == 1) {
+    Curve = bezier(Start1, ((Start1+Ranger1:pos())/2)+vec(0,0,50) ,Ranger1:pos(), Progress1)
+    #holoPos(1, Curve)
+
+}
+if(Leg == 2) {
+    Curve = bezier(Start2, ((Start2+Ranger2:pos())/2)+vec(0,0,50) ,Ranger2:pos(), Progress1)
+    holoPos(2, Curve)
+
+}
+if(Leg == 3) {
+    Curve = bezier(Start3, ((Start3+Ranger3:pos())/2)+vec(0,0,50) ,Ranger3:pos(), Progress2)
+    holoPos(3, Curve)
+
+}
+if(Leg == 4) {
+    Curve = bezier(Start4, ((Start4+Ranger4:pos())/2)+vec(0,0,50) ,Ranger4:pos(), Progress2)
+    holoPos(4, Curve)
+
+}
+}
+
+
+if(first()) {
+    holoModel(1, "hq_cylinder")
+    holoModel(2, "hq_cylinder")
+    holoModel(3, "hq_cylinder")
+    holoModel(4, "hq_cylinder")
+holoPos(1, Ranger1:pos())
+holoPos(2, Ranger2:pos())
+holoPos(3, Ranger3:pos())
+holoPos(4, Ranger4:pos())
+F1 = holoEntity(1)
+F2 = holoEntity(2)
+F3 = holoEntity(3)
+F4 = holoEntity(4)
+###Foot 1
+
+###Foot 2
+
+###Foot 3
+
+###Foot 4
+
+
+
+
+}
+

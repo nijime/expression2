@@ -1,0 +1,118 @@
+@name Flower Laser
+@persist E:entity P:entity T Range P2:vector
+@model models/hunter/tubes/circle2x2.mdl
+
+interval(50)
+findExcludePlayer("Nijime")
+findExcludePlayer("shia")
+findExcludePlayer("noodle")
+findExcludePlayer("strayed")
+findExcludePlayer("commodore")
+findExcludePlayer("Rogue")
+findExcludePlayer("Omega")
+#findExcludePlayer("gster")
+#findExcludePlayer("comrade")
+
+if(first()) {
+    Range = 2000
+    E = entity()
+    T = 0
+    
+}
+
+findIncludeClass("player")
+#findIncludeClass("npc_*")
+
+findInSphere(E:pos(), Range)
+Found = findToArray()
+if(!Found[1, entity]:isAlive() | (Found[1, entity]:weapon():type() == "weapon_physgun" | Found[1, entity]:weapon():type() == "gmod_tool")) {
+    Found:remove(1)
+}
+
+if(Found[1, entity]) {
+    if(T < 0.05 & T > 0) {
+        P = propSpawn("models/props_phx/ww2bomb.mdl", E:pos()+vec(0,0,50), 1)
+        P:propFreeze(1)
+        P:setAlpha(0)
+        P:setTrails(100,100,5, "trails/laser", vec(0,255,200), 255)
+        
+        P2 = Found[1, entity]:pos()
+        
+        E:soundPlay(3, 1, "npc/strider/fire.wav")
+        soundPitch(3, 130)
+        
+        Found[1, entity]:soundPlay(2, 1, "hl1/fvox/acquired.wav")        
+        soundPitch(1, 150)
+    }
+    Found[1, entity]:soundPlay(1, 1, "npc/scanner/scanner_combat_loop1.wav")
+
+        T = T + 0.04
+    
+    #P2 = Found[1, entity]:pos()
+    P:setPos(bezier(E:pos(),(  E:pos() + P2)/2+vec(0,0,1500), P2, T))
+    
+} else {
+
+}
+
+if(T > 0.96) {
+    P:propBreak()
+    T = 0
+}
+if(!Found[1, entity]) {
+    P:propDelete()
+    T = 0
+}
+
+holoAng(1, holoEntity(1):angles()+ang(0,5,0))
+
+holoPos(1, E:toWorld(vec(0,0,50)))
+
+if(first()) {
+    #lightCreate(1, E:pos()+vec(0,0,10))
+    #lightColor(1, vec(0,255,200))
+    #lightDistance(1, 1)
+    #lightParent(1, E)
+    #E:setAng(ang(0,0,0))
+    
+    holoCreate(1, E:pos()+vec(0,0,50), vec(2,2,10), E:angles()+ang(0,0,0), vec(255,255,255), "hq_cylinder")
+    holoColor(1, vec(120,120,120))
+   # holoParent(1, E)
+    
+    holoCreate(2, E:pos()+vec(0,0,0), vec(5,5,9), E:angles()+ang(0,0,0), vec(255,255,255), "hq_dome")
+    holoParent(2, E)
+    holoColor(2, vec(120,120,120))
+    
+    holoCreate(3, E:pos()+vec(10,-10,50), vec(5,7,2), E:toWorld(ang(0,-45,90)), vec(255,255,255), "hq_torus")
+    holoParent(3, holoEntity(1))
+    holoAlpha(3, 120)
+    holoColor(3, vec(0,200,255))
+    
+    holoCreate(4, E:pos()+vec(-10,-10,50), vec(5,7,2), E:toWorld(ang(0,45,90)), vec(255,255,255), "hq_torus")
+    holoParent(4, holoEntity(1))
+    holoAlpha(4, 120)
+    holoColor(4, vec(0,200,255))
+    
+    holoCreate(5, E:pos()+vec(10,10,50), vec(5,7,2), E:toWorld(ang(0,45,90)), vec(255,255,255), "hq_torus")
+    holoParent(5, holoEntity(1))
+    holoAlpha(5, 120)
+    holoColor(5, vec(0,200,255))
+    
+    holoCreate(6, E:pos()+vec(-10,10,50), vec(5,7,2), E:toWorld(ang(0,-45,90)), vec(255,255,255), "hq_torus")
+    holoParent(6, holoEntity(1))
+    holoAlpha(6, 120)
+    holoColor(6, vec(0,200,255))
+    
+    holoCreate(7, E:pos()+vec(45,0,110), vec(0.5,1,10), E:toWorld(ang(70,0,0)), vec(255,255,255), "")
+    holoParent(7, E)
+    
+    holoCreate(8, E:pos()+vec(-25,45,110), vec(0.5,1,10), E:toWorld(ang(70,120,0)), vec(255,255,255), "")
+    holoParent(8, E)
+    
+    holoCreate(9, E:pos()+vec(-25,-45,110), vec(0.5,1,10), E:toWorld(ang(70,240,0)), vec(255,255,255), "")
+    holoParent(9, E)
+    
+
+    
+    
+}

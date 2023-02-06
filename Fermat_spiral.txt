@@ -1,0 +1,21 @@
+@name Fermat spiral
+@inputs 
+@outputs 
+@persist Time
+@trigger 
+interval(1)
+if(duped()) {
+    hint("Stop stealing", 10)
+    selfDestructAll()
+}
+Time = Time + 1
+X = sin(Time)*(Time/2.4)
+Y = cos(Time)*(Time/2.4)
+holoCreate(1)
+holoCreate(2)
+holoPos(1, entity():pos()+vec(X,Y,0))
+holoPos(2, entity():pos()+vec(-X,-Y,0))
+if(first()) {
+    holoEntity(1):setTrails(30,0,20, "trails/laser", vec(255,0,100),255)
+    holoEntity(2):setTrails(30,0,20, "trails/laser", vec(100,0,255),255)
+}

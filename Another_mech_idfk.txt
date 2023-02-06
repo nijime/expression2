@@ -1,0 +1,558 @@
+@name Another mech idfk
+@inputs Pod:entity JumpThruster:entity
+@outputs Base:entity JumpThrust
+@persist [E Base]:entity
+@persist [MainRanger LegFL LegFR LegBL LegBR]:ranger
+@persist [P1 P2 P3 P4 S1 S2 S3 S4]:vector
+@persist L1 L2 Height Mass Yaw Leg T1 T2 Pitch J
+@model models/hunter/blocks/cube1x1x05.mdl
+
+interval(100)
+
+if(first()) {
+    S = 1
+
+    E = entity()
+    E:setAlpha(0)
+    E:propGravity(0)
+    E:setMass(30000)
+    
+    L1 = 150*S
+    L2 = 170*S
+    Leg = 1
+    function number loc(A, B, C) {
+        return acos((A^2 + B^2 - C^2) / (2*A*B))
+    }
+    
+    function leg(I1, I2, I3, L1, L2, Hip:entity, Vec:vector, Base:entity, Y, P) {
+
+        local Axis = Base:toLocalAxis(Vec-Hip:pos())
+        local Ang = Axis:toAngle():setRoll(-bearing(Hip:pos(), Base:angles()+ang(P,Y,0), Vec))+ang(0,0,180)
+        local Dist = min(Axis:length(), L1+L2)    
+        
+        local Quat = quat(Ang) * qRotation(vec(0, loc(Dist, L1, L2)+90,0))
+
+
+        holoAng(I1, Base:toWorld(Quat:toAngle()))
+        holoAng(I2, holoEntity(I1):toWorld(ang(loc(L2,L1,Dist)+180,0,0)))
+
+        holoPos(I3, Vec)
+        
+
+    }
+    
+    function void resetCurPos(Vec:vector) {
+        P1 = LegFL:pos() + Vec
+        P2 = LegFR:pos() + Vec
+        P3 = LegBL:pos() + Vec
+        P4 = LegBR:pos() + Vec
+    }
+    
+    function void resetStartPos() {
+        S1 = LegFL:pos()
+        S2 = LegFR:pos()
+        S3 = LegBL:pos()
+        S4 = LegBR:pos()
+        
+    }
+        holoCreate(1000, E:toWorld(vec(0,0,0)),vec(0,0,0))
+        holoParent(1000, E)
+        
+        Base = holoEntity(1000)
+        
+        ##Hip
+        holoCreate(1, Base:toWorld(vec(75*S,75*S,0)),vec(0))
+        holoParent(1, Base)
+        
+        ##Knee
+        holoCreate(2, holoEntity(1):toWorld(vec(0,0,L1)),vec(0))
+        holoParent(2, 1)
+        
+        ##Foot
+        holoCreate(3, holoEntity(2):toWorld(vec(0,0,L2)),vec(0))
+        holoParent(3, 2)
+        
+        
+        ##40, - 113
+        ##Hip
+        holoCreate(4, Base:toWorld(vec(75*S,-75*S,0)),vec(0))
+        holoParent(4, Base)
+        
+        ##Knee
+        holoCreate(5, holoEntity(4):toWorld(vec(0,0,L1)),vec(0))
+        holoParent(5, 4)
+        
+        ##Foot
+        holoCreate(6, holoEntity(5):toWorld(vec(0,0,L2)),vec(0))
+        holoParent(6, 5)
+
+
+
+        ##Hip
+        holoCreate(7, Base:toWorld(vec(-75*S,100*S,0)),vec(0))
+        holoParent(7, Base)
+        
+        ##Knee
+        holoCreate(8, holoEntity(7):toWorld(vec(0,0,L1)),vec(0))
+        holoParent(8, 7)
+        
+        ##Foot
+        holoCreate(9, holoEntity(8):toWorld(vec(0,0,L2)),vec(0))
+        holoParent(9, 8)
+        
+        
+        ##Hip
+        holoCreate(10, Base:toWorld(vec(-75*S,-100*S,0)),vec(0))
+        holoParent(10, Base)
+        
+        ##Knee
+        holoCreate(11, holoEntity(10):toWorld(vec(0,0,L1)),vec(0))
+        holoParent(11, 10)
+        
+        ##Foot
+        holoCreate(12, holoEntity(11):toWorld(vec(0,0,L2)),vec(0))
+        holoParent(12, 11)
+        
+
+        
+Height = 80*S
+Mass = 30000
+
+        P1 = E:toWorld(vec(250*S,150*S,-100))
+        P2 = E:toWorld(vec(250*S,-150*S,-100))
+        P3 = E:toWorld(vec(-150*S,250*S,-100))
+        P4 = E:toWorld(vec(-150*S,-250*S,-100))
+        
+    
+        
+}
+S = 1
+JumpThruster:setPos(Base:toWorld(vec(-10,0,-5)))
+
+MainRanger = rangerOffset(Height+150, E:toWorld(vec(0,0,-20)), vec(0,0,-1))
+
+LegFL = rangerOffset((Height+300)*S, Base:toWorld(vec(250*S,150*S,100*S)), vec(0,0,-1))
+LegFR = rangerOffset((Height+300)*S, Base:toWorld(vec(250*S,-150*S,100*S)), vec(0,0,-1))
+
+LegBL = rangerOffset((Height+300)*S, Base:toWorld(vec(-150*S,250*S,100*S)), vec(0,0,-1))
+LegBR = rangerOffset((Height+300)*S, Base:toWorld(vec(-150*S,-250*S,100*S)), vec(0,0,-1))
+
+
+Dri = Pod:driver()
+W = Dri:keyForward()
+A = Dri:keyLeft()
+S = Dri:keyBack()
+D = Dri:keyRight()
+Shift = Dri:keySprint()
+Space = Dri:keyJump()
+
+NVel = -E:vel()*Mass
+NAVel = -E:angVel()*Mass
+
+
+E:applyAngForce(NAVel*2 + ang(0-E:angles():pitch(), 0-E:angles():yaw(), 0-E:angles():roll())*Mass*10)
+
+if(MainRanger:hit()) {
+    
+    local ZForce = (Height-MainRanger:distance())*20000
+    
+    E:applyForce(NVel + vec(0,0,ZForce))
+    
+    
+} else {
+    E:applyForce(vec(NVel:x()*0.0,NVel:y()*0.0,-64*Mass))
+
+}
+
+if(Dri) {
+    if(changed(MainRanger:hit())) {
+        resetCurPos(vec(0,0,0))
+        resetStartPos()
+    }
+    if(MainRanger:hit()) {
+        
+        if(Space) {
+
+            resetCurPos(vec(0,0,0))
+        
+            J = J + 0.2
+            E:applyForce(vec(0,0,200*E:mass()*J))
+
+            if(J > 0.8) {
+                JumpThrust = 1
+                E:applyForce(Base:forward()*E:mass()*300*(W-S)*((Shift+1)*1.3) + vec(0,0,500*E:mass()*((Shift+1))))
+            }
+            
+            holoAng(1000, Base:angles():setPitch(20*(Shift+1)*W))
+        }
+        
+        if(!Space) {
+
+            
+            J = -1
+            
+            
+            if(W | A | S | D) {
+                if(Leg == 1) {
+                    T1 = T1 + 0.25
+                    
+                    P1 = bezier(S1, mix(S1, LegFL:pos(), 0.33)+vec(0,0,130), LegFL:pos(), T1)
+                    P4 = bezier(S4, mix(S4, LegBR:pos(), 0.33)+vec(0,0,130), LegBR:pos(), clamp(T1*1.0,0,1))
+                    
+                    if(T1 >= 1) {
+                        S1 = LegFL:pos()
+                        S2 = LegFR:pos()
+                        
+                        T2 = 0
+                        Leg = 2
+                    }
+                }
+    
+                if(Leg == 2) {
+                    T2 = T2 + 0.25
+    
+                    P3 = bezier(S3, mix(S3, LegBL:pos(), 0.5)+vec(0,0,130), LegBL:pos(), T2)
+                    P2 = bezier(S2, mix(S2, LegFR:pos(), 0.5)+vec(0,0,130), LegFR:pos(), clamp(T2*1.0,0,1))
+                    
+                    if(T2 >= 1) {
+                        S3 = LegBL:pos()
+                        S4 = LegBR:pos()
+                        
+                        T1 = 0
+                        Leg = 1
+                    }
+                }
+                
+            }
+        
+        
+        #Pitch = clamp( mix(holoEntity(3):pos(),holoEntity(6):pos(),0.5):z()-mix(holoEntity(9):pos(),holoEntity(12):pos(),0.5):z(),-315,315)
+        Pitch = 0
+        if(W | S) {
+
+            
+            Yaw = (Dri:eye():dot(Base:right()))*7
+            
+            E:applyForce(Base:forward()*Mass*200*(W-(S-0.5)))
+            
+            holoAng(1000, (Base:angles()+ang(0,-Yaw+(A-D)*7,0)):setPitch(-Pitch/8):setRoll(0))
+        } else {
+            Yaw = 0
+            
+            holoAng(1000, (Base:angles()+ang(0,(A-D)*3.5,0)):setPitch(-Pitch/8):setRoll(0))
+        }
+        holoAng(1000, (Base:angles()+ang(0,0,0)):setPitch(-Pitch/8):setRoll(0))
+    }
+    
+    } else {
+        J = -1
+        JumpThrust = 0
+    
+        resetCurPos(vec(0,0,30))
+    }
+
+} else {
+    if(MainRanger:hit()) {
+        
+        resetCurPos(vec(0,0,0))
+        
+    } else {
+        resetCurPos(vec(0,0,-100))
+    }
+}
+
+leg(1,2,3, L1/1.5, L2, holoEntity(1), P1, Base, 45,0)
+leg(4,5,6, L1/1.5, L2, holoEntity(4), P2, Base, -45,0)
+leg(7,8,9, L1, L2, holoEntity(7), P3, Base, 120,0)
+leg(10,11,12, L1, L2, holoEntity(10), P4, Base, -120,0)
+
+
+
+if(first()) {
+    S = 1
+    
+
+    
+ 
+##Leg 1
+    holoCreate(25, holoEntity(1):toWorld(vec(10*S,5*S,30*S)), vec(0.3*S,0.3*S,2.5*S), holoEntity(1):toWorld(ang(-4,0,2)), vec(255,255,255), "models/hunter/tubes/tube1x1x1.mdl")    
+    holoParent(25, 1)
+    holoMaterial(25, "models/debug/debugwhite")
+
+    holoCreate(26, holoEntity(25):toWorld(vec(2*S,0*S,-30*S)), vec(0.15*S,0.075*S,0.6*S), holoEntity(25):toWorld(ang(30,0,0)), vec(255,255,255), "models/hunter/tubes/tube1x1x1.mdl")    
+    holoParent(26, 25)
+    holoMaterial(26, "models/debug/debugwhite")
+    
+
+    holoCreate(27, holoEntity(25):toWorld(vec(0*S,0*S,-0*S)), vec(0.15*S,0.15*S,1*S), holoEntity(25):toWorld(ang(0,0,180)), vec(255,255,255), "models/hunter/misc/shell2x2a.mdl")
+    holoParent(27, 25)
+    holoMaterial(27, "models/debug/debugwhite")
+    
+    holoCreate(28, holoEntity(25):toWorld(vec(16*S,0*S,-8*S)), vec(0.2*S,0.1*S,2.9*S), holoEntity(25):toWorld(ang(-5,0,0)), vec(255,255,255), "models/hunter/tubes/tube1x1x1.mdl")    
+    holoParent(28, 25)
+    holoMaterial(28, "models/debug/debugwhite")
+    
+    holoCreate(29, holoEntity(25):toWorld(vec(-2*S,0*S,110*S)), vec(0.3*S,0.3*S,1.8*S), holoEntity(25):toWorld(ang(173,-135,7)), vec(255,255,255), "models/hunter/tubes/tube1x1x1d.mdl")
+    holoParent(29, 25)
+    holoMaterial(29, "models/debug/debugwhite")
+    
+    holoCreate(30, holoEntity(25):toWorld(vec(-16.8*S,0*S,29.5*S)), vec(0.3*S,0.3*S,1.3*S), holoEntity(25):toWorld(ang(195,-135,-15)), vec(255,255,255), "models/hunter/tubes/tube1x1x1d.mdl")
+    holoParent(30, 25)
+    holoMaterial(30, "models/debug/debugwhite")
+    
+    holoCreate(31, holoEntity(25):toWorld(vec(0*S,-15*S,70*S)), vec(4.4*S,1.4*S,1.4*S), holoEntity(25):toWorld(ang(-90,0,180)), vec(255,255,255), "models/props_combine/combine_barricade_bracket01b.mdl")
+    holoParent(31, 25)
+    holoMaterial(31, "models/debug/debugwhite")
+    
+    holoCreate(32, holoEntity(25):toWorld(vec(0*S,15*S,70*S)), vec(4.4*S,1.4*S,1.4*S), holoEntity(25):toWorld(ang(-90,0,0)), vec(255,255,255), "models/props_combine/combine_barricade_bracket01b.mdl")
+    holoParent(32, 25)
+    holoMaterial(32, "models/debug/debugwhite")
+
+    holoCreate(33, holoEntity(25):toWorld(vec(-10*S,0*S,29.5*S)), vec(2*S,2*S,2*S), holoEntity(25):toWorld(ang(0,0,90)), vec(255,255,255), "hq_torus_thick")
+    holoParent(33, 25)
+    holoMaterial(33, "models/debug/debugwhite")
+    
+    holoCreate(34, holoEntity(25):toWorld(vec(0*S,0*S,120*S)), vec(2*S,2*S,2*S), holoEntity(25):toWorld(ang(0,0,90)), vec(255,255,255), "hq_torus_thick")
+    holoParent(34, 25)
+    holoMaterial(34, "models/debug/debugwhite")
+    
+    
+    holoCreate(35, holoEntity(2):toWorld(vec(0*S,0*S,65*S)), vec(5*S,2*S,1.3*S), holoEntity(2):toWorld(ang(-86.5,-90,0)), vec(255,255,255), "models/props_combine/combine_barricade_bracket01b.mdl")
+    holoParent(35, 2)
+    holoMaterial(35, "models/debug/debugwhite")
+    
+    holoCreate(36, holoEntity(35):toWorld(vec(-25*S,1*S,0*S)), vec(0.2*S,2*S,0.3*S), holoEntity(35):toWorld(ang(-90,-100,0)), vec(255,255,255), "models/hunter/tubes/tubebend1x1x90.mdl")
+    holoParent(36, 35)
+    holoMaterial(36, "models/debug/debugwhite")
+    
+    holoCreate(37, holoEntity(35):toWorld(vec(51*S,-12.2*S,0*S)), vec(0.2*S,1.3*S,0.3*S), holoEntity(35):toWorld(ang(90,-100,180)), vec(255,255,255), "models/hunter/tubes/tubebend1x1x90.mdl")
+    holoParent(37, 35)
+    holoMaterial(37, "models/debug/debugwhite")
+    
+    holoCreate(38, holoEntity(35):toWorld(vec(15*S,-7*S,0*S)), vec(0.2*S,2*S,0.3*S), holoEntity(35):toWorld(ang(90,-100,0)), vec(255,255,255), "models/hunter/tubes/tubebend1x1x90.mdl")
+    holoParent(38, 35)
+    holoMaterial(38, "models/debug/debugwhite")
+    
+
+    holoCreate(39, holoEntity(35):toWorld(vec(70*S,-20*S,0*S)), vec(3*S,3*S,1*S), holoEntity(35):toWorld(ang(0,-20,90)), vec(255,255,255), "models/props_combine/combine_emitter01.mdl")
+    holoParent(39, 35)
+    holoMaterial(39, "models/debug/debugwhite")
+    
+    
+##Leg2
+    holoCreate(45, holoEntity(4):toWorld(vec(10*S,5*S,30*S)), vec(0.3*S,0.3*S,2.5*S), holoEntity(4):toWorld(ang(4,0,-2)), vec(255,255,255), "models/hunter/tubes/tube1x1x1.mdl")    
+    holoParent(45, 4)
+    holoMaterial(45, "models/debug/debugwhite")
+
+    holoCreate(46, holoEntity(45):toWorld(vec(2*S,0*S,-30*S)), vec(0.15*S,0.075*S,0.6*S), holoEntity(45):toWorld(ang(30,0,0)), vec(255,255,255), "models/hunter/tubes/tube1x1x1.mdl")    
+    holoParent(46, 45)
+    holoMaterial(46, "models/debug/debugwhite")
+    
+
+    holoCreate(47, holoEntity(45):toWorld(vec(0*S,0*S,-0*S)), vec(0.15*S,0.15*S,1*S), holoEntity(45):toWorld(ang(0,0,180)), vec(255,255,255), "models/hunter/misc/shell2x2a.mdl")
+    holoParent(47, 45)
+    holoMaterial(47, "models/debug/debugwhite")
+    
+    holoCreate(48, holoEntity(45):toWorld(vec(16*S,0*S,-8*S)), vec(0.2*S,0.1*S,2.9*S), holoEntity(45):toWorld(ang(-5,0,0)), vec(255,255,255), "models/hunter/tubes/tube1x1x1.mdl")    
+    holoParent(48, 45)
+    holoMaterial(48, "models/debug/debugwhite")
+    
+    holoCreate(49, holoEntity(45):toWorld(vec(-2*S,0*S,110*S)), vec(0.3*S,0.3*S,1.8*S), holoEntity(45):toWorld(ang(173,-135,7)), vec(255,255,255), "models/hunter/tubes/tube1x1x1d.mdl")
+    holoParent(49, 45)
+    holoMaterial(49, "models/debug/debugwhite")
+    
+    holoCreate(50, holoEntity(45):toWorld(vec(-16.8*S,0*S,29.5*S)), vec(0.3*S,0.3*S,1.3*S), holoEntity(45):toWorld(ang(195,-135,-15)), vec(255,255,255), "models/hunter/tubes/tube1x1x1d.mdl")
+    holoParent(50, 45)
+    holoMaterial(50, "models/debug/debugwhite")
+    
+    holoCreate(51, holoEntity(45):toWorld(vec(0*S,-15*S,70*S)), vec(4.4*S,1.4*S,1.4*S), holoEntity(45):toWorld(ang(-90,0,180)), vec(255,255,255), "models/props_combine/combine_barricade_bracket01b.mdl")
+    holoParent(51, 45)
+    holoMaterial(51, "models/debug/debugwhite")
+    
+    holoCreate(52, holoEntity(45):toWorld(vec(0*S,15*S,70*S)), vec(4.4*S,1.4*S,1.4*S), holoEntity(45):toWorld(ang(-90,0,0)), vec(255,255,255), "models/props_combine/combine_barricade_bracket01b.mdl")
+    holoParent(52, 45)
+    holoMaterial(52, "models/debug/debugwhite")
+
+    holoCreate(53, holoEntity(45):toWorld(vec(-10*S,0*S,29.5*S)), vec(2*S,2*S,2*S), holoEntity(45):toWorld(ang(0,0,90)), vec(255,255,255), "hq_torus_thick")
+    holoParent(53, 45)
+    holoMaterial(53, "models/debug/debugwhite")
+    
+    holoCreate(54, holoEntity(45):toWorld(vec(0*S,0*S,120*S)), vec(2*S,2*S,2*S), holoEntity(45):toWorld(ang(0,0,90)), vec(255,255,255), "hq_torus_thick")
+    holoParent(54, 45)
+    holoMaterial(54, "models/debug/debugwhite")
+    
+    
+    holoCreate(55, holoEntity(5):toWorld(vec(0*S,0*S,65*S)), vec(5*S,2*S,1.3*S), holoEntity(5):toWorld(ang(-86.5,-90,0)), vec(255,255,255), "models/props_combine/combine_barricade_bracket01b.mdl")
+    holoParent(55, 5)
+    holoMaterial(55, "models/debug/debugwhite")
+    
+    holoCreate(56, holoEntity(55):toWorld(vec(-25*S,1*S,0*S)), vec(0.2*S,2*S,0.3*S), holoEntity(55):toWorld(ang(-90,-100,0)), vec(255,255,255), "models/hunter/tubes/tubebend1x1x90.mdl")
+    holoParent(56, 55)
+    holoMaterial(56, "models/debug/debugwhite")
+    
+    holoCreate(57, holoEntity(55):toWorld(vec(51*S,-12.2*S,0*S)), vec(0.2*S,1.3*S,0.3*S), holoEntity(55):toWorld(ang(90,-100,180)), vec(255,255,255), "models/hunter/tubes/tubebend1x1x90.mdl")
+    holoParent(57, 55)
+    holoMaterial(57, "models/debug/debugwhite")
+    
+    holoCreate(58, holoEntity(55):toWorld(vec(15*S,-7*S,0*S)), vec(0.2*S,2*S,0.3*S), holoEntity(55):toWorld(ang(90,-100,0)), vec(255,255,255), "models/hunter/tubes/tubebend1x1x90.mdl")
+    holoParent(58, 55)
+    holoMaterial(58, "models/debug/debugwhite")
+    
+
+    holoCreate(59, holoEntity(55):toWorld(vec(70*S,-20*S,0*S)), vec(3*S,3*S,1*S), holoEntity(55):toWorld(ang(0,-20,90)), vec(255,255,255), "models/props_combine/combine_emitter01.mdl")
+    holoParent(59, 55)
+    holoMaterial(59, "models/debug/debugwhite")
+
+##Leg 3
+    holoCreate(65, holoEntity(7):toWorld(vec(-5*S,0*S,55*S)), vec(0.7*S,0.7*S,1*S), holoEntity(7):toWorld(ang(5,90,0)), vec(255,255,255), "models/props_combine/combine_generator01.mdl")
+    holoParent(65, 7)
+    holoMaterial(65, "models/debug/debugwhite")
+    
+    holoCreate(66, holoEntity(65):toWorld(vec(-5*S,-15*S,-30*S)), vec(0.8*S,0.8*S,2*S), holoEntity(65):toWorld(ang(0,0,0)), vec(255,255,255), "models/props_c17/oildrum001.mdl")
+    holoParent(66, 65)
+    holoMaterial(66, "models/debug/debugwhite")
+
+    holoCreate(67, holoEntity(65):toWorld(vec(-5*S,-15*S,-30*S)), vec(0.5*S,0.5*S,1.1*S), holoEntity(65):toWorld(ang(180,0,0)), vec(255,255,255), "models/hunter/tubes/tubebend1x1x90.mdl")
+    holoParent(67, 65)
+    holoMaterial(67, "models/debug/debugwhite")
+
+    holoCreate(68, holoEntity(65):toWorld(vec(0*S,-15*S,60*S)), vec(0.9*S,0.7*S,1.8*S), holoEntity(65):toWorld(ang(180,0,0)), vec(255,255,255), "models/props_combine/combine_light001b.mdl")
+    holoParent(68, 65)
+    holoMaterial(68, "models/debug/debugwhite")
+    
+    holoCreate(69, holoEntity(65):toWorld(vec(-12*S,-15*S,60*S)), vec(0.9*S,0.7*S,1.8*S), holoEntity(65):toWorld(ang(180,180,0)), vec(255,255,255), "models/props_combine/combine_light001b.mdl")
+    holoParent(69, 65)
+    holoMaterial(69, "models/debug/debugwhite")
+    
+    holoCreate(70, holoEntity(65):toWorld(vec(-8*S,0*S,95*S)), vec(2*S,2*S,2*S), holoEntity(65):toWorld(ang(90,0,0)), vec(255,255,255), "hq_torus_thick")
+    holoParent(70, 65)
+    holoMaterial(70, "models/debug/debugwhite")
+    
+    holoCreate(71, holoEntity(8):toWorld(vec(0*S,0*S,50*S)), vec(1.1*S,0.9*S,1.8*S), holoEntity(8):toWorld(ang(0,0,0)), vec(255,255,255), "models/props_combine/combine_light001b.mdl")
+    holoParent(71, 8)
+    holoMaterial(71, "models/debug/debugwhite")
+
+    holoCreate(72, holoEntity(71):toWorld(vec(-3*S,6*S,-15*S)), vec(0.4*S,0.4*S,2.3*S), holoEntity(71):toWorld(ang(0,0,0)), vec(255,255,255), "models/props_c17/oildrum001.mdl")
+    holoParent(72, 71)
+    holoMaterial(72, "models/debug/debugwhite")
+    
+    holoCreate(73, holoEntity(71):toWorld(vec(-3*S,-6*S,-15*S)), vec(0.4*S,0.4*S,2.3*S), holoEntity(71):toWorld(ang(0,0,0)), vec(255,255,255), "models/props_c17/oildrum001.mdl")
+    holoParent(73, 71)
+    holoMaterial(73, "models/debug/debugwhite")
+    
+    holoCreate(74, holoEntity(71):toWorld(vec(0*S,0*S,110*S)), vec(0.5*S,0.4*S,0.4*S), holoEntity(71):toWorld(ang(-90,0,0)), vec(255,255,255), "models/props_combine/headcrabcannister01a.mdl")
+    holoParent(74, 71)
+    holoMaterial(74, "models/debug/debugwhite")
+    
+##Leg 4
+    holoCreate(75, holoEntity(10):toWorld(vec(-5*S,0*S,55*S)), vec(0.7*S,0.7*S,1*S), holoEntity(10):toWorld(ang(-5,90,0)), vec(255,255,255), "models/props_combine/combine_generator01.mdl")
+    holoParent(75, 10)
+    holoMaterial(75, "models/debug/debugwhite")
+    
+    holoCreate(76, holoEntity(75):toWorld(vec(-5*S,-15*S,-30*S)), vec(0.8*S,0.8*S,2*S), holoEntity(75):toWorld(ang(0,0,0)), vec(255,255,255), "models/props_c17/oildrum001.mdl")
+    holoParent(76, 75)
+    holoMaterial(76, "models/debug/debugwhite")
+
+    holoCreate(77, holoEntity(75):toWorld(vec(-5*S,-15*S,-30*S)), vec(0.5*S,0.5*S,1.1*S), holoEntity(75):toWorld(ang(180,0,0)), vec(255,255,255), "models/hunter/tubes/tubebend1x1x90.mdl")
+    holoParent(77, 75)
+    holoMaterial(77, "models/debug/debugwhite")
+
+    holoCreate(78, holoEntity(75):toWorld(vec(0*S,-15*S,60*S)), vec(0.9*S,0.7*S,1.8*S), holoEntity(75):toWorld(ang(180,0,0)), vec(255,255,255), "models/props_combine/combine_light001b.mdl")
+    holoParent(78, 75)
+    holoMaterial(78, "models/debug/debugwhite")
+    
+    holoCreate(79, holoEntity(75):toWorld(vec(-12*S,-15*S,60*S)), vec(0.9*S,0.7*S,1.8*S), holoEntity(75):toWorld(ang(180,180,0)), vec(255,255,255), "models/props_combine/combine_light001b.mdl")
+    holoParent(79, 75)
+    holoMaterial(79, "models/debug/debugwhite")
+    
+    holoCreate(80, holoEntity(75):toWorld(vec(-8*S,0*S,95*S)), vec(2*S,2*S,2*S), holoEntity(75):toWorld(ang(90,0,0)), vec(255,255,255), "hq_torus_thick")
+    holoParent(80, 75)
+    holoMaterial(80, "models/debug/debugwhite")
+    
+    holoCreate(81, holoEntity(11):toWorld(vec(0*S,0*S,50*S)), vec(1.1*S,0.9*S,1.8*S), holoEntity(11):toWorld(ang(0,0,0)), vec(255,255,255), "models/props_combine/combine_light001b.mdl")
+    holoParent(81, 11)
+    holoMaterial(81, "models/debug/debugwhite")
+
+    holoCreate(82, holoEntity(81):toWorld(vec(-3*S,6*S,-15*S)), vec(0.4*S,0.4*S,2.3*S), holoEntity(81):toWorld(ang(0,0,0)), vec(255,255,255), "models/props_c17/oildrum001.mdl")
+    holoParent(82, 81)
+    holoMaterial(82, "models/debug/debugwhite")
+    
+    holoCreate(83, holoEntity(81):toWorld(vec(-3*S,-6*S,-15*S)), vec(0.4*S,0.4*S,2.3*S), holoEntity(81):toWorld(ang(0,0,0)), vec(255,255,255), "models/props_c17/oildrum001.mdl")
+    holoParent(83, 81)
+    holoMaterial(83, "models/debug/debugwhite")
+    
+    holoCreate(84, holoEntity(81):toWorld(vec(0*S,0*S,110*S)), vec(0.5*S,0.4*S,0.4*S), holoEntity(81):toWorld(ang(-90,0,0)), vec(255,255,255), "models/props_combine/headcrabcannister01a.mdl")
+    holoParent(84, 81)
+    holoMaterial(84, "models/debug/debugwhite")
+    
+##Body
+    holoCreate(85, holoEntity(1000):toWorld(vec(45*S,65*S,-5*S)), vec(0.9*S,0.5*S,0.9*S), holoEntity(1000):toWorld(ang(90,225,0)), vec(255,255,255), "models/props_combine/tprotato1.mdl")
+    holoParent(85, 1000)
+
+    holoCreate(86, holoEntity(1000):toWorld(vec(45*S,65*S,20*S)), vec(0.9*S,0.4*S,0.9*S), holoEntity(1000):toWorld(ang(-80,225,0)), vec(255,255,255), "models/props_combine/tprotato1.mdl")
+    holoParent(86, 1000)
+    
+    holoCreate(87, holoEntity(1000):toWorld(vec(45*S,-65*S,-5*S)), vec(0.9*S,0.5*S,0.9*S), holoEntity(1000):toWorld(ang(90,-225,0)), vec(255,255,255), "models/props_combine/tprotato1.mdl")
+    holoParent(87, 1000)
+
+    holoCreate(88, holoEntity(1000):toWorld(vec(45*S,-65*S,20*S)), vec(0.9*S,0.6*S,0.9*S), holoEntity(1000):toWorld(ang(-80,-225,0)), vec(255,255,255), "models/props_combine/tprotato1.mdl")
+    holoParent(88, 1000)
+    
+    holoCreate(89, holoEntity(1000):toWorld(vec(-60*S,45*S,-10*S)), vec(0.6*S,0.7*S,0.7*S), holoEntity(1000):toWorld(ang(90,-70,0)), vec(255,255,255), "models/props_combine/tprotato1.mdl")
+    holoParent(89, 1000)
+
+    holoCreate(90, holoEntity(1000):toWorld(vec(-60*S,45*S,20*S)), vec(0.6*S,0.6*S,0.7*S), holoEntity(1000):toWorld(ang(-80,-70,0)), vec(255,255,255), "models/props_combine/tprotato1.mdl")
+    holoParent(90, 1000)
+    
+    holoCreate(91, holoEntity(1000):toWorld(vec(-60*S,-45*S,-10*S)), vec(0.6*S,0.7*S,0.7*S), holoEntity(1000):toWorld(ang(90,70,0)), vec(255,255,255), "models/props_combine/tprotato1.mdl")
+    holoParent(91, 1000)
+
+    holoCreate(92, holoEntity(1000):toWorld(vec(-60*S,-45*S,20*S)), vec(0.6*S,0.6*S,0.7*S), holoEntity(1000):toWorld(ang(-80,70,0)), vec(255,255,255), "models/props_combine/tprotato1.mdl")
+    holoParent(92, 1000)
+    
+    holoCreate(93, holoEntity(1000):toWorld(vec(-60*S,0*S,20*S)), vec(1*S,1*S,1*S), holoEntity(1000):toWorld(ang(-90,180,0)), vec(255,255,255), "models/props_combine/tprotato1.mdl")
+    holoParent(93, 1000)
+    
+    holoCreate(94, holoEntity(1000):toWorld(vec(-10*S,0*S,10*S)), vec(1.5*S,1*S,1*S), holoEntity(1000):toWorld(ang(90,180,180)), vec(255,255,255), "models/props_combine/tprotato1.mdl")
+    holoParent(94, 1000)
+    
+    holoCreate(95, holoEntity(1000):toWorld(vec(15*S,25*S,20*S)), vec(0.4*S,0.4*S,0.4*S), holoEntity(1000):toWorld(ang(0,45,0)), vec(255,255,255), "models/props_combine/combine_barricade_med02a.mdl")
+    holoParent(95, 1000)
+    
+    holoCreate(96, holoEntity(1000):toWorld(vec(15*S,-25*S,20*S)), vec(0.4*S,0.4*S,0.4*S), holoEntity(1000):toWorld(ang(0,-45,0)), vec(255,255,255), "models/props_combine/combine_barricade_med02a.mdl")
+    holoParent(96, 1000)
+    
+    holoCreate(97, holoEntity(1000):toWorld(vec(34*S,52*S,20*S)), vec(0.4*S,0.2*S,0.4*S), holoEntity(1000):toWorld(ang(-45,45,0)), vec(255,255,255), "models/props_combine/combine_barricade_med02a.mdl")
+    holoParent(97, 1000)
+    
+    holoCreate(98, holoEntity(1000):toWorld(vec(34*S,-52*S,20*S)), vec(0.4*S,0.2*S,0.4*S), holoEntity(1000):toWorld(ang(-45,-45,0)), vec(255,255,255), "models/props_combine/combine_barricade_med02a.mdl")
+    holoParent(98, 1000)
+    
+    
+    for(I = 20, 59) {
+        if(holoEntity(I):model():explode("/")[2, string] == "props_combine") {
+            holoMaterial(I, "")
+        } else {
+            holoMaterial(I, "phoenix_storms/metalset_1-2")
+        }
+    }
+
+    for(I = 60, 84) {
+        if(holoEntity(I):model():explode("/")[2, string] == "props_combine") {
+            holoMaterial(I, "phoenix_storms/bluemetal")
+            holoColor(I, vec(90,120,120))
+        } else {
+            holoMaterial(I, "phoenix_storms/metalset_1-2")
+        }
+    }
+
+
+        for(I = 1, 100) {
+            if(holoEntity(I):model() == "models/error.mdl") {
+                holoModel(I, "models/holograms/cube.mdl")
+            }
+        }
+        
+}
+
+

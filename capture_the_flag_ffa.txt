@@ -1,0 +1,215 @@
+@name Capture The Flag FFA
+@persist [E O Flag Holder PHolder]:entity [HoverPos]:vector [Songs Points Players]:array T Tog Start Needed PointTime
+interval(100)
+runOnChat(1)
+
+if(first()) {
+    Songs = array("music/hl2_song1.mp3", "music/hl2_song20_submix0.mp3", "music/hl2_song29.mp3")
+    
+    Needed = 9
+    PointTime = 10
+    
+    O = owner()
+    E = entity()
+    
+    HoverPos = E:pos()+vec(0,0,20)
+    
+    holoCreate(1)
+    holoPos(1, E:pos()+vec(0,0,20))
+    Flag = holoEntity(1)
+    
+    holoCreate(2)
+    holoModel(2, "hq_sphere")
+    holoScale(2, vec(-6,-6,-6))
+    holoPos(2, Flag:pos())
+    holoParent(2, 1)
+    
+    holoCreate(3)
+    holoModel(3, "hq_sphere")
+    holoScale(3, vec(-15,-15,-15))
+    holoPos(3, Flag:pos())
+    holoParent(3, 1)
+    
+    holoCreate(4)
+    holoAlpha(4, 0)
+    holoEntity(4):setTrails(1000,0, 1, "trails/smoke", vec(255,0,0),255)
+
+}
+if(O:lastSaid():lower() == "!start") {
+    timer("start", 250)
+}
+if(clk("start")) {
+        concmd("say > The flag can now be picked up!")
+        Start = 1
+        Players = players()
+}
+
+if(O:lastSaid():lower() == "!startaimpos") {
+    timer("startaimpos", 250)
+}
+if(clk("startaimpos")) {
+        concmd("say > The flag can now be picked up!")
+        Start = 1
+        Players = players()
+        HoverPos = O:aimPos()
+}
+
+if(O:lastSaid():lower() == "!end") {
+    timer("end", 250)
+}
+if(clk("end")) {
+        concmd("say > Round ended")
+        Start = 0
+        soundStop("music")
+        
+        Points:clear()
+
+}
+
+
+if(Start) {
+    if(changed(Holder)) {
+        if(Holder) {
+            Random = randint(1, Songs:count())
+            
+            concmd("say > " + Holder:name() + " is carrying the flag!")
+            
+            Flag:soundPlay("pickup", 1, "ambient/alarms/warningbell1.wav")
+            Flag:soundPlay("music", soundDuration(Songs[Random, string]), Songs[Random, string])
+    
+            
+            holoVisible(3, array(Holder), 0)
+            holoVisible(2, array(Holder), 0)
+            holoVisible(1, players(), 0)
+            
+            timer("pointgain", PointTime*1000)
+        }
+        
+        if(!Holder) {
+            soundStop("music")
+            
+            if(PHolder:inNoclip()) {
+                concmd("say > " + PHolder:name() + " tried to noclip!")
+            } else {
+                concmd("say > " + PHolder:name() + " dropped the flag!")
+            }
+            
+            Flag:soundPlay("drop", 1, "ambient/alarms/klaxon1.wav")
+            holoVisible(3, array(PHolder), 1)
+            holoVisible(2, array(PHolder), 1)
+            holoVisible(1, players(), 1)
+            
+            stoptimer("pointgain")
+        }
+        
+    }
+    
+    if(Holder) {
+        if(clk("nextsong")) {
+            Random = randint(1, Songs:count())
+            Flag:soundPlay("music", soundDuration(Songs[Random, string]), Songs[Random, string])
+            timer("nextsong", soundDuration(Songs[Random, string])*1000)
+        }
+        
+        PHolder = Holder
+        
+        HoverPos = Holder:pos()+vec(0,0,36)
+        holoPos(1, HoverPos)
+        if(clk("pointgain")) {
+            for(I = 1, Players:count()) {
+                if(Players[I, entity] == Holder) {
+                
+                    
+                    if(Points[I, number] >= Needed) {
+                        timer("win", 400)
+                    } else {
+                        Points[I, number] = Points[I, number]+1
+                        concmd("say > " + Holder:name() + ": +1 point, " + Points[I, number] + " overall")
+                        #print(Points[I, number])
+                    
+                    }
+                }
+            }
+    
+    
+            timer("pointgain", PointTime*1000)
+        }
+        if(!Holder:isAlive() | Holder:inNoclip() | Holder:lastSaid():lower() == "!drop") {
+            HoverPos = Holder:pos()+vec(0,0,20)
+            Holder = noentity()
+            
+            findExcludePlayer(PHolder)
+            
+            timer("reinclude", 2000)
+        
+        }
+        
+    } else {
+    Tog = !Tog
+    holoPos(4, Tog ? Flag:pos() : Flag:pos()+vec(0,0,10000))
+    
+        findIncludeClass("player")
+        findInSphere(Flag:pos(), 100)
+        Found = findToArray()
+        
+        for(I = 1, Found:count()) {
+            if(!Found[I, entity]:isAlive() | Found[I, entity]:inNoclip()) {
+                Found:remove(I)
+            }
+        }
+        
+        if(Found[1, entity]) {
+            Holder = Found[1, entity]
+        }
+        
+        T = T + 1
+        holoColor(1, vec4(abs(sin(T+90)*255), abs(sin(T+45)*255), abs(sin(T*3)*255), 200))
+        holoAng(1, ang(0,T*3,0))
+        holoPos(1, HoverPos+vec(0,0,sin(T*4)*10))
+        
+        holoColor(2, vec4(abs(sin(T+90)*255), abs(sin(T+45)*255), abs(sin(T*3)*255), 100))
+        holoColor(3, vec4(abs(sin(T+90)*255), abs(sin(T+45)*255), abs(sin(T*3)*255), 50))
+    
+    }
+} else {
+    
+    T = T + 1
+    holoColor(1, vec4(abs(sin(T+90)*255), abs(sin(T+45)*255), abs(sin(T*3)*255), 200))
+    holoAng(1, ang(0,T*3,0))
+    holoPos(1, HoverPos+vec(0,0,sin(T*4)*10))
+        
+    holoColor(2, vec4(abs(sin(T+90)*255), abs(sin(T+45)*255), abs(sin(T*3)*255), 100))
+    holoColor(3, vec4(abs(sin(T+90)*255), abs(sin(T+45)*255), abs(sin(T*3)*255), 50))
+    
+        holoVisible(3, array(PHolder), 1)
+        holoVisible(2, array(PHolder), 1)
+        holoVisible(1, players(), 1)
+        
+        timer("reset", 200)
+}
+
+
+if(clk("win")) {
+    
+    soundStop("music")
+    soundPlay("win", 10, "music/hl1_song25_remix3.mp3")
+    
+    concmd("say > " + Holder:name() + " won!")
+    Start = 0
+    HoverPos = PHolder:pos()+vec(0,0,20)
+    
+    
+    timer("reset", 200)
+
+}
+if(clk("reset")) {
+    Holder = noentity()
+    PHolder = noentity()
+    
+    Points:clear()
+}
+
+if(clk("reinclude")) {
+    findClearBlackList()
+}
+

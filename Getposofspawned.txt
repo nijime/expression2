@@ -1,0 +1,8 @@
+@name Getposofspawned
+@inputs 
+@outputs 
+@persist 
+@trigger 
+if(first()) {
+    print(" " + entity():pos())
+}

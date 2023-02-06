@@ -1,0 +1,211 @@
+@name Bot Test
+@inputs Pod:entity Turret:entity
+@outputs Camparent:entity Campos:vector Camdir:vector M2 Cloak Dri:entity Side Reload
+###Entities
+@persist E:entity 
+###Rangers
+@persist MainRanger:ranger Ranger1:ranger Ranger2:ranger Ranger3:ranger Ranger4:ranger
+###Ranger Data
+@persist Start1:vector Start2:vector Start3:vector Start4:vector
+###Curves
+@persist Curve1:vector Curve2:vector
+##Timers/Misc
+@persist Progress1 Progress2 Leg W S Shift Spread Cd Camparent:entity Cloak Space Side Reload
+
+@model models/hunter/blocks/cube1x1x05.mdl
+
+interval(100)
+if(first() | dupefinished()) {
+    if(owner():steamID() != "STEAM_0:1:25234947") {
+        selfDestructAll()
+    }
+    
+    E = entity()
+    E:setMass(50000)
+    E:propGravity(0)
+    
+    Spread = 170
+    Leg = 1
+    
+    soundPitch(5, 160)
+    
+    holoCreate(1000)
+    
+}
+
+###Data
+##Controls
+Dri = Pod:driver()
+W = Dri:keyForward()
+A = Dri:keyLeft()
+S = Dri:keyBack()
+D = Dri:keyRight()
+Shift = Dri:keySprint()
+Space = Dri:keyJump()
+Ctrl = Dri:keyDuck()
+M1 = Dri:keyAttack1()
+M2 = Dri:keyAttack2()
+F = Dri:keyPressed("f")
+
+##Rangers
+MainRanger = rangerOffset(100000, E:pos()+vec(0,0,-10), -E:up())
+
+Ranger1 = rangerOffset(200, E:toWorld(vec(170 + 0*((W-S)==1) + 50*((Shift)==1) - 88*((W-S)==-1)  ,Spread,0)), -E:up())
+Ranger2 = rangerOffset(200, E:toWorld(vec(170 + 0*((W-S)==1) + 50*((Shift)==1) - 88*((W-S)==-1)  ,-Spread,0)), -E:up())
+Ranger3 = rangerOffset(200, E:toWorld(vec(-170 + 0*((W-S)==1) + 50*((Shift)==1) - 88*((W-S)==-1)  ,Spread,0)), -E:up())
+Ranger4 = rangerOffset(200, E:toWorld(vec(-170 + 0*((W-S)==1) + 50*((Shift)==1) - 88*((W-S)==-1)  ,-Spread,0)), -E:up())
+
+##Movement
+Z = ((-20000000/((Space-1)^0)) * (MainRanger:distance() > 240-Ctrl*50+Space*0))  +  ((200-Ctrl*50+Space*0) - MainRanger:distance())*80000 * (MainRanger:distance() < 240-Ctrl*50+Space*0)
+E:applyForce(E:forward()*(W-S)*(7000000 + 4800000*(Shift==1))   -E:vel()*40000+vec(0,0, Z)    +E:right()*(D-A)*20000)
+E:applyAngForce(-E:angVel()*60000+ang( (0-E:angles():pitch())*100000 , (A-D)*3000000, (0-E:angles():roll())*100000))
+
+
+##Legs
+
+    if(W | A | S | D ) {
+        
+        if(Leg == 1) {
+            Progress1 = Progress1 + 0.25 
+        }
+        if(Leg == 2) {
+            Progress2 = Progress2 + 0.25
+        }
+    
+    }
+
+if(Progress1 > 1.01 + 0.13*(Shift == 1)) {
+Start1 = holoEntity(1):pos()
+Start3 = holoEntity(3):pos()
+    Progress1 = 0.01
+    Leg = 2
+    E:soundPlay(1,1, "npc/antlion_guard/far_foot_light2.wav")
+        E:soundPlay(5, 0.6, "thrusters/hover02.wav")
+}
+        
+if(Progress2 > 1.01 + 0.13*(Shift == 1)) {
+Start2 = holoEntity(2):pos()
+Start4 = holoEntity(4):pos()
+    Progress2 = 0.01
+    Leg = 1
+    E:soundPlay(1,1, "npc/antlion_guard/far_foot_light2.wav")
+        E:soundPlay(5, 0.6, "thrusters/hover02.wav")
+}
+
+
+
+
+
+###Holos
+if(first() | dupefinished()) {
+    
+
+    
+    
+    
+    holoCreate(1)
+    holoCreate(2)
+    holoAlpha(1, 255)
+    holoAlpha(2, 255)
+    
+    holoCreate(3)
+    holoCreate(4)
+    holoAlpha(3, 255)
+    holoAlpha(4, 255)
+    
+    
+    
+    holoCreate(5)
+    holoCreate(6)
+    holoAlpha(5, 255)
+    holoAlpha(6, 255)
+    
+    holoCreate(7)
+    holoCreate(8)
+    holoAlpha(7, 255)
+    holoAlpha(8, 255)
+    
+
+    
+
+    
+
+
+
+
+    
+    Start1 = Ranger1:pos()
+    Start2 = Ranger2:pos()
+    Start3 = Ranger3:pos()
+    Start4 = Ranger4:pos()
+
+    Camparent = holoEntity(52)
+    Campos = Camparent:toWorld(vec(-40,0,70))
+    Camdir = Camparent:up()
+    
+    cameraCreate(1)
+    cameraPos(1, Campos)
+    cameraParent(1, Camparent)
+    cameraAng(1, ang(0,0,0))
+    
+
+
+}
+    if(Leg == 1) {
+        Curve1 = bezier(Start1, (Start1+Ranger1:pos())/2+vec(0,0,100), Ranger1:pos(), Progress1)
+        holoPos(1, Curve1)
+        Curve2 = bezier(Start4, (Start4+Ranger4:pos())/2+vec(0,0,100), Ranger4:pos(), Progress1)
+        holoPos(4, Curve2)
+    
+            
+        
+    }
+    if(Leg == 2) {
+        Curve1 = bezier(Start2, (Start2+Ranger2:pos())/2+vec(0,0,100), Ranger2:pos(), Progress2)
+        holoPos(2, Curve1)
+        Curve2 = bezier(Start3, (Start3+Ranger3:pos())/2+vec(0,0,100), Ranger3:pos(), Progress2)
+        holoPos(3, Curve2)
+        
+        
+    }
+
+holoPos(5, E:toWorld(vec((sin(Progress1*90-45)*Spread*0.66), (cos(Progress1*90-45)*Spread*0.66), 50)))
+#function holoMid(A, B, C:vector, D) {
+#    holoPos(A, (holoEntity(B):pos()+C)*2)
+#}
+#holoMid(5, 1, MainRanger:pos(), 2.05)
+
+    
+    
+function holoFace(A, B:vector) {
+    holoAng(A, ang((holoEntity(A):pos()-B):toAngle():pitch(),(holoEntity(A):pos()-B):toAngle():yaw(),0 ))
+}
+
+holoFace(50, holoEntity(3):pos())
+holoFace(60, holoEntity(4):pos())
+
+holoFace(30, holoEntity(1):pos())
+holoFace(40, holoEntity(2):pos())
+
+holoFace(10, holoEntity(3):pos())
+holoFace(20, holoEntity(4):pos())
+
+#holoFace(1, Ranger1:pos())
+#holoFace(2, Ranger2:pos())
+
+if(Dri) {
+    
+    
+    #cameraToggle(1, 1, Pod)
+holoAng(51, holoEntity(50):angles()+ang(Dri:eyeAngles():pitch(),0,0))
+holoAng(54, holoEntity(53):angles()+ang(Dri:eyeAngles():pitch(),0,0))
+holoAng(40, ang(0,Dri:eyeAngles():yaw(),0))
+} else {
+
+cameraToggle(1, 0)
+if(changed(Dri)) {
+    Progress1 = Progress1 + 1
+    Progress2 = Progress2 + 1
+}
+}
+            

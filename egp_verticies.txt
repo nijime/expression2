@@ -1,0 +1,54 @@
+@name egp verticies
+@inputs EGP:wirelink User:entity
+@outputs 
+@persist R:array
+@trigger 
+interval(1)
+R = array(vec2(randint(512),randint(512)),vec2(randint(512),randint(512)),vec2(randint(512),randint(512)),vec2(randint(512),randint(512)),vec2(randint(512),randint(512)),vec2(randint(512),randint(512)),vec2(randint(512),randint(512)))
+if(first()) {
+EGP:egpClear()
+#EGP:egpAddVertices(1, Array)
+#EGP:egpPoly(2, Array)
+EGP:egpLine(3, vec2(0,256), R[1, vector2])
+EGP:egpLine(4, R[1, vector2], R[2, vector2])
+EGP:egpLine(5, R[2, vector2], R[3, vector2])
+EGP:egpLine(6, R[3, vector2], R[4, vector2])
+EGP:egpLine(7, R[4, vector2], R[5, vector2])
+EGP:egpLine(8, R[5, vector2], R[6, vector2])
+EGP:egpLine(9, R[6, vector2], vec2(512,256))
+
+EGP:egpSize(3, 2)
+EGP:egpSize(4, 2)
+EGP:egpSize(5, 2)
+EGP:egpSize(6, 2)
+EGP:egpSize(7, 2)
+EGP:egpSize(8, 2)
+EGP:egpSize(9, 2)
+
+
+
+
+
+EGP:egpCircle(1337, vec2(0,0), vec2(5,5))
+EGP:egpParentToCursor(1337)
+EGP:egpColor(1337, vec(0,0,0))
+
+}
+if(inrange(EGP:egpCursor(User), vec2(0,0), vec2(50,50))) {
+    User:plyApplyForce(vec(0,0,1000))
+}
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    

@@ -1,0 +1,330 @@
+@name HoloHeli
+@inputs Seat:entity Turret:entity
+@outputs LookY LookR Attack1 Hover
+@persist Driver:entity E:entity Seat:entity Pitch1 Pitch2 Yaw1 Yaw2 RP RR RY Lift Ez Look Yaw LookY Jetmode Spin
+@model models/hunter/blocks/cube025x025x025.mdl
+interval(100)
+E = entity()
+
+        if(duped()) {
+            selfDestruct()
+        }
+        
+        
+        Holos = 1
+        if(first() & Holos == 1) {
+            
+            E:setAng(ang(0,0,0))
+            
+##Torso
+holoCreate(1)
+holoModel(1, "hq_cylinder")
+holoPos(1, E:pos()+vec(0,0,5))
+holoAng(1, ang(105,0,90))
+holoScale(1, vec(0.7,1.2,6.2))           
+holoParent(1, E)
+            
+holoCreate(2)
+holoModel(2, "hq_torus")
+holoPos(2, E:pos()+vec(0,65,5))
+#holoAng(2, ang(195,0,0))
+holoScale(2, vec(5.5,5.5,3))           
+holoParent(2, E)          
+            
+holoCreate(3)
+holoModel(3, "hq_torus")
+holoPos(3, E:pos()+vec(0,-65,5))
+#holoAng(3, ang(195,0,0))
+holoScale(3, vec(5.5,5.5,3))           
+holoParent(3, E)           
+            
+holoCreate(4)
+holoModel(4, "hq_sphere")
+holoPos(4, E:pos()+vec(20,0,0))
+holoAng(4, ang(10,0,0))
+holoScale(4, vec(5,2,2))           
+holoParent(4, E)         
+            
+holoCreate(5)
+holoModel(5, "hq_sphere")
+holoPos(5, E:pos()+vec(15,0,-2))
+holoAng(5, ang(0,0,0))
+holoScale(5, vec(6,2,2))           
+holoParent(5, E)             
+            
+holoCreate(6)
+holoModel(6, "hq_sphere")
+holoPos(6, E:pos()+vec(0,0,2))
+holoAng(6, ang(0,0,0))
+holoScale(6, vec(6,2,2))           
+holoParent(6, E)
+
+##Blades
+holoCreate(7)
+holoModel(7, "")
+holoPos(7, E:pos()+vec(0,-65,5))
+#holoAng(7, ang(195,0,0))
+holoScale(7, vec(5,0.6,0.08))           
+holoParent(7, E)
+holoColor(7, vec(20,20,20))        
+
+holoCreate(8)
+holoModel(8, "")
+holoPos(8, E:pos()+vec(0,-65,5))
+#holoAng(8, ang(195,0,0))
+holoScale(8, vec(5,0.6,0.08))           
+holoParent(8, E)            
+holoColor(8, vec(20,20,20)) 
+
+holoCreate(9)
+holoModel(9, "")
+holoPos(9, E:pos()+vec(0,65,5))
+#holoAng(9, ang(195,0,0))
+holoScale(9, vec(5,0.6,0.08))           
+holoParent(9, E)
+holoColor(9, vec(20,20,20)) 
+
+holoCreate(10)
+holoModel(10, "")
+holoPos(10, E:pos()+vec(0,65,5))
+#holoAng(10, ang(195,0,0))
+holoScale(10, vec(5,0.6,0.08))           
+holoParent(10, E)
+holoColor(10, vec(20,20,20)) 
+
+holoCreate(11)
+holoModel(11, "hq_torus")
+holoPos(11, E:pos()+vec(0,65,5))
+#holoAng(11, ang(195,0,0))
+holoScale(11, vec(4.5,4.5,2))           
+holoParent(11, E) 
+holoColor(11, vec(100,100,100)) 
+
+
+holoCreate(12)
+holoModel(12, "hq_torus")
+holoPos(12, E:pos()+vec(0,-65,5))
+#holoAng(12, ang(195,0,0))
+holoScale(12, vec(4.5,4.5,2))           
+holoParent(12, E) 
+holoColor(12, vec(100,100,100))
+
+                 
+##Tail
+holoCreate(20)
+holoModel(20, "")
+holoPos(20, E:pos()+vec(-60,0,-4))
+holoAng(20, ang(0,0,0))
+holoScale(20, vec(10,0.3,0.5))           
+holoParent(20, E)         
+            
+holoCreate(21)
+holoModel(21, "")
+holoPos(21, E:pos()+vec(-60,0,-1))
+holoAng(21, ang(-5,0,0))
+holoScale(21, vec(5,0.2,0.5))           
+holoParent(21, E)              
+            
+holoCreate(22)
+holoModel(22, "")
+holoPos(22, E:pos()+vec(-29,0,-6))
+holoAng(22, ang(4,0,0))
+holoScale(22, vec(5,0.2,0.5))           
+holoParent(22, E)             
+ 
+holoCreate(23)
+holoModel(23, "")
+holoPos(23, E:pos()+vec(-40,0,2))
+holoAng(23, ang(-11,0,0))
+holoScale(23, vec(2,0.2,0.5))           
+holoParent(23, E)       
+
+      
+holoCreate(25)
+holoModel(25, "")
+holoPos(25, E:pos()+vec(-102,25,-6))
+holoAng(25, ang(0,15,0))
+holoScale(25, vec(1,4.5,0.1))           
+holoParent(25, E)             
+            
+holoCreate(26)
+holoModel(26, "")
+holoPos(26, E:pos()+vec(-102,-25,-6))
+holoAng(26, ang(0,-15,0))
+holoScale(26, vec(1,4.5,0.1))           
+holoParent(26, E)            
+            
+holoCreate(27)
+holoModel(27, "")
+holoPos(27, E:pos()+vec(-109,25,-6))
+holoAng(27, ang(0,2,0))
+holoScale(27, vec(1,4.5,0.1))           
+holoParent(27, E)           
+            
+holoCreate(28)
+holoModel(28, "")
+holoPos(28, E:pos()+vec(-109,-25,-6))
+holoAng(28, ang(0,-2,0))
+holoScale(28, vec(1,4.5,0.1))           
+holoParent(28, E)                
+            
+holoCreate(29)
+holoModel(29, "")
+holoPos(29, E:pos()+vec(-110,-50,-1))
+holoAng(29, ang(-10,5,80))
+holoScale(29, vec(1,1,0.1))           
+holoParent(29, E)       
+            
+holoCreate(30)
+holoModel(30, "")
+holoPos(30, E:pos()+vec(-110,-50,-11))
+holoAng(30, ang(10,5,100))
+holoScale(30, vec(1,1,0.1))           
+holoParent(30, E)           
+            
+holoCreate(31)
+holoModel(31, "")
+holoPos(31, E:pos()+vec(-110,50,-1))
+holoAng(31, ang(-10,-5,-80))
+holoScale(31, vec(1,1,0.1))           
+holoParent(31, E)       
+            
+holoCreate(32)
+holoModel(32, "")
+holoPos(32, E:pos()+vec(-110,50,-11))
+holoAng(32, ang(10,-5,-100))
+holoScale(32, vec(1,1,0.1))           
+holoParent(32, E)             
+            
+holoCreate(33)
+holoModel(33, "")
+holoPos(33, E:pos()+vec(-118,0,6))
+holoAng(33, ang(-40,0,90))
+holoScale(33, vec(1.2,3,0.1))           
+holoParent(33, E)       
+            
+            
+            
+            
+}       
+     if(first()) {       
+            Ez = E:pos():z()
+            E:setAng(ang(0,0,0))
+            E:propGravity(0)
+            Seat:propGravity(0)
+            Seat:setMass(0)
+            Seat:propNotSolid(0)
+            E:propNotSolid(0)
+            
+Seat:setPos(E:pos()+vec(0,0,10))
+Seat:setAng(ang(E:angles():pitch(), E:angles():yaw()-90, 0))
+Seat:parentTo(E)
+Seat:setAlpha(5)
+E:soundPlay(1, 0, "npc/manhack/mh_engine_loop2.wav")
+E:soundPlay(2, 0, "npc/combine_gunship/gunship_weapon_fire_loop6.wav")
+}
+
+
+Driver = Seat:driver()
+W = Driver:keyForward()
+A = Driver:keyLeft()
+S = Driver:keyBack()
+D = Driver:keyRight()
+Space = Driver:keyJump()
+Shift = Driver:keySprint()
+Alt = Driver:keyWalk()
+Attack1 = Driver:keyAttack1()
+
+Turret:setPos(E:pos()+vec(0,0,-15))
+Turret:setAng((Driver:aimPos()-Turret:pos()):toAngle())
+
+if(Driver) {
+    soundVolume(1, 1000)
+}
+if(!Driver) {
+    soundVolume(1, 0)
+}
+
+if(Attack1) {
+    soundVolume(2, 1000)
+}
+if (!Attack1) {
+    soundVolume(2, 0)
+}
+
+if(Alt) {
+    Jetmode = 3
+    X = 0
+} else {
+Jetmode = 1
+X = 0.93
+}
+
+
+if(Space) {
+    Lift = Lift + 15 * Jetmode
+} elseif(Shift) {
+    Lift = Lift - 15 * Jetmode
+}
+
+if(W) {
+    Pitch = 10
+    Forward = 120 * Jetmode
+    Yaw = 1.5 * -2 - Jetmode * 0.9 + X
+}
+if(S) {
+    Pitch = -10
+    Forward = -50 
+    Yaw = 1.3*1.5
+} 
+if(!W & !S) {
+Pitch = 0
+Forward = 0
+Yaw = 0
+}
+
+if(A) {
+
+    Roll = -25
+
+
+}
+if(D) {
+
+    Roll = 25
+    
+
+}
+if(!A & !D) {
+    
+Roll = 0
+}
+
+
+
+Hover = ((Ez+Lift-E:pos():z()))
+
+LookP = -E:angVel():pitch()/3+     (Pitch-E:angles():pitch())
+LookY =  (A-D)*15+(E:vel():dot(E:forward())/100+(Seat:angles():roll()/-20))+Yaw
+LookR = -E:angVel():roll()/5+      (Roll-E:angles():roll())
+
+
+
+E:applyForce(vec(-E:vel():x()/3     , -E:vel():y()/3     ,  -E:vel():z()/3+Hover))
+E:applyForce(E:forward()*Forward)
+
+E:applyAngForce(ang(LookP, -E:angVel():yaw()/5 + LookY, LookR))
+
+
+
+Spin = 80 + Spin + sqrt(E:vel():x()^2+E:vel():y()^2)/5
+
+holoAng(2, ang(E:angles():pitch()*3,E:angles():yaw(),E:angles():roll()))
+holoAng(3, ang(E:angles():pitch()*3,E:angles():yaw(),E:angles():roll()))
+holoAng(7, ang(0, Spin, 10))
+holoAng(8, ang(0, Spin+90, 10))
+holoAng(9, ang(0, Spin, -10))
+holoAng(10, ang(0, Spin+90, -10))
+
+
+

@@ -1,0 +1,8 @@
+@name 
+@inputs 
+@outputs 
+@persist 
+@trigger 
+if(first()) {
+    entity():isWeldedTo():setMass(75)
+}

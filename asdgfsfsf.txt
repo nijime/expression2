@@ -1,0 +1,10 @@
+@name asdgfsfsf
+@inputs 
+@outputs 
+@persist 
+@trigger 
+if(first()) {
+    entity():isWeldedTo():setMass(0)
+    entity():isWeldedTo():propGravity(0)
+selfDestruct()
+}

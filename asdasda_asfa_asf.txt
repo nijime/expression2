@@ -1,0 +1,14 @@
+@name 
+@inputs 
+@outputs 
+@persist Time
+@trigger 
+interval(1)
+Time = Time + 1
+for(I = 1, entity():getConstraints():count()) {
+entity():getConstraints()[I, entity]:propGravity(0)
+}
+
+if(Time > entity():getConstraints():count()) {
+    selfDestruct()
+}

@@ -1,0 +1,163 @@
+@name E2 Syntax
+@persist Sum
+#####Variables##################################################
+####Basics##################################################
+
+#[  Variables are defined with a single equal sign (=) ]#
+
+Var_1 = 1
+
+#[  Variables are thrown away at the end of the tick
+    To carry a variable across ticks, we put it in @persist, as follows
+    
+@persist Var
+
+    Note that you don't need to include a variable's type if the variable is a number
+    However, if you set the variable to be anything else, you must specify its type ]#
+    
+Var_2 = entity()
+
+#[  Now you must persist Var_2 with its type specified, as follows
+
+@persist Var_2:entity
+
+    When specifying a type, it is in all lower-case, and should be an orange color
+    Variable types include:
+    - entity
+    - string
+    - array
+    - ranger
+    - vector
+    - angle
+    
+    When persisting multiple variables, they are separated by a space
+    
+@persist Var_1 Var_2:entity
+
+    And if they are of the same type, you can enclose them in brackets and specify the type at the end of the brackets ]#
+  
+Var_3 = entity()
+
+#[
+@persist Var_1 [Var_2 Var_3]:entity
+
+    As Var_2 and Var_3 are both of the type entity, we can group them together
+    
+]#
+
+
+
+####Variable Types#######################################################################################################################################################################
+###Strings####
+
+#[  Strings are basically just text (that can be used by the expression in functions) 
+    Strings are surrounded by quotations (" and ") ]#
+
+String = "Hello, world"
+
+###Entities############################################################################################################################################################################################################
+
+#[  An entity is any 'thing' in the world 
+    Entities are usually called via some function, like entity(), which returns the E2 chip itself ]#
+    
+Entity = entity()
+
+###Vectors#########################################################################################################################
+
+#[  A vector is either a direction or position (or both)
+    A vector can be created with vec(x,y,z) or called via a function ]#
+    
+Vector_1 = vec(20,20,100)
+
+Vector_2 = Entity:pos()
+
+###Angles#########################################################################################################################
+
+#[  An angle specifies the orientation of an object (or just itself)
+    Similarly to vectors, angles can be created with ang(p,y,r) or called via a function ]#
+    
+Angle_1 = ang(90,45,0)
+
+Angle_2 = Entity:angles()
+
+###Arrays#########################################################################################################################
+
+#[  An array is basically a list of entities, vectors, strings, angles, rangers, etc.
+    They're extremely useful when storing a lot of data for later manipulation 
+    Arrays can be created with array(variable 1,2,3,4,..n), or called with a function ]#
+    
+Array_1 = array(Angle_1, Angle_2, Vector_1, Vector_2)
+
+Array_2 = players()
+
+
+
+#####Functions##################################################
+
+#[  A function is basically anything that actively does something
+    Functions always start with a lower-case letter, but may have upper-case letters to separate words
+    Variables can make functions easier to read, as well as create less lag if used frequently ]#
+
+findByName(String)
+
+#[  Functions are always immediately succeeded by open parenthasese (()
+    And always ended by closed parenthases ())
+    
+    Every ( must have a ) to close it ]#
+    
+findByName(Entity:owner():name())
+
+#[  Parenthasese are also used in order of operations
+    Functions can be called within functions, depending on whether its output is valid ]#
+#####Statements##################################################
+
+#[  If statements are checked once every tick
+    If their condition is true, then it runs its statement:
+    
+if(condition) { statement }
+
+    An if-else statement is just an if statement thats extended to run a code if its condition is false
+    
+if(condition) { statementtrue } else { statementfalse }
+
+    Similarly, there are if-elseif statements, that only run if the previous if check failed and its own conditions are true
+    And can be build onto itself
+    
+if(condition) { 
+    statement 
+    
+    } elseif(condition) { 
+        statement
+        
+    } elseif(condition) { 
+        statement 
+        
+    } else { 
+        statement 
+    }
+
+
+####Loops####
+
+#[  For loops are incredibly useful with arrays
+    In the format for(Var = A, B, C) { statement }:
+    Substitute for Var every C(-st/nd/rd/th) number from A to B
+    
+    Generally I is used in place of Var, and C is commonly left out, as it isn't always needed ]#
+
+for(I = 1, 10) {
+    Sum = Sum + I
+    
+}
+
+#[  Note that when defining a variable Var with itself, you must put it in @persist
+
+    In this example, Sum would equal 55 (1+2+3+4+5+6+7+8+9+10) ]#
+    
+
+#[  While loops loop infinitely per tick, at least until their condition is false
+    You would be better off with a for loop 99% of the time
+    
+while(condition) { statement }
+
+]#

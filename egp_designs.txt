@@ -1,0 +1,18 @@
+@name egp designs
+@inputs EGP:wirelink
+@outputs 
+@persist Time
+@trigger 
+interval(1)
+O = owner()
+E = entity()
+Time = Time + 0.4
+if(Time < 1) {
+    R1 = randint(360)
+    R2 = randint(360)
+    R3 = randint(10,50)
+    R4 = randint(10,50)
+for(I = 1, 12) {
+    EGP:egpLine(I, vec2(256,256), vec2(sin(R1)*R3+256,cos(R2)*R4+256))
+}
+}

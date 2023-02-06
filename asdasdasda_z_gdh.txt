@@ -1,0 +1,24 @@
+@name 
+@inputs E:entity
+@outputs 
+@persist Offset:vector Ang:angle
+interval(100)
+
+if(first()) {
+    
+    #You can change this to change the gimbal's position around the seat
+    Offset = vec(0,0,20)
+    
+    #Change this to make the entity face a different way
+    Ang = ang(0,0,0)
+    
+    
+}
+
+Pod = entity():isWeldedTo()
+
+
+if(Pod:driver()) { E:setAng(Pod:driver():eyeAngles()) }
+
+
+E:setPos(Pod:toWorld(Offset))

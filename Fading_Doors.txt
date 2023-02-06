@@ -1,0 +1,30 @@
+@name Fading Doors
+@outputs Fade
+@persist Key:string Allowed:array Door:entity
+interval(20)
+if(first()) {
+    function entity ply(String:string) {
+        return findPlayerByName(String)
+    }
+    function findIncludeArray(Arr:array) {
+        for(I = 1, Arr:count()) {
+            findIncludePlayer(Arr[I, entity])
+        }
+    }
+    
+    ##Add allowed players by adding " , ply("theirname") "
+    Allowed = array(ply("KraKenXI"), ply("nijime"), ply("ellernate")                          )
+    ##Change what key activates the fading door
+    Key = "g"
+
+}
+Allowed = array(ply("KraKenXI"), ply("nijime"), ply("ellernate")                          )
+for(I = 1, Allowed:count()) {
+    if(Allowed[I, entity]:keyPressed(Key)) {
+        Fade = 1
+    } else {
+        Fade = 0
+    }
+}
+        
+

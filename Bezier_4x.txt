@@ -1,0 +1,132 @@
+@name Bezier 4x
+@inputs Seat:entity
+@outputs Leg P1 P2 StartPos1:vector StartPos2:vector CurPos1:vector CurPos2:vector
+@persist E:entity Dri:entity
+@persist R1:ranger R2:ranger R3:ranger R4:ranger
+@persist StartPos1:vector StartPos2:vector StartPos3:vector StartPos4:vector
+@persist Bez1:vector Bez2:vector Bez3:vector Bez4:vector P1 P2 P3 P4
+@persist Leg
+function vector bezierc([Start Mid End]:vector, Ratio)
+{
+    #Ratio is from 0 to 1
+    return mix(mix(End, Mid, Ratio), mix(Mid, Start, Ratio), Ratio)
+}
+if(first()) {
+    
+    E = entity()
+    E:propGravity(0)
+    
+
+
+
+    holoCreate(1)
+    holoCreate(2)
+    
+    holoCreate(7)
+    holoCreate(8)
+    
+    holoCreate(3)
+    holoCreate(4)
+    
+holoPos(3, E:pos()+vec(50,25,0))
+holoPos(4, E:pos()+vec(50,-25,0))
+holoParent(3, E)
+holoParent(4, E)
+
+    holoCreate(5)
+    holoCreate(6)
+    
+holoPos(5, E:pos()+vec(-25,25,0))
+holoPos(6, E:pos()+vec(-25,-25,0))
+holoParent(5, E)
+holoParent(6, E)
+
+    Leg = 1
+    
+    P1 = 0
+    P2 = 0
+    P3 = 0
+    P4 = 0
+    
+    StartPos1 = R1:pos()
+    StartPos2 = R2:pos()
+    StartPos3 = R3:pos()
+    StartPos4 = R4:pos()
+    
+holoPos(1, StartPos1)
+holoPos(2, StartPos2)
+}
+
+interval(20)
+Dri = Seat:driver()
+E:applyForce(-E:vel()*1)
+if(Dri:keyForward()) {
+    E:applyForce(E:forward()*50)
+    
+    if(Leg == 1) {
+        P1 = P1 + 0.05
+    }
+    
+    if(Leg == 2) {
+        P2 = P2 + 0.05
+    }
+    
+    if(Leg == 3) {
+        P3 = P3 + 0.05
+    }
+    
+    if(Leg == 4) {
+        P4 = P4 + 0.05
+    }
+    
+}
+if(P1 > 0.99) {
+    StartPos1 = R1:pos()
+    Leg = 2
+    
+    P1 = 0
+}
+if(P2 > 0.99) {
+    StartPos2 = R2:pos()
+    Leg = 3
+    
+    P2 = 0
+}
+
+if(P3 > 0.99) {
+    StartPos3 = R3:pos()
+    Leg = 4
+    
+    P3 = 0
+}
+if(P4 > 0.99) {
+    StartPos4 = R4:pos()
+    Leg = 1
+    
+    P4 = 0
+}
+
+R1 = rangerOffset(200, holoEntity(3):pos()+vec(0,0,0), -E:up())
+R2 = rangerOffset(200, holoEntity(4):pos()+vec(0,0,0), -E:up())
+R3 = rangerOffset(200, holoEntity(5):pos()+vec(0,0,0), -E:up())
+R4 = rangerOffset(200, holoEntity(6):pos()+vec(0,0,0), -E:up())
+
+CurPos1 = R1:pos()
+CurPos2 = R2:pos()
+CurPos3 = R3:pos()
+CurPos4 = R4:pos()
+
+Bez1 = bezierc(StartPos1, (StartPos1+CurPos1)/2+vec(0,0,25), CurPos1, P1)
+Bez2 = bezierc(StartPos2, (StartPos2+CurPos2)/2+vec(0,0,25), CurPos2, P2)
+Bez3 = bezierc(StartPos3, (StartPos3+CurPos3)/2+vec(0,0,25), CurPos1, P3)
+Bez4 = bezierc(StartPos4, (StartPos4+CurPos4)/2+vec(0,0,25), CurPos2, P4)
+
+
+
+holoPos(1, Bez1)
+
+holoPos(2, Bez2)
+
+holoPos(7, Bez3)
+
+holoPos(8, Bez4)
